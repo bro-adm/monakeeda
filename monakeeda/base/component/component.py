@@ -27,7 +27,6 @@ class Component(ABC):
 
         return True
 
-    @abstractmethod
     def _set_cls_landscape(self, monkey_cls, bases, monkey_attrs):
         """
         Pipeline ModelCls Build -> step X (?)
@@ -39,7 +38,7 @@ class Component(ABC):
         :return: updated MonkeyModel attributes
         """
 
-        pass
+        self._monkey_cls = monkey_cls
 
     def build(self, monkey_cls, bases, monkey_attrs) -> bool:
         is_valid = self._validate(monkey_cls, bases, monkey_attrs)

@@ -58,11 +58,6 @@ class BaseComponentComposite(Component, Generic[TComponent], ABC):
 
         return calculated_values
 
-    def _set_cls_landscape(self, monkey_cls, bases, monkey_attrs):
-        # TODO: decide if to make this method not abstract with this nothing implementation
-
-        pass
-
     def build(self, monkey_cls, bases, monkey_attrs) -> bool:
         is_valid = True
 
