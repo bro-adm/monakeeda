@@ -1,7 +1,40 @@
 from abc import ABC, abstractmethod
-from typing import List, Generic
+from typing import List, Generic, Dict, Union
 
 from .component import TComponent, Component
+from .rules import RuleException, Rule
+
+
+class OneComponentPerLabelAllowedRuleException(RuleException):
+    def __init__(self, duplicate_labels_components: Dict[str, List[Component]]):
+        self.duplicate_labels_components: Dict[str, List[Component]] = duplicate_labels_components
+
+    def __str__(self):
+        duplication_description = f"Following components can not be set together -> "
+
+        for label, components in self.duplicate_labels_components.items():
+            components_descriptions = [str(component) for component in components]
+            duplication_description = duplication_description + f"\n {components_descriptions} -> label: {label}"
+
+        return duplication_description
+
+
+class OneComponentPerLabelAllowedRule(Rule):
+
+    def validate(self, component: "BaseComponentComposite") -> Union[RuleException, None]:
+        existing_labels: Dict[str, Component] = {}
+        duplicate_labels_components: Dict[str, List[Component]] = {}
+
+        for nested_component in component._components:
+            label = nested_component.__label__
+            if label in existing_labels:
+                duplicate_labels_components.setdefault(label, [existing_labels[label]])
+                duplicate_labels_components[label].append(nested_component)
+            else:
+                existing_labels[label] = nested_component
+
+        if duplicate_labels_components:
+            return OneComponentPerLabelAllowedRuleException(duplicate_labels_components)
 
 
 class BaseComponentComposite(Component, Generic[TComponent], ABC):
