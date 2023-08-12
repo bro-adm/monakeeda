@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import ClassVar, TypeVar, Type
 
+from monakeeda.consts import NamespacesConsts
 from .rules import Rules
 
 
@@ -19,7 +20,7 @@ class Component(ABC):
         """
 
         exceptions = self.__rules__.validate(self)
-        monkey_attrs['build']['exceptions'] = exceptions
+        monkey_attrs[NamespacesConsts.BUILD][NamespacesConsts.EXCEPTIONS] = exceptions
 
         if exceptions:
             return False
