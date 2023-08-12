@@ -7,6 +7,7 @@ from .rules import Rules
 # TODO: add success type of type bool for type hints
 
 class Component(ABC):
+    __label__: ClassVar[str]
     __rules__: ClassVar[Rules] = Rules([])
 
     def _validate(self, monkey_cls, bases, monkey_attrs) -> bool:
@@ -68,6 +69,9 @@ class Component(ABC):
         """
 
         pass
+
+    def __str__(self):
+        return f"{self.__label__} component"
 
 
 TComponent = TypeVar('TComponent', bound=Type[Component])
