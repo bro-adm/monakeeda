@@ -13,6 +13,13 @@ class DecoratorMainComponent(MainComponent[BaseDecorator]):
 
     # TODO: validate run order preserves method order
     def values_handler(self, key, model_instance, values) -> dict:
+        """
+        A single decorator component can run on all model fields.
+        specific white/black lists can be set according to decorator implementations and instances configurations.
+
+        Therefore, the values_handler logic is set by allowing each decorator to run its values_handler for all fields.
+        This is the opposite from other implementation.
+        """
         for decorator in model_instance.__map__[NamespacesConsts.BUILD][NamespacesConsts.DECORATORS]:
             values = decorator.values_handler(key, model_instance, values)
 
