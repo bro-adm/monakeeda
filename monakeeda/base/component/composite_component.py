@@ -46,34 +46,38 @@ class BaseComponentComposite(Component, Generic[TComponent], ABC):
     being custom one level inheritance implementations.
     """
 
-    @property
     @abstractmethod
-    def _components(self) -> List[TComponent]:
+    def _components(self, monkey_cls) -> List[TComponent]:
         """
         Returns a list of the composite components under its management.
 
-        There is no, single instance Component -> not even the MainComponent,
-        their instance jobs attrs differentiate them.
-        Passing those instance attrs as dependencies to static methods is not an option due to other being initiatable
+        components might reside under a namespace in the monkey_cls or in the components instance
         """
 
         pass
 
     def values_handler(self, key, model_instance, values) -> dict:
-        calculated_values = values
-        for component in self._components:
-            calculated_values = component.values_handler(key, model_instance, calculated_values)
+        for component in self._components(model_instance.__class__):
+            calculated_values = component.values_handler(key, model_instance, values)
+            values.update(calculated_values)
 
-        return calculated_values
+        return values
+
+    def _set_cls_landscape(self, monkey_cls, bases, monkey_attrs):
+        for component in self._components(monkey_cls):
+            component._set_cls_landscape(monkey_cls, bases, monkey_attrs)
 
     def build(self, monkey_cls, bases, monkey_attrs) -> bool:
         is_valid = True
 
-        for component in self._components:
+        for component in self._components(monkey_cls):
             # Keeps is_valid False if was False, else runs next components build (for additional errors and setups)
             is_valid = is_valid if not is_valid else component.build(monkey_cls, bases, monkey_attrs)
 
-        return super().build(monkey_cls, bases, monkey_attrs)
+        if is_valid:
+            return super().build(monkey_cls, bases, monkey_attrs)
+
+        return is_valid  # False
 
 
 class ComponentInitComposite(BaseComponentComposite, Generic[TComponent]):
