@@ -21,11 +21,11 @@ class OneComponentPerLabelAllowedRuleException(RuleException):
 
 class OneComponentPerLabelAllowedRule(Rule):
 
-    def validate(self, component: "BaseComponentComposite") -> Union[RuleException, None]:
+    def validate(self, component: "BaseComponentComposite", monkey_cls) -> Union[RuleException, None]:
         existing_labels: Dict[str, Component] = {}
         duplicate_labels_components: Dict[str, List[Component]] = {}
 
-        for nested_component in component._components:
+        for nested_component in component._get_components(monkey_cls):
             label = nested_component.__label__
             if label in existing_labels:
                 duplicate_labels_components.setdefault(label, [existing_labels[label]])
@@ -49,6 +49,14 @@ class BaseComponentComposite(Component, Generic[TComponent], ABC):
     @property
     @abstractmethod
     def _components(self) -> List[TComponent]:
+        """
+        Returns a list of the composite components under its management.
+
+        There is no, single instance Component -> not even the MainComponent,
+        their instance jobs attrs differentiate them.
+        Passing those instance attrs as dependencies to static methods is not an option due to other being initiatable
+        """
+
         pass
 
     def values_handler(self, key, model_instance, values) -> dict:
