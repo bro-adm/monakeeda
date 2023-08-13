@@ -27,6 +27,7 @@ class Component(ABC):
 
         return True
 
+    @abstractmethod
     def _set_cls_landscape(self, monkey_cls, bases, monkey_attrs):
         """
         Pipeline ModelCls Build -> step X (?)
@@ -34,13 +35,14 @@ class Component(ABC):
         :param monkey_cls: the MonkeyModel class itself
         :param bases: all the classes the MonkeyModel inherited from
         :param monkey_attrs: all the attributed the MonkeyModel holds
-
-        :return: updated MonkeyModel attributes
         """
 
-        self._monkey_cls = monkey_cls
+        pass
 
     def build(self, monkey_cls, bases, monkey_attrs) -> bool:
+        """
+        At the build stage of ALL components you will want validation to take place before setting the landscape :)
+        """
         is_valid = self._validate(monkey_cls, bases, monkey_attrs)
 
         if not is_valid:
@@ -52,7 +54,7 @@ class Component(ABC):
 
     @abstractmethod
     def values_handler(self, key, model_instance, values) -> dict:
-        # TODO: add key param description
+        # TODO: add key param description + handle the fact that composite does not care about key it fucks it and the siple ones do
         # TODO: type validations happen at this stage so how come they cant return RulesException
         # TODO: validate if the method should be based on returns or inner method updates
 
