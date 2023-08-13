@@ -65,7 +65,7 @@ class BaseComponentComposite(Component, Generic[TComponent], ABC):
             # Keeps is_valid False if was False, else runs next components build (for additional errors and setups)
             is_valid = is_valid if not is_valid else component.build(monkey_cls, bases, monkey_attrs)
 
-        return is_valid
+        return super().build(monkey_cls, bases, monkey_attrs)
 
 
 class ComponentInitComposite(BaseComponentComposite, Generic[TComponent]):
