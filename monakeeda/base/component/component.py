@@ -54,6 +54,7 @@ class Component(ABC):
     def values_handler(self, key, model_instance, values) -> dict:
         # TODO: add key param description
         # TODO: type validations happen at this stage so how come they cant return RulesException
+        # TODO: validate if the method should be based on returns or inner method updates
 
         """
         Pipeline step X (?)
