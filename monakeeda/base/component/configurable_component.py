@@ -87,6 +87,5 @@ class ConfigurableComponent(BaseComponentComposite[TParameter], Generic[TParamet
                     self._initialized_params.append(possible_param(param_val))
                     break
 
-    @property
-    def _components(self) -> List[Parameter]:
+    def _components(self, monkey_cls) -> List[Parameter]:
         return self._initialized_params
