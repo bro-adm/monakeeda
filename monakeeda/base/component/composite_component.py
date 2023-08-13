@@ -25,7 +25,7 @@ class OneComponentPerLabelAllowedRule(Rule):
         existing_labels: Dict[str, Component] = {}
         duplicate_labels_components: Dict[str, List[Component]] = {}
 
-        for nested_component in component._get_components(monkey_cls):
+        for nested_component in component._components(monkey_cls):
             label = nested_component.__label__
             if label in existing_labels:
                 duplicate_labels_components.setdefault(label, [existing_labels[label]])

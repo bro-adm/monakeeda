@@ -33,5 +33,5 @@ class BaseParameterValueTypeValidationFailedRule(Rule, ABC):
         self.wanted_type = wanted_type
 
     @abstractmethod
-    def validate(self, component: Parameter) -> Union[RuleException, None]:
+    def validate(self, component: Parameter, monkey_cls) -> Union[RuleException, None]:
         pass

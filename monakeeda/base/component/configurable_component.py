@@ -18,7 +18,8 @@ class UnmatchedParameterKeyRuleException(RuleException):
 
 class UnmatchedParameterKeyRule(Rule):
 
-    def validate(self, component: "ConfigurableComponent") -> Union[RuleException, None]:
+    def validate(self, component: "ConfigurableComponent", monkey_cls) -> Union[RuleException, None]:
+        # TODO: validate if can simply logic
         unmatched_params = {}
 
         for param_key, param_val in component._init_params.items():
