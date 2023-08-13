@@ -18,7 +18,6 @@ class Annotation(Component, ABC):
     def _set_cls_landscape(self, monkey_cls, bases, monkey_attrs):
         monkey_attrs[FieldConsts.TYPE] = self.base_type
         monkey_attrs[FieldConsts.ANNOTATION] = self
-        super()._set_cls_landscape(monkey_cls, bases, monkey_attrs)
 
     @abstractmethod
     def _act_with_value(self, value, cls, current_field_info) -> Any:

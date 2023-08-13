@@ -30,13 +30,13 @@ FATHER MODEL CONFIG CLASS U NEED TO CREATE A CONFIG CLASS IN THE CURRENT MODEL W
 U WANT TO NEGATE !!!  
 """
 
+
 # TODO: find a way to run this once prior to everything else and once afterwards because
 #  some parameters requires the main components to run and others are required for further work
 class ConfigMainComponent(MainComponent[Config]):
 
-    @property
-    def _components(self) -> List[Config]:
-        return [self._monkey_cls.__map__[NamespacesConsts.BUILD][NamespacesConsts.CONFIG]]
+    def _components(self, monkey_cls) -> List[Config]:
+        return [monkey_cls.__map__[NamespacesConsts.BUILD][NamespacesConsts.CONFIG]]
 
     def _set_by_base(self, monkey_cls, base, attrs):
         """
@@ -53,4 +53,3 @@ class ConfigMainComponent(MainComponent[Config]):
 
         initialized_config: Config = monkey_cls_config(**monkey_cls_config_attrs)
         monkey_cls.__map__[NamespacesConsts.BUILD][NamespacesConsts.CONFIG] = initialized_config
-        initialized_config.build(monkey_cls, bases, monkey_attrs)
