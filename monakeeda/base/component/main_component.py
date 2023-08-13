@@ -10,8 +10,16 @@ class MainComponent(BaseComponentComposite[TComponent], BaseManager, Generic[TCo
     """
     Meant for concept managers that usually if not always need to also run bases setups.
     Beware of instance variables!!!
+
+    Operation order:
+        - run_bases
+        - components
+        - build
+        - init
+
+    No validations are required for Main Components bases+cls setup ->
+    inner components should not run their landscapes prior to validators !!!
     """
 
-    def _set_cls_landscape(self, monkey_cls, bases, monkey_attrs):
-        super()._set_cls_landscape(monkey_cls, bases, monkey_attrs)
-        self.run_bases(monkey_cls, bases, monkey_attrs)
+    pass
+
