@@ -11,7 +11,7 @@ class RuleException(Exception):
 
 class Rule(ABC):
     @abstractmethod
-    def validate(self, component: "Component") -> Union[RuleException, None]:
+    def validate(self, component: "Component", monkey_cls) -> Union[RuleException, None]:
         pass
 
 
@@ -31,10 +31,10 @@ class Rules(Rule):
     def __init__(self, rules: List[Rule]):
         self._rules = rules
 
-    def validate(self, component: "Component") -> Union[RuleException, None]:
+    def validate(self, component: "Component", monkey_cls) -> Union[RuleException, None]:
         exceptions = []
         for rule in self._rules:
-            result = rule.validate(component)
+            result = rule.validate(component, monkey_cls)
             if result:
                 exceptions.append(result)
 
