@@ -9,6 +9,7 @@ class NamespacesConsts:
     FIELDS = 'fields_info'  # TODO: validate if can change to 'fields'
     FIELDS_KEYS = 'main_field_keys'  # TODO: validate if can get rid of this
     ANNOTATIONS = 'annotations'
+    CONFIG = '__config__'  # TODO: validate if can change to 'config'
 
     DECORATED_WITH = '__decorated_with__'  # model methods decorators instances space
 
@@ -18,3 +19,7 @@ class FieldConsts:
     REQUIRED = 'required'
     TYPE = 'type'
     ANNOTATION = 'annotation_cls'
+
+
+class ConfigConsts:
+    CONFIG = 'Config'
