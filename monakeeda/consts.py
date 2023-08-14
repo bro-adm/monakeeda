@@ -19,6 +19,7 @@ class FieldConsts:
     REQUIRED = 'required'
     TYPE = 'type'
     ANNOTATION = 'annotation_cls'
+    VALUE = 'value'
 
 
 class ConfigConsts:
