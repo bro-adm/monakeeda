@@ -59,9 +59,7 @@ class Component(ABC):
         return True
 
     @abstractmethod
-    def values_handler(self, key, model_instance, values, stage: Stages) -> dict:
-        # TODO: add key param description + handle the fact that composite does not care about key it fucks it and the siple ones do
-        # TODO: type validations happen at this stage so how come they cant return RulesException
+    def values_handler(self, model_instance, values, stage: Stages) -> dict:
         # TODO: validate if the method should be based on returns or inner method updates
 
         """
@@ -70,7 +68,6 @@ class Component(ABC):
         Some Component implementations do not need and cannot and do not see the full values dictionary given to Model
         on init, so merging the values to the main values dictionary is up to the Manager Component implementation.
 
-        :param key: ?
         :param model_instance: MonkeyModel -> do all components receive the instance?
         :param values: values to initiate component
 

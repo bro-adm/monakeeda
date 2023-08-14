@@ -10,7 +10,7 @@ class AnnotationDefaultDict(defaultdictvalue):
 
     def __getitem__(self, type_):
         gotten = super(AnnotationDefaultDict, self).__getitem__(get_type_cls(type_))
-        return gotten(type_)
+        return gotten
 
     def __setitem__(self, key, item):
         if issubclass(item.mro()[0], Annotation):

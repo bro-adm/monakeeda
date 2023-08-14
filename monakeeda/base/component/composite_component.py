@@ -56,9 +56,9 @@ class BaseComponentComposite(Component, Generic[TComponent], ABC):
 
         pass
 
-    def values_handler(self, key, model_instance, values, stage) -> dict:
+    def values_handler(self, model_instance, values, stage) -> dict:
         for component in self._components(model_instance.__class__):
-            calculated_values = component.values_handler(key, model_instance, values, stage)
+            calculated_values = component.values_handler(model_instance, values, stage)
             values.update(calculated_values)
 
         return values

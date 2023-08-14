@@ -21,8 +21,8 @@ class AnnotationMainComponent(MainComponent[Annotation]):
         annotations = monkey_attrs.get(PythonNamingConsts.annotations, {})  # shouldn't be {}
 
         for key, annotation in annotations.items():
-            annotation_cls = self._annotation_mapping[annotation]
-            monkey_cls.__map__[NamespacesConsts.BUILD][NamespacesConsts.ANNOTATIONS][key] = annotation_cls
+            annotation_cls_instance = self._annotation_mapping[annotation](key, annotation)
+            monkey_cls.__map__[NamespacesConsts.BUILD][NamespacesConsts.ANNOTATIONS][key] = annotation_cls_instance
             # TODO: validate if custom namespace required for annotations instead of reading from fields
 
     def run_bases(self, monkey_cls, bases, monkey_attrs):
