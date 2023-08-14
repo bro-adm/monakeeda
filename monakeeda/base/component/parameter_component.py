@@ -5,7 +5,7 @@ from .component import Component
 from .rules import RuleException, Rule
 
 
-class Parameter(Component):
+class Parameter(Component, ABC):
     __key__: ClassVar[str]
 
     def __init__(self, param_val):
