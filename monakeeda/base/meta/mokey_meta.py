@@ -1,6 +1,7 @@
 from abc import ABCMeta
 from collections import OrderedDict
 
+from monakeeda.base.component import RulesException
 from monakeeda.consts import NamespacesConsts
 
 
@@ -23,5 +24,7 @@ class MonkeyMeta(ABCMeta):
 
         cls.__map__ = {NamespacesConsts.BUILD: {}, NamespacesConsts.FIELDS: OrderedDict()}
 
+        # TODO: think about how to make landscape not hard coded logic
+        attrs[NamespacesConsts.BUILD][NamespacesConsts.EXCEPTIONS] = RulesException(name, [])
         if cls.__model_components__.build(cls, bases, attrs):
             raise attrs[NamespacesConsts.BUILD][NamespacesConsts.EXCEPTIONS]
