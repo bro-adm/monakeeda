@@ -11,7 +11,7 @@ class CastingError(ValueError):
 
 
 class Cast(GenericAnnotation, Generic[T]):
-    def _act_with_value(self, value, cls, current_field_info):
+    def _act_with_value(self, value, cls, current_field_info, stage):
         cast_to = self._types[0]
         try:
             wanted_value = cast_to(value)

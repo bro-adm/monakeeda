@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from enum import Enum
 from typing import ClassVar, TypeVar, Type
 
 from monakeeda.consts import NamespacesConsts
@@ -6,6 +7,10 @@ from .rules import Rules
 
 
 # TODO: add success type of type bool for type hints
+
+class Stages(Enum):
+    INIT = 'init'
+    UPDATE = 'update'
 
 class Component(ABC):
     __label__: ClassVar[str]
@@ -54,7 +59,7 @@ class Component(ABC):
         return True
 
     @abstractmethod
-    def values_handler(self, key, model_instance, values) -> dict:
+    def values_handler(self, key, model_instance, values, stage: Stages) -> dict:
         # TODO: add key param description + handle the fact that composite does not care about key it fucks it and the siple ones do
         # TODO: type validations happen at this stage so how come they cant return RulesException
         # TODO: validate if the method should be based on returns or inner method updates

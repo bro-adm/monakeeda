@@ -1,5 +1,5 @@
 from base_manager import BaseManager
-from .component import Component, TComponent
+from .component import Component, TComponent, Stages
 from .composite_component import BaseComponentComposite, ComponentInitComposite, OneComponentPerLabelAllowedRule, \
     OneComponentPerLabelAllowedRuleException
 from .configurable_component import ConfigurableComponent, UnmatchedParameterKeyRule, UnmatchedParameterKeyRuleException
