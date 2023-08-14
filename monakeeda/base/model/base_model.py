@@ -24,6 +24,7 @@ class MonkeyModel(metaclass=MonkeyMeta, model_components=model_components, annot
         self._values_handler(kwargs, Stages.INIT)
         # The super setter because the setter logic can be changed and in teh init we have data as we want it already
 
+    # TODO: patch update
     def update(self, **kwargs):
         self._values_handler(kwargs, Stages.UPDATE)
 
