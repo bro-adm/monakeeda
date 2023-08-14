@@ -1,10 +1,10 @@
 from abc import ABC, abstractmethod
 from typing import Any
+
 from typing_extensions import get_args
 
 from monakeeda.consts import NamespacesConsts, FieldConsts
-from .. import Stages
-from ..component import Component
+from ..component import Component, Stages
 
 
 class Annotation(Component, ABC):
@@ -20,7 +20,7 @@ class Annotation(Component, ABC):
             # TODO: validate if this effects the class mappings !!!
             field_info[FieldConsts.VALUE] = getattr(model_instance, key)
 
-        return self._act_with_value(values[key], model_instance, field_info, stage)
+        return {key: self._act_with_value(values[key], model_instance, field_info, stage)}
 
     def _set_cls_landscape(self, monkey_cls, bases, monkey_attrs):
         monkey_attrs[FieldConsts.TYPE] = self.base_type
