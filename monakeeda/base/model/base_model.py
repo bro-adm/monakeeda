@@ -21,7 +21,7 @@ class MonkeyModel(metaclass=MonkeyMeta, model_components=model_components, annot
 
     def __init__(self, **kwargs):
         for key in self.__map__['main_field_keys']:
-            kwargs = self.__model_components__.component_handler(key, self, kwargs)
+            kwargs = self.__model_components__.values_handler(key, self, kwargs)
         kwargs = ignore_unwanted_params(self.__class__, kwargs)
         for key in kwargs:
             super(MonkeyModel, self).__setattr__(key, kwargs[key])
