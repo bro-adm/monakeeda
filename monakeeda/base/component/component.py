@@ -19,10 +19,11 @@ class Component(ABC):
         :return: True if valid and False if Errors occurred
         """
 
-        exceptions = self.__rules__.validate(self)
-        monkey_attrs[NamespacesConsts.BUILD][NamespacesConsts.EXCEPTIONS] = exceptions
+        exceptions = self.__rules__.validate(self, monkey_cls)
 
         if exceptions:
+            monkey_attrs[NamespacesConsts.BUILD][NamespacesConsts.EXCEPTIONS].append_exception(exceptions)
+
             return False
 
         return True

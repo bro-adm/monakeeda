@@ -20,6 +20,9 @@ class RulesException(RuleException):
         self._component_type = component_type
         self._exceptions = exceptions
 
+    def append_exception(self, exception: RuleException):
+        self._exceptions.append(exception)
+
     def __str__(self):
         return f"{self._component_type} validations failed -> " + str(
             reduce(lambda exc1, exc2: f'{exc1}\n{exc2}', self._exceptions))
