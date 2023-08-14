@@ -18,7 +18,7 @@ class Const(GenericAnnotation, Generic[T]):
             raise TypeError(f"field should be of type {const_type}, but got {value} of type {type(value)} instead")
 
         if stage == Stages.UPDATE:
-            curr_val = current_field_info[FieldConsts.TYPE]
+            curr_val = current_field_info[FieldConsts.VALUE]
 
             if value != curr_val:
                 raise ConstError(curr_val, value)
