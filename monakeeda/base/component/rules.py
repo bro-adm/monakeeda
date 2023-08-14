@@ -40,3 +40,5 @@ class Rules(Rule):
 
         if exceptions:
             return RulesException(component.__class__.__name__, exceptions)
+
+        return
