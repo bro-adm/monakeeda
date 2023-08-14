@@ -44,12 +44,12 @@ class FieldMainComponent(MainComponent[Field]):
 
             if not isinstance(value, Field):
                 if value is inspect._empty:
-                    value = NoField()
+                    value = NoField(field_key)
                 else:
-                    value = Field(default=value)
+                    value = Field(field_key, default=value)
 
             # TODO: make sure I did not fuck up signatures...
-            monkey_attrs.set(field_key, value)
+            monkey_attrs[field_key] = value
 
     def _set_by_base(self, monkey_cls, base, attrs):
         monkey_cls.__map__[NamespacesConsts.FIELDS_KEYS].extend(base.__map__[NamespacesConsts.FIELDS_KEYS])

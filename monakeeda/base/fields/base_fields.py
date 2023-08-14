@@ -40,9 +40,9 @@ class NoField(Field, copy_parameter_components=False):
     initializations are added by code and not user like alias in AliasGenerator.
     """
 
-    def __init__(self):
+    def __init__(self, field_key):
         # hard set: no params available for initialization
-        super(NoField, self).__init__()
+        super(NoField, self).__init__(field_key)
 
     def _set_cls_landscape(self, monkey_cls, bases, monkey_attrs):
         super(NoField, self)._set_cls_landscape(monkey_cls, bases, monkey_attrs)
