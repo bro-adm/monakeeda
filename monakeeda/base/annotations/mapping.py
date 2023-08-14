@@ -1,4 +1,4 @@
-from typing import Type, List
+from typing import Type
 
 from monakeeda.helpers import defaultdictvalue
 from .base_annotation import Annotation
@@ -23,7 +23,7 @@ annotation_mapping = {}
 annotation_mapping = AnnotationDefaultDict(lambda annotation: annotation, annotation_mapping)
 
 
-def annotation_mapper(key_annotations: List[Type], annotation_mapping=annotation_mapping):
+def annotation_mapper(*key_annotations: Type, annotation_mapping=annotation_mapping):
     def inner_get_annotation_cls(annotation_cls: Type[Annotation]):
         for key_annotation in key_annotations:
             annotation_mapping[key_annotation] = annotation_cls
