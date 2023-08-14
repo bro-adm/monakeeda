@@ -1,11 +1,9 @@
-from .helpers import ignore_unwanted_params
 from ..annotations import AnnotationMainComponent, annotation_mapping, ModelAnnotation
 from ..component import MainComponentInitComposite, Stages
 from ..config import ConfigMainComponent, Config
 from ..decorators import DecoratorMainComponent
 from ..fields import FieldMainComponent
 from ..meta import MonkeyMeta
-from ...consts import NamespacesConsts
 
 # TODO: create signature component
 model_components = MainComponentInitComposite([FieldMainComponent(), DecoratorMainComponent(), AnnotationMainComponent(annotation_mapping), ConfigMainComponent()])
@@ -15,10 +13,9 @@ model_components = MainComponentInitComposite([FieldMainComponent(), DecoratorMa
 class MonkeyModel(metaclass=MonkeyMeta, model_components=model_components, annotation_mapping=annotation_mapping):
 
     def _values_handler(self, values: dict, stage):
-        kwargs = values.copy()
-        for key in self.__map__[NamespacesConsts.FIELDS_KEYS]:
-            kwargs = self.__model_components__.values_handler(key, self, kwargs, stage)
-        kwargs = ignore_unwanted_params(self.__class__, kwargs)
+        kwargs = self.__model_components__.values_handler(self, values, stage)
+        # kwargs = ignore_unwanted_params(self.__class__, kwargs)
+
         for key in kwargs:
             super(MonkeyModel, self).__setattr__(key, kwargs[key])
         # The super setter because the setter logic can be changed and in teh init we have data as we want it already
