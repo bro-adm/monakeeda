@@ -17,7 +17,7 @@ class DefaultParameter(FieldParameter):
 
     def _set_cls_landscape(self, monkey_cls, bases, monkey_attrs):
         super(DefaultParameter, self)._set_cls_landscape(monkey_cls, bases, monkey_attrs)
-        monkey_attrs[FieldConsts.REQUIRED] = False
+        monkey_cls.__map__[NamespacesConsts.FIELDS][self._field_key][FieldConsts.REQUIRED] = False
 
 
 class FieldMainComponent(MainComponent[Field]):
@@ -34,9 +34,7 @@ class FieldMainComponent(MainComponent[Field]):
 
     def _set_curr_cls(self, monkey_cls, bases, monkey_attrs):
         annotations: dict = monkey_attrs.get(PythonNamingConsts.annotations, {})
-        monkey_cls.__map__[NamespacesConsts.FIELDS_KEYS].extend(annotations.keys())
-        monkey_cls.__map__[NamespacesConsts.FIELDS_KEYS] = get_ordered_set_list(
-            monkey_cls.__map__[NamespacesConsts.FIELDS_KEYS])
+        monkey_cls.__map__[NamespacesConsts.FIELDS_KEYS] = get_ordered_set_list(annotations.keys())
 
         for field_key in annotations:
             monkey_cls.__map__[NamespacesConsts.FIELDS].setdefault(field_key, {})
@@ -44,12 +42,17 @@ class FieldMainComponent(MainComponent[Field]):
 
             if not isinstance(value, Field):
                 if value is inspect._empty:
-                    value = NoField(field_key)
+                    value = NoField()
                 else:
-                    value = Field(field_key, default=value)
+                    value = Field(default=value)
+
+            # TODO: this sucks
+            for param in value._components(monkey_cls):
+                param._field_key = field_key
 
             # TODO: make sure I did not fuck up signatures...
             monkey_attrs[field_key] = value
+            monkey_cls.__map__[NamespacesConsts.FIELDS][field_key][FieldConsts.FIELD] = value
 
     def _set_by_base(self, monkey_cls, base, attrs):
         monkey_cls.__map__[NamespacesConsts.FIELDS_KEYS].extend(base.__map__[NamespacesConsts.FIELDS_KEYS])
