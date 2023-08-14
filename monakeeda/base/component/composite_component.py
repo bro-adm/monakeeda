@@ -79,12 +79,3 @@ class BaseComponentComposite(Component, Generic[TComponent], ABC):
             return super().build(monkey_cls, bases, monkey_attrs)
 
         return is_valid  # False
-
-
-class ComponentInitComposite(BaseComponentComposite, Generic[TComponent]):
-    def __init__(self, components: List[TComponent]):
-        self._init_components = components
-
-    @property
-    def _components(self) -> List[TComponent]:
-        return self._init_components
