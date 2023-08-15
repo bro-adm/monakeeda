@@ -29,8 +29,8 @@ class MonkeyModel(metaclass=MonkeyMeta, model_components=model_components, annot
     # TODO: patch update
     def update(self, **kwargs):
         kwargs = deep_update(self._values, kwargs)
-        super().__setattr__('_values', kwargs.copy())
         self._values_handler(kwargs, Stages.UPDATE)
+        super().__setattr__('_values', kwargs.copy())
 
     def __setattr__(self, key, value):
         self.update(**{key: value})
