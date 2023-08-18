@@ -47,6 +47,7 @@ class FieldMainComponent(MainComponent[Field]):
                     value = Field(default=value)
 
             # TODO: this sucks
+            value._field_key = field_key
             for param in value._components(monkey_cls):
                 param._field_key = field_key
 

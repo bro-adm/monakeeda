@@ -31,4 +31,4 @@ class NoField(Field, copy_parameter_components=False):
 
     def _set_cls_landscape(self, monkey_cls, bases, monkey_attrs):
         super(NoField, self)._set_cls_landscape(monkey_cls, bases, monkey_attrs)
-        monkey_attrs[FieldConsts.REQUIRED] = True
+        monkey_cls.__map__[NamespacesConsts.FIELDS][self._field_key][FieldConsts.REQUIRED] = True
