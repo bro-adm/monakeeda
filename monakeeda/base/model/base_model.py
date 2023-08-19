@@ -9,7 +9,7 @@ from ...utils import deep_update
 model_components = MainComponentInitComposite([FieldMainComponent(), DecoratorMainComponent(), AnnotationMainComponent(annotation_mapping), ConfigMainComponent()])
 
 
-class MonkeyModel(metaclass=MonkeyMeta, model_components=model_components, annotation_mapping=annotation_mapping, priority=4):
+class MonkeyModel(metaclass=MonkeyMeta, model_components=model_components, annotation_mapping=annotation_mapping, priority=5):
 
     def _values_handler(self, values: dict, stage):
         for i in range(self.__priority__):  # includes 0

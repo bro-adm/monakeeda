@@ -15,6 +15,7 @@ class ExtrasParameter(ConfigParameter):
     __key__ = 'extra'
     __label__ = 'extras'
     __rules__ = Rules([BasicParameterValueTypeValidationRule(Extras)])
+    __priority__ = 4
 
     def _values_handler(self, priority, model_instance, values, stage) -> dict:
         if self.param_val == Extras.IGNORE:
