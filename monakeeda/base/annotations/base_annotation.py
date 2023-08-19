@@ -15,7 +15,7 @@ class Annotation(Component, ABC):
         self.base_type = base_type
 
     # TODO: what happens when value is not provided for a certain key
-    def _values_handler(self, model_instance, values, stage) -> dict:
+    def _values_handler(self, priority, model_instance, values, stage) -> dict:
         """
         As I see it, this needs to stand to the components API and so the AnnotationsMainComponent will be the one
         to set the scope of operation of the Annotation implementation instance.

@@ -11,7 +11,7 @@ model_components = MainComponentInitComposite([FieldMainComponent(), DecoratorMa
 
 
 # TODO: add update method and dict/view method
-class MonkeyModel(metaclass=MonkeyMeta, model_components=model_components, annotation_mapping=annotation_mapping, priority=1):
+class MonkeyModel(metaclass=MonkeyMeta, model_components=model_components, annotation_mapping=annotation_mapping, priority=2):
 
     def _values_handler(self, values: dict, stage):
         for i in range(self.__priority__):  # includes 0

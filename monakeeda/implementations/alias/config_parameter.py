@@ -10,7 +10,7 @@ class AliasGenerator(ConfigParameter):
     __label__ = 'alias_generator'
     __rules__ = Rules([CallableParameterSignatureValidationRule(1), AllModelFieldsAcknowledgeParameterRule('alias')])
 
-    def _values_handler(self, model_instance, values, stage):
+    def _values_handler(self, priority, model_instance, values, stage):
         return values
 
     def _find_alias_field_parameter_cls(self, field_cls):

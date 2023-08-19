@@ -10,7 +10,7 @@ class Alias(FieldParameter):
     __label__ = 'alias'
     __rules__ = Rules([BasicParameterValueTypeValidationRule(str)])
 
-    def _values_handler(self, model_instance, values, stage) -> dict:
+    def _values_handler(self, priority, model_instance, values, stage) -> dict:
         updated_values = {}
 
         values.setdefault(self.param_val, inspect._empty)

@@ -61,7 +61,7 @@ class Component(ABC):
         return True
 
     @abstractmethod
-    def _values_handler(self, model_instance, values, stage: Stages) -> dict:
+    def _values_handler(self, priority, model_instance, values, stage: Stages) -> dict:
         # TODO: validate if the method should be based on returns or inner method updates
 
         """
@@ -80,7 +80,7 @@ class Component(ABC):
 
     def values_handler(self, priority, model_instance, values, stage: Stages) -> dict:
         if self.__priority__ == priority:
-            return self._values_handler(model_instance, values, stage)
+            return self._values_handler(priority, model_instance, values, stage)
 
         return {}
 
