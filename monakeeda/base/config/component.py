@@ -31,8 +31,6 @@ U WANT TO NEGATE !!!
 """
 
 
-# TODO: find a way to run this once prior to everything else and once afterwards because
-#  some parameters requires the main components to run and others are required for further work
 class ConfigMainComponent(MainComponent[Config]):
 
     def _components(self, monkey_cls) -> List[Config]:
@@ -47,7 +45,6 @@ class ConfigMainComponent(MainComponent[Config]):
         pass
 
     def _set_curr_cls(self, monkey_cls, bases, monkey_attrs):
-        # TODO: make that if a config cls wasnt set in the curr model so it wont find the abstarct model config cls and run all the setups again
         monkey_cls_config = getattr(monkey_cls, ConfigConsts.CONFIG)
         monkey_cls_config_attrs = get_cls_attrs(monkey_cls_config)
 

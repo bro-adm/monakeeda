@@ -11,7 +11,6 @@ class ConfigParameter(Parameter, ABC):
     pass
 
 
-# TODO: add annotation_mapping parameter for config
 class Config(ConfigurableComponent[ConfigParameter]):
     """
     Just a class for simple differentiating between configurable component implementations

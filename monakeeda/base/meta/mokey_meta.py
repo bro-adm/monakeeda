@@ -26,9 +26,8 @@ class MonkeyMeta(ABCMeta):
 
         cls.__map__ = {NamespacesConsts.BUILD: {}, NamespacesConsts.FIELDS: OrderedDict()}
 
-        attrs[NamespacesConsts.BUILD] = {}  # TODO: validate that context does not pass between all classes
+        attrs[NamespacesConsts.BUILD] = {}
         cls.__model_components__.run_bases(cls, bases, attrs)
-        # TODO: think about how to make landscape not hard coded logic
         attrs[NamespacesConsts.BUILD][NamespacesConsts.EXCEPTIONS] = RulesException(name, [])
         if not cls.__model_components__.build(cls, bases, attrs):
             raise attrs[NamespacesConsts.BUILD][NamespacesConsts.EXCEPTIONS]

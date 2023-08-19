@@ -2,7 +2,6 @@ from typing import List
 
 from typing_extensions import get_origin
 
-# TODO: try to delete this dictionary
 __helper_mapping = {list: List}
 
 

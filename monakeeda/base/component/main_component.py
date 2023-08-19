@@ -31,7 +31,6 @@ class MainComponentInitComposite(BaseComponentComposite[MainComponent]):
     def _components(self, monkey_cls) -> List[MainComponent]:
         return self._init_components
 
-    # TODO: hate this composite break :(
     def run_bases(self, monkey_cls, bases, monkey_attrs):
         for component in self._components(monkey_cls):
             component.run_bases(monkey_cls, bases, monkey_attrs)

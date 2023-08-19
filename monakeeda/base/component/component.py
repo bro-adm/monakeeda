@@ -6,8 +6,6 @@ from monakeeda.consts import NamespacesConsts
 from .rules import Rules
 
 
-# TODO: add success type of type bool for type hints
-
 class Stages(Enum):
     INIT = 'init'
     UPDATE = 'update'
@@ -19,7 +17,6 @@ class Component(ABC):
     __priority__: ClassVar[int] = 0
 
     def _validate(self, monkey_cls, bases, monkey_attrs) -> bool:
-        # TODO: try to use self.__class__.__rules__ for logic consistency
         """
         Pipeline ? -> step X (?)
 
@@ -62,8 +59,6 @@ class Component(ABC):
 
     @abstractmethod
     def _values_handler(self, priority, model_instance, values, stage: Stages) -> dict:
-        # TODO: validate if the method should be based on returns or inner method updates
-
         """
         Pipeline step X (?)
 

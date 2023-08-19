@@ -63,7 +63,6 @@ class BaseComponentComposite(Component, Generic[TComponent], ABC):
 
         return values
 
-    # TODO: Rethink the fact that _set_cls_landscape does not work on returns but currently via updates -> makes every step harder and requires more precise components -> example FieldsMainComponent, FieldParameter and Field(Configuarble)Component effected inits
     def _set_cls_landscape(self, monkey_cls, bases, monkey_attrs):
         for component in self._components(monkey_cls):
             component._set_cls_landscape(monkey_cls, bases, monkey_attrs)

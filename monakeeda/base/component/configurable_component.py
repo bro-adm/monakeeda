@@ -7,8 +7,6 @@ from .rules import RuleException, Rule, Rules
 
 
 class UnmatchedParameterKeyRuleException(RuleException):
-    # TODO: add field type information in error
-
     def __init__(self, unmatched_params: dict):
         self.unmatched_params = unmatched_params
 
@@ -19,7 +17,6 @@ class UnmatchedParameterKeyRuleException(RuleException):
 class UnmatchedParameterKeyRule(Rule):
 
     def validate(self, component: "ConfigurableComponent", monkey_cls) -> Union[RuleException, None]:
-        # TODO: validate if can simply logic
         unmatched_params = {}
 
         for param_key, param_val in component._init_params.items():
@@ -41,7 +38,6 @@ class ConfigurableComponent(BaseComponentComposite[TParameter], Generic[TParamet
     __rules__: ClassVar[Rules] = Rules([OneComponentPerLabelAllowedRule(), UnmatchedParameterKeyRule()])
     __parameters_components__: List[Type[TParameter]] = []
 
-    # TODO: add priority to insert order
     @classmethod
     def parameter(cls, parameter: Type[TParameter]):
         """

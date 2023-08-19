@@ -9,7 +9,6 @@ class defaultdictvalue(defaultdict):
         return value
 
 
-# TODO: validate if in use
 def get_param_default_from_signature(cls, key: str):
     params = inspect.signature(cls).parameters
     param = params.get(key, None)

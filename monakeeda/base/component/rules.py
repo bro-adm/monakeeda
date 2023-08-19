@@ -3,8 +3,6 @@ from functools import reduce
 from typing import Union, List
 
 
-# TODO: check how if possible to make component dependency be the component name directly instead of the object -> remember if this only exist for clean errors or more
-
 class RuleException(Exception):
     pass
 

@@ -6,11 +6,9 @@ from ..fields import FieldMainComponent
 from ..meta import MonkeyMeta
 from ...utils import deep_update
 
-# TODO: create signature component
 model_components = MainComponentInitComposite([FieldMainComponent(), DecoratorMainComponent(), AnnotationMainComponent(annotation_mapping), ConfigMainComponent()])
 
 
-# TODO: add update method and dict/view method
 class MonkeyModel(metaclass=MonkeyMeta, model_components=model_components, annotation_mapping=annotation_mapping, priority=2):
 
     def _values_handler(self, values: dict, stage):
@@ -27,7 +25,6 @@ class MonkeyModel(metaclass=MonkeyMeta, model_components=model_components, annot
         self._values_handler(kwargs, Stages.INIT)
         # The super setter because the setter logic can be changed and in teh init we have data as we want it already
 
-    # TODO: patch update
     def update(self, **kwargs):
         kwargs = deep_update(self._values, kwargs)
         self._values_handler(kwargs, Stages.UPDATE)

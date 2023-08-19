@@ -11,8 +11,6 @@ class BaseManager(ABC):
         pass
 
     def run_bases(self, monkey_cls, bases, monkey_attrs):
-        # TODO: add operation order
-
         for base in bases:
             self._set_by_base(monkey_cls, base, monkey_attrs)
 

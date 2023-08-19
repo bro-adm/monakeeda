@@ -46,12 +46,10 @@ class FieldMainComponent(MainComponent[Field]):
                 else:
                     value = Field(default=value)
 
-            # TODO: this sucks
             value._field_key = field_key
             for param in value._components(monkey_cls):
                 param._field_key = field_key
 
-            # TODO: make sure I did not fuck up signatures...
             monkey_attrs[field_key] = value
             monkey_cls.__map__[NamespacesConsts.FIELDS][field_key][FieldConsts.FIELD] = value
 

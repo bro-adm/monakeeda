@@ -6,10 +6,10 @@ class NamespacesConsts:
     BUILD = 'build'
     EXCEPTIONS = 'exceptions'
     DECORATORS = 'decorators'
-    FIELDS = 'fields_info'  # TODO: validate if can change to 'fields'
-    FIELDS_KEYS = 'main_field_keys'  # TODO: validate if can get rid of this
+    FIELDS = 'fields_info'
+    FIELDS_KEYS = 'main_field_keys'
     ANNOTATIONS = 'annotations'
-    CONFIG = '__config__'  # TODO: validate if can change to 'config'
+    CONFIG = '__config__'
 
     DECORATED_WITH = '__decorated_with__'  # model methods decorators instances space
 

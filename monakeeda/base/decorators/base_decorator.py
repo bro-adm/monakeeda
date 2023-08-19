@@ -30,8 +30,6 @@ will run on load time, making all the methods in the class decorated be marked a
 
 
 class BaseDecorator(Component, ABC):
-    # TODO: think about what parameter the wrapper method should receive
-    # TODO: make generic?
     @abstractmethod
     def wrapper(self, monkey_cls, kwargs, values_initialized_info, config, wanted_fields_info):
         """

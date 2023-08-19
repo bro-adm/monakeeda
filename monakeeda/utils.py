@@ -52,8 +52,6 @@ def more_than_one_key_in_dict(the_dict: dict, keys: list):
 
 
 def get_ordered_set_list(seq) -> list:
-    # TODO: check why did I do this like this :(
-
     seen = set()
     seen_add = seen.add
     return [x for x in seq if not (x in seen or seen_add(x))]

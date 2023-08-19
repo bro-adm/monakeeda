@@ -5,7 +5,6 @@ from monakeeda.consts import FieldConsts
 from .exceptions import ConstError
 
 
-# TODO: make 'default' be provided via DefaultParameter implementation
 class Const(GenericAnnotation, Generic[T]):
     def _act_with_value(self, value, cls, current_field_info, stage):
         const_type = self._types[0]
