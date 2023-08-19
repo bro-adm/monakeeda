@@ -12,7 +12,7 @@ class DefaultParameter(FieldParameter):
     __key__: str = 'default'
     __label__ = 'default_provider'
 
-    def values_handler(self, model_instance, values, stage) -> dict:
+    def _values_handler(self, model_instance, values, stage) -> dict:
         return {self._field_key: values.get(self._field_key, self.param_val)}
 
     def _set_cls_landscape(self, monkey_cls, bases, monkey_attrs):

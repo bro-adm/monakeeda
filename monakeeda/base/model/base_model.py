@@ -11,14 +11,15 @@ model_components = MainComponentInitComposite([FieldMainComponent(), DecoratorMa
 
 
 # TODO: add update method and dict/view method
-class MonkeyModel(metaclass=MonkeyMeta, model_components=model_components, annotation_mapping=annotation_mapping):
+class MonkeyModel(metaclass=MonkeyMeta, model_components=model_components, annotation_mapping=annotation_mapping, priority=1):
 
     def _values_handler(self, values: dict, stage):
-        kwargs = self.__model_components__.values_handler(self, values, stage)
+        for i in range(self.__priority__):  # includes 0
+            values = self.__model_components__.values_handler(i, self, values, stage)
         # kwargs = ignore_unwanted_params(self.__class__, kwargs)
 
-        for key in kwargs:
-            super(MonkeyModel, self).__setattr__(key, kwargs[key])
+        for key in values:
+            super(MonkeyModel, self).__setattr__(key, values[key])
         # The super setter because the setter logic can be changed and in teh init we have data as we want it already
 
     def __init__(self, **kwargs):

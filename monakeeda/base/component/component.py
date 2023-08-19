@@ -12,9 +12,11 @@ class Stages(Enum):
     INIT = 'init'
     UPDATE = 'update'
 
+
 class Component(ABC):
     __label__: ClassVar[str]
     __rules__: ClassVar[Rules] = Rules([])
+    __priority__: ClassVar[int] = 0
 
     def _validate(self, monkey_cls, bases, monkey_attrs) -> bool:
         # TODO: try to use self.__class__.__rules__ for logic consistency
@@ -59,7 +61,7 @@ class Component(ABC):
         return True
 
     @abstractmethod
-    def values_handler(self, model_instance, values, stage: Stages) -> dict:
+    def _values_handler(self, model_instance, values, stage: Stages) -> dict:
         # TODO: validate if the method should be based on returns or inner method updates
 
         """
@@ -75,6 +77,12 @@ class Component(ABC):
         """
 
         pass
+
+    def values_handler(self, priority, model_instance, values, stage: Stages) -> dict:
+        if self.__priority__ == priority:
+            return self._values_handler(model_instance, values, stage)
+
+        return {}
 
     def __str__(self):
         return f"{self.__label__} component"
