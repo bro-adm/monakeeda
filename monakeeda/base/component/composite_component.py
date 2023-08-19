@@ -38,6 +38,7 @@ class OneComponentPerLabelAllowedRule(Rule):
 
 
 class BaseComponentComposite(Component, Generic[TComponent], ABC):
+    __priority__ = -1
     """
     Composite DP implementation.
 

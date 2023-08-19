@@ -10,10 +10,10 @@ class MonkeyMeta(ABCMeta):
         cls = super(MonkeyMeta, mcs).__new__(mcs, name, bases, attrs)
         return cls
 
-    def __init__(cls, name, bases, attrs, model_components=None, annotation_mapping=None, priority=1):
+    def __init__(cls, name, bases, attrs, model_components=None, annotation_mapping=None, priority=None):
         if not bases:
-            if model_components == None or annotation_mapping == None:
-                raise ValueError('direct metaclass users needs to pass the model_components and annotation_mapping')
+            if model_components == None or annotation_mapping == None or priority == None:
+                raise ValueError('direct metaclass users needs to pass the model_components, annotation_mapping and priority')
             cls.__model_components__ = model_components
             cls.__annotation_mapping__ = annotation_mapping
             cls.__priority__ = priority

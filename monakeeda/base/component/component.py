@@ -74,7 +74,7 @@ class Component(ABC):
         pass
 
     def values_handler(self, priority, model_instance, values, stage: Stages) -> dict:
-        if self.__priority__ == priority:
+        if self.__priority__ == -1 or self.__priority__ == priority:
             return self._values_handler(priority, model_instance, values, stage)
 
         return {}

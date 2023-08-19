@@ -8,6 +8,7 @@ class AllowMutation(FieldParameter):
     __key__ = 'const'
     __label__ = 'mutation'
     __rules__ = Rules([BasicParameterValueTypeValidationRule(bool)])
+    __priority__ = 2
 
     def _values_handler(self, priority, model_instance, values, stage):
         if stage == Stages.UPDATE:

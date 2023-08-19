@@ -4,6 +4,7 @@ from typing import List
 from monakeeda.consts import FieldConsts, NamespacesConsts, PythonNamingConsts
 from monakeeda.utils import deep_update, get_ordered_set_list
 from .base_fields import Field, NoField, FieldParameter
+from .. import Stages
 from ..component import MainComponent
 
 
@@ -13,7 +14,10 @@ class DefaultParameter(FieldParameter):
     __label__ = 'default_provider'
 
     def _values_handler(self, priority, model_instance, values, stage) -> dict:
-        return {self._field_key: values.get(self._field_key, self.param_val)}
+        if stage == Stages.INIT:
+            return {self._field_key: values.get(self._field_key, self.param_val)}
+
+        return {}
 
     def _set_cls_landscape(self, monkey_cls, bases, monkey_attrs):
         super(DefaultParameter, self)._set_cls_landscape(monkey_cls, bases, monkey_attrs)

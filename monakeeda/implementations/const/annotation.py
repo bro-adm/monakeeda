@@ -6,6 +6,8 @@ from .exceptions import ConstError
 
 
 class Const(GenericAnnotation, Generic[T]):
+    __priority__ = 2
+
     def _act_with_value(self, value, cls, current_field_info, stage):
         const_type = self._types[0]
         if not isinstance(value, const_type):

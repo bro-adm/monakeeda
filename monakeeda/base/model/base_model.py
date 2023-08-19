@@ -9,11 +9,13 @@ from ...utils import deep_update
 model_components = MainComponentInitComposite([FieldMainComponent(), DecoratorMainComponent(), AnnotationMainComponent(annotation_mapping), ConfigMainComponent()])
 
 
-class MonkeyModel(metaclass=MonkeyMeta, model_components=model_components, annotation_mapping=annotation_mapping, priority=2):
+class MonkeyModel(metaclass=MonkeyMeta, model_components=model_components, annotation_mapping=annotation_mapping, priority=4):
 
     def _values_handler(self, values: dict, stage):
         for i in range(self.__priority__):  # includes 0
-            values = self.__model_components__.values_handler(i, self, values, stage)
+            kwargs = self.__model_components__.values_handler(i, self, values, stage)
+            values.update(kwargs)
+
         # kwargs = ignore_unwanted_params(self.__class__, kwargs)
 
         for key in values:
@@ -21,14 +23,12 @@ class MonkeyModel(metaclass=MonkeyMeta, model_components=model_components, annot
         # The super setter because the setter logic can be changed and in teh init we have data as we want it already
 
     def __init__(self, **kwargs):
-        super().__setattr__('_values', kwargs.copy())
         self._values_handler(kwargs, Stages.INIT)
         # The super setter because the setter logic can be changed and in teh init we have data as we want it already
 
     def update(self, **kwargs):
-        kwargs = deep_update(self._values, kwargs)
+        kwargs = deep_update(self.__dict__.copy(), kwargs)
         self._values_handler(kwargs, Stages.UPDATE)
-        super().__setattr__('_values', kwargs.copy())
 
     def __setattr__(self, key, value):
         self.update(**{key: value})
