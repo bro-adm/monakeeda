@@ -1,4 +1,4 @@
-from monakeeda.base import ConfigParameter, Config, Rules
+from monakeeda.base import ConfigParameter, Config, Rules, FieldParameter
 from monakeeda.consts import NamespacesConsts, FieldConsts
 from .field_parameter import Alias
 from ..rules import CallableParameterSignatureValidationRule, AllModelFieldsAcknowledgeParameterRule
@@ -10,10 +10,10 @@ class AliasGenerator(ConfigParameter):
     __label__ = 'alias_generator'
     __rules__ = Rules([CallableParameterSignatureValidationRule(1), AllModelFieldsAcknowledgeParameterRule('alias')])
 
-    def _values_handler(self, priority, model_instance, values, stage):
+    def _values_handler(self, priority, model_instance, values, stage) -> dict:
         return values
 
-    def _find_alias_field_parameter_cls(self, field_cls):
+    def _find_alias_field_parameter_cls(self, field_cls) -> FieldParameter:
         # rules validate the unwanted scenario where the filed cls does not acknowledge alias setup
 
         return \

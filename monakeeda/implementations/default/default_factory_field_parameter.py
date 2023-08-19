@@ -8,7 +8,7 @@ class DefaultFactory(FieldParameter):
     __label__ = 'default_provider'
     __rules__ = Rules([CallableParameterSignatureValidationRule(0)])
 
-    def _values_handler(self, priority, model_instance, values, stage):
+    def _values_handler(self, priority, model_instance, values, stage) -> dict:
         if stage == Stages.INIT:
             return {self._field_key: self.param_val()}
 

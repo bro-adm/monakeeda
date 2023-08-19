@@ -1,4 +1,4 @@
-from typing import Generic, T
+from typing import Generic, T, Any
 
 from monakeeda.base import GenericAnnotation
 from monakeeda.consts import FieldConsts
@@ -13,7 +13,7 @@ class CastingError(ValueError):
 class Cast(GenericAnnotation, Generic[T]):
     __priority__ = 1
 
-    def _act_with_value(self, value, cls, current_field_info, stage):
+    def _act_with_value(self, value, cls, current_field_info, stage) -> Any:
         cast_to = self._types[0]
         try:
             wanted_value = cast_to(value)

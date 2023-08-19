@@ -15,7 +15,7 @@ class ValidValues(FieldParameter):
     __rules__ = Rules([BasicParameterValueTypeValidationRule((list, tuple, set))])
     __priority__ = 3
 
-    def _values_handler(self, priority, model_instance, values, stage):
+    def _values_handler(self, priority, model_instance, values, stage) -> dict:
         val = values[self._field_key]
 
         if val not in self.param_val:
