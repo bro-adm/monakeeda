@@ -7,6 +7,9 @@ from ..component import RulesException, organize_components
 
 class MonkeyMeta(ABCMeta):
     def __new__(mcs, name, bases, attrs, **_):
+        attrs.setdefault(NamespacesConsts.MAP, {NamespacesConsts.COMPONENTS: [], NamespacesConsts.BUILD: {}, NamespacesConsts.FIELDS: OrderedDict()})
+        attrs[NamespacesConsts.MAP][NamespacesConsts.BUILD][NamespacesConsts.EXCEPTIONS] = RulesException(name, [])
+
         cls = super(MonkeyMeta, mcs).__new__(mcs, name, bases, attrs)
         return cls
 
@@ -20,14 +23,20 @@ class MonkeyMeta(ABCMeta):
             cls.__component_managers__ = component_managers if component_managers else bases[0].__component_managers__
             cls.__annotation_mapping__ = annotation_mapping if annotation_mapping else bases[0].__annotation_mapping__
 
-        attrs.setdefault('__map__', {NamespacesConsts.COMPONENTS: [], NamespacesConsts.BUILD: {}, NamespacesConsts.FIELDS: OrderedDict()})
         super(MonkeyMeta, cls).__init__(name, bases, attrs)
 
-        for component_manager in component_managers:
+        for component_manager in cls.__component_managers__:
             component_manager.build(cls, bases, attrs)
 
         model_components = cls.__map__[NamespacesConsts.COMPONENTS]
         cls.__organized_components__ = organize_components(model_components)
+
+        print(name)
+        print(cls.__organized_components__)
+        print(cls.__map__[NamespacesConsts.FIELDS])
+        # print(cls.__map__[NamespacesConsts.BUILD])
+        # print(cls.__map__[NamespacesConsts.COMPONENTS])
+        print('------------------------------------------')
 
         for component in cls.__organized_components__:
             component.validate(cls, bases, attrs)

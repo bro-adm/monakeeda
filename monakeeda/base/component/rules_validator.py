@@ -10,4 +10,6 @@ class RulesValidator(ABC):
 
     def validate(self, monkey_cls, bases, monkey_attrs):
         exceptions = self.__rules__.validate(self, monkey_cls)
-        monkey_attrs[NamespacesConsts.BUILD][NamespacesConsts.EXCEPTIONS].append_exception(exceptions)
+
+        if exceptions:
+            monkey_attrs[NamespacesConsts.MAP][NamespacesConsts.BUILD][NamespacesConsts.EXCEPTIONS].append_exception(exceptions)

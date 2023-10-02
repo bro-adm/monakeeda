@@ -1,6 +1,7 @@
 import inspect
 
 from monakeeda.base import FieldParameter, Rules, Field
+from .config_parameter import AliasGenerator
 from ..rules import BasicParameterValueTypeValidationRule
 
 
@@ -8,9 +9,10 @@ from ..rules import BasicParameterValueTypeValidationRule
 class Alias(FieldParameter):
     __key__ = 'alias'
     __label__ = 'alias'
+    __prior_handler__ = AliasGenerator
     __rules__ = Rules([BasicParameterValueTypeValidationRule(str)])
 
-    def _values_handler(self, priority, model_instance, values, stage) -> dict:
+    def handle_values(self, model_instance, values, stage) -> dict:
         updated_values = {}
 
         values.setdefault(self.param_val, inspect._empty)

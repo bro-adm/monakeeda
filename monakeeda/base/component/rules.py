@@ -19,13 +19,13 @@ class Rule(ABC):
 class RulesException(RuleException):
     def __init__(self, component_type: str, exceptions: List[RuleException]):
         super().__init__(component_type)
-        self._exceptions = exceptions
+        self.exceptions = exceptions
 
     def append_exception(self, exception: RuleException):
-        self._exceptions.append(exception)
+        self.exceptions.append(exception)
 
     def is_empty(self) -> bool:
-        return len(self._exceptions) == 0
+        return len(self.exceptions) == 0
 
     def __str__(self):
         return f"{self._component_type} validations failed -> " + str(
@@ -65,7 +65,7 @@ class NoComponentDependenciesFailedRule(Rule):
     def validate(self, component: "Component", monkey_cls) -> Union[RuleException, None]:
         failed_dependencies = []
 
-        for exception in monkey_cls.__map__[NamespacesConsts.BUILD][NamespacesConsts.EXCEPTIONS]:
+        for exception in monkey_cls.__map__[NamespacesConsts.BUILD][NamespacesConsts.EXCEPTIONS].exceptions:
             if exception.component_type in component.__dependencies__:
                 failed_dependencies.append(exception.component_type)
 

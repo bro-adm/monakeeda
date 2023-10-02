@@ -6,7 +6,7 @@ from .base_annotations import Annotation
 from ..component import ComponentManager
 
 
-class AnnotationManager(ComponentManager[Annotation]):
+class AnnotationManager(ComponentManager):
     def __init__(self, annotation_mapping):
         self._annotation_mapping = annotation_mapping
 

@@ -11,6 +11,7 @@ class NamespacesConsts:
     FIELDS_KEYS = 'main_field_keys'
     ANNOTATIONS = 'annotations'
     CONFIG = '__config__'
+    MAP = '__map__'
 
     DECORATED_WITH = '__decorated_with__'  # model methods decorators instances space
 

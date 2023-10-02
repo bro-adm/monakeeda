@@ -1,15 +1,15 @@
 from abc import ABC, abstractmethod
-from typing import List, Generic
+from typing import List
 
 from monakeeda.consts import NamespacesConsts
-from .component import TComponent
+from .component import Component
 from .monkey_builder import MonkeyBuilder
 
 
-class ComponentManager(MonkeyBuilder, ABC, Generic[TComponent]):
+class ComponentManager(MonkeyBuilder, ABC):
 
     @abstractmethod
-    def _components(self, monkey_cls) -> List[TComponent]:
+    def _components(self, monkey_cls) -> List[Component]:
         pass
 
     @abstractmethod

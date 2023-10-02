@@ -7,10 +7,10 @@ from .base_fields import Field, NoField
 from ..component import ComponentManager
 
 
-class FieldManager(ComponentManager[Field]):
+class FieldManager(ComponentManager):
 
     def _components(self, monkey_cls) -> List[Field]:
-        return \
+        field_components = \
             list(
                 filter(
                     lambda x: True if x else False,
@@ -18,6 +18,14 @@ class FieldManager(ComponentManager[Field]):
                      monkey_cls.__map__[NamespacesConsts.FIELDS].values()]
                 )
             )
+
+        components = []
+        for field in field_components:
+            components.extend(field._components(monkey_cls))
+
+        components.extend(field_components)
+
+        return components
 
     def _set_curr_cls(self, monkey_cls, bases, monkey_attrs):
         annotations: dict = monkey_attrs.get(PythonNamingConsts.annotations, {})

@@ -1,7 +1,7 @@
-from ..annotations import AnnotationManager, annotation_mapping, ModelAnnotation
 from ..component import Stages
-from ..config import ConfigManager, Config
 from ..fields import FieldManager
+from ..annotations import AnnotationManager, annotation_mapping, ModelAnnotation
+from ..config import ConfigManager, Config
 from ..meta import MonkeyMeta
 from ...utils import deep_update
 

@@ -1,7 +1,7 @@
 from abc import ABC
-from typing import Dict, List, Union, Generic, ClassVar, Type
+from typing import Dict, List, Union, ClassVar, Type, Generic
 
-from .component import Component, TComponent
+from .component import Component
 from .parameter_component import TParameter, Parameter
 from .rules import RuleException, Rule, Rules
 
@@ -52,11 +52,11 @@ class UnmatchedParameterKeyRule(Rule):
         unmatched_params = {}
 
         for param_key, param_val in component._init_params.items():
-            if component.__parameters_components__:
-                for parameter in component.__parameters_components__:
+            if component.__parameter_components__:
+                for parameter in component.__parameter_components__:
                     if param_key == parameter.__key__:
                         break
-                    if parameter == component.__parameters_components__[-1]:
+                    if parameter == component.__parameter_components__[-1]:
                         unmatched_params[param_key] = param_val
             else:
                 # No parameters exist for the given component, so every given configuration is a mistake
@@ -66,9 +66,9 @@ class UnmatchedParameterKeyRule(Rule):
             return UnmatchedParameterKeyRuleException(unmatched_params)
 
 
-class ConfigurableComponent(Component[TComponent], ABC, Generic[TComponent]):
+class ConfigurableComponent(Component, Generic[TParameter], ABC):
     __rules__: ClassVar[Rules] = Rules([OneComponentPerLabelAllowedRule(), UnmatchedParameterKeyRule()])
-    __parameters_components__: List[Type[TParameter]] = []
+    __parameter_components__: List[Type[TParameter]] = []
 
     @classmethod
     def parameter(cls, parameter: Type[TParameter]):
@@ -80,16 +80,16 @@ class ConfigurableComponent(Component[TComponent], ABC, Generic[TComponent]):
         """
 
         added = False
-        cls.__parameters_components__ = list(cls.__parameters_components__)
+        cls.__parameter_components__ = list(cls.__parameter_components__)
 
-        for i in range(len(cls.__parameters_components__)):
-            exisisting_param = cls.__parameters_components__[i]
+        for i in range(len(cls.__parameter_components__)):
+            exisisting_param = cls.__parameter_components__[i]
             if parameter.__key__ == exisisting_param.__key__:
-                cls.__parameters_components__[i] = parameter
+                cls.__parameter_components__[i] = parameter
                 added = True
 
         if not added:
-            cls.__parameters_components__.append(parameter)
+            cls.__parameter_components__.append(parameter)
 
         return parameter
 
@@ -100,9 +100,10 @@ class ConfigurableComponent(Component[TComponent], ABC, Generic[TComponent]):
             - if in the inheriting cls you override some parameter component so the same will happen to all base
               classes with the same memory dict.
         """
+        super().__init_subclass__()
 
         if copy_parameter_components:
-            cls.__parameters_components__ = cls.__parameters_components__.copy()
+            cls.__parameter_components__ = cls.__parameter_components__.copy()
 
     def __init__(self, **params):
         self._init_params = params
@@ -111,7 +112,7 @@ class ConfigurableComponent(Component[TComponent], ABC, Generic[TComponent]):
 
     def __initiate_params(self, params: dict):
         for param_key, param_val in params.items():
-            for possible_param in self.__parameters_components__:
+            for possible_param in self.__parameter_components__:
                 if param_key == possible_param.__key__:
                     self._initialized_params.append(possible_param(param_val))
                     break

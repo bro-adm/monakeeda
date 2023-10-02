@@ -24,7 +24,7 @@ class AllModelFieldsAcknowledgeParameterRule(Rule):
         for field_key, field_info in monkey_cls.__map__[NamespacesConsts.FIELDS].items():
             field = field_info[FieldConsts.FIELD]
 
-            if self.key not in [field_parameter.__key__ for field_parameter in field.__parameters_components__]:
+            if self.key not in [field_parameter.__key__ for field_parameter in field.__parameter_components__]:
                 unacknowledged_fields[field_key] = field.__class__
 
         if unacknowledged_fields:

@@ -1,7 +1,7 @@
 from abc import ABC
 
 from monakeeda.consts import FieldConsts, NamespacesConsts
-from ..component import ConfigurableComponent, Parameter, Stages
+from ..component import Parameter, ConfigurableComponent
 
 
 class FieldParameter(Parameter, ABC):
@@ -15,7 +15,13 @@ class FieldParameter(Parameter, ABC):
 
 
 class Field(ConfigurableComponent[FieldParameter]):
-    pass
+    __label__ = 'field'
+
+    def build(self, monkey_cls, bases, monkey_attrs):
+        pass
+
+    def handle_values(self, model_instance, values, stage) -> dict:
+        return {}
 
 
 class NoField(Field, copy_parameter_components=False):
@@ -32,19 +38,3 @@ class NoField(Field, copy_parameter_components=False):
     def build(self, monkey_cls, bases, monkey_attrs):
         super(NoField, self).build(monkey_cls, bases, monkey_attrs)
         monkey_cls.__map__[NamespacesConsts.FIELDS][self._field_key][FieldConsts.REQUIRED] = True
-
-
-@Field.parameter
-class DefaultParameter(FieldParameter):
-    __key__: str = 'default'
-    __label__ = 'default_provider'
-
-    def handle_values(self, model_instance, values, stage) -> dict:
-        if stage == Stages.INIT:
-            return {self._field_key: values.get(self._field_key, self.param_val)}
-
-        return {}
-
-    def build(self, monkey_cls, bases, monkey_attrs):
-        super(DefaultParameter, self).build(monkey_cls, bases, monkey_attrs)
-        monkey_cls.__map__[NamespacesConsts.FIELDS][self._field_key][FieldConsts.REQUIRED] = False

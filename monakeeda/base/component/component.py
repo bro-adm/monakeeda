@@ -1,3 +1,4 @@
+import inspect
 from abc import ABC
 from typing import ClassVar, TypeVar, Type, List
 
@@ -11,16 +12,19 @@ all_components = []
 
 class Component(RulesValidator, MonkeyBuilder, ValuesHandler, ABC):
     __label__: ClassVar[str]
-    __next_handler__: ClassVar[Type['Component']]
+    __prior_handler__: ClassVar[Type['Component']] = None
     __rules__: ClassVar[Rules] = Rules([NoComponentDependenciesFailedRule()])
     __dependencies__: ClassVar[List[Type['Component']]] = []
 
     def __init_subclass__(cls):
-        if all_components:
-            position = all_components.index(str(cls.__next_handler__))
-            all_components.insert(position, str(cls))
-        else:
-            all_components.append(str(cls))
+        super().__init_subclass__()
+
+        if not inspect.isabstract(cls):
+            if cls.__prior_handler__:
+                position = all_components.index(str(cls.__prior_handler__))
+                all_components.insert(position+1, str(cls))
+            else:
+                all_components.append(str(cls))
 
     def __str__(self):
         return f"{self.__label__} component"

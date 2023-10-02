@@ -9,5 +9,5 @@ class Stages(Enum):
 
 class ValuesHandler(ABC):
     @abstractmethod
-    def handle_values(self, model_instance, values, stage):
+    def handle_values(self, model_instance, values, stage) -> dict:
         pass
