@@ -3,28 +3,11 @@ from typing import List
 
 from monakeeda.consts import FieldConsts, NamespacesConsts, PythonNamingConsts
 from monakeeda.utils import deep_update, get_ordered_set_list
-from .base_fields import Field, NoField, FieldParameter
-from .. import Stages
-from ..component import MainComponent
+from .base_fields import Field, NoField
+from ..component import ComponentManager
 
 
-@Field.parameter
-class DefaultParameter(FieldParameter):
-    __key__: str = 'default'
-    __label__ = 'default_provider'
-
-    def _values_handler(self, priority, model_instance, values, stage) -> dict:
-        if stage == Stages.INIT:
-            return {self._field_key: values.get(self._field_key, self.param_val)}
-
-        return {}
-
-    def _set_cls_landscape(self, monkey_cls, bases, monkey_attrs):
-        super(DefaultParameter, self)._set_cls_landscape(monkey_cls, bases, monkey_attrs)
-        monkey_cls.__map__[NamespacesConsts.FIELDS][self._field_key][FieldConsts.REQUIRED] = False
-
-
-class FieldMainComponent(MainComponent[Field]):
+class FieldManager(ComponentManager[Field]):
 
     def _components(self, monkey_cls) -> List[Field]:
         return \
@@ -62,6 +45,6 @@ class FieldMainComponent(MainComponent[Field]):
         base_fields_info = base.__map__[NamespacesConsts.FIELDS]
         deep_update(monkey_cls.__map__[NamespacesConsts.FIELDS], base_fields_info)
 
-    def run_bases(self, monkey_cls, bases, monkey_attrs):
+    def build(self, monkey_cls, bases, monkey_attrs):
         monkey_cls.__map__.setdefault(NamespacesConsts.FIELDS_KEYS, [])
-        super(FieldMainComponent, self).run_bases(monkey_cls, bases, monkey_attrs)
+        super(FieldManager, self).build(monkey_cls, bases, monkey_attrs)

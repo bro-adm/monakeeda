@@ -14,7 +14,7 @@ class Annotation(Component, ABC):
         self._field_key = field_key
         self.base_type = base_type
 
-    def _values_handler(self, priority, model_instance, values, stage) -> dict:
+    def handle_values(self, model_instance, values, stage) -> dict:
         """
         As I see it, this needs to stand to the components API and so the AnnotationsMainComponent will be the one
         to set the scope of operation of the Annotation implementation instance.
@@ -33,9 +33,9 @@ class Annotation(Component, ABC):
 
         return {self._field_key: self._act_with_value(value, model_instance, field_info, stage)}
 
-    def _set_cls_landscape(self, monkey_cls, bases, monkey_attrs):
-        monkey_attrs[FieldConsts.TYPE] = self.base_type
-        monkey_attrs[FieldConsts.ANNOTATION] = self
+    def build(self, monkey_cls, bases, monkey_attrs):
+        monkey_cls.__map__[NamespacesConsts.FIELDS][self._field_key][FieldConsts.TYPE] = self.base_type
+        monkey_cls.__map__[NamespacesConsts.FIELDS][self._field_key][FieldConsts.ANNOTATION] = self
 
     @abstractmethod
     def _act_with_value(self, value, cls, current_field_info, stage) -> Any:

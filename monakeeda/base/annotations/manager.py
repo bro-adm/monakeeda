@@ -2,11 +2,11 @@ from collections import OrderedDict
 from typing import List
 
 from monakeeda.consts import NamespacesConsts, PythonNamingConsts
-from .base_annotation import Annotation
-from ..component import MainComponent
+from .base_annotations import Annotation
+from ..component import ComponentManager
 
 
-class AnnotationMainComponent(MainComponent[Annotation]):
+class AnnotationManager(ComponentManager[Annotation]):
     def __init__(self, annotation_mapping):
         self._annotation_mapping = annotation_mapping
 
@@ -24,6 +24,6 @@ class AnnotationMainComponent(MainComponent[Annotation]):
             annotation_cls_instance = self._annotation_mapping[annotation](key, annotation)
             monkey_cls.__map__[NamespacesConsts.BUILD][NamespacesConsts.ANNOTATIONS][key] = annotation_cls_instance
 
-    def run_bases(self, monkey_cls, bases, monkey_attrs):
+    def build(self, monkey_cls, bases, monkey_attrs):
         monkey_cls.__map__[NamespacesConsts.BUILD].setdefault(NamespacesConsts.ANNOTATIONS, OrderedDict())
-        super(AnnotationMainComponent, self).run_bases(monkey_cls, bases, monkey_attrs)
+        super(AnnotationManager, self).build(monkey_cls, bases, monkey_attrs)

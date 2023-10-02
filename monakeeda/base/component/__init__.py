@@ -1,9 +1,9 @@
-from .base_manager import BaseManager
-from .component import Component, TComponent, Stages
-from .composite_component import BaseComponentComposite, OneComponentPerLabelAllowedRule, \
+from .component import Component, TComponent, all_components
+from .component_manager import ComponentManager
+from .configurable_component import ConfigurableComponent, UnmatchedParameterKeyRuleException, \
     OneComponentPerLabelAllowedRuleException
-from .configurable_component import ConfigurableComponent, UnmatchedParameterKeyRule, UnmatchedParameterKeyRuleException
-from .main_component import MainComponent, MainComponentInitComposite
+from .helpers import organize_components
 from .parameter_component import Parameter, TParameter, BaseParameterValueTypeValidationFailedRule, \
     ParameterValueTypeValidationFailedRuleException
 from .rules import Rule, Rules, RuleException, RulesException
+from .values_handler import Stages

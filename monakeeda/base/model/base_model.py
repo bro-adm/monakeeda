@@ -1,19 +1,18 @@
-from ..annotations import AnnotationMainComponent, annotation_mapping, ModelAnnotation
-from ..component import MainComponentInitComposite, Stages
-from ..config import ConfigMainComponent, Config
-from ..decorators import DecoratorMainComponent
-from ..fields import FieldMainComponent
+from ..annotations import AnnotationManager, annotation_mapping, ModelAnnotation
+from ..component import Stages
+from ..config import ConfigManager, Config
+from ..fields import FieldManager
 from ..meta import MonkeyMeta
 from ...utils import deep_update
 
-model_components = MainComponentInitComposite([FieldMainComponent(), DecoratorMainComponent(), AnnotationMainComponent(annotation_mapping), ConfigMainComponent()])
+component_managers = [FieldManager(), AnnotationManager(annotation_mapping), ConfigManager()]
 
 
-class MonkeyModel(metaclass=MonkeyMeta, model_components=model_components, annotation_mapping=annotation_mapping, priority=5):
+class MonkeyModel(metaclass=MonkeyMeta, component_managers=component_managers, annotation_mapping=annotation_mapping):
 
-    def _values_handler(self, values: dict, stage):
-        for i in range(self.__priority__):  # includes 0
-            kwargs = self.__model_components__.values_handler(i, self, values, stage)
+    def _handle_values(self, values: dict, stage):
+        for component in self.__organized_components__:
+            kwargs = component.handle_values(self, values, stage)
             values.update(kwargs)
 
         # kwargs = ignore_unwanted_params(self.__class__, kwargs)
@@ -23,12 +22,12 @@ class MonkeyModel(metaclass=MonkeyMeta, model_components=model_components, annot
         # The super setter because the setter logic can be changed and in teh init we have data as we want it already
 
     def __init__(self, **kwargs):
-        self._values_handler(kwargs, Stages.INIT)
+        self._handle_values(kwargs, Stages.INIT)
         # The super setter because the setter logic can be changed and in teh init we have data as we want it already
 
     def update(self, **kwargs):
         kwargs = deep_update(self.__dict__.copy(), kwargs)
-        self._values_handler(kwargs, Stages.UPDATE)
+        self._handle_values(kwargs, Stages.UPDATE)
 
     def __setattr__(self, key, value):
         self.update(**{key: value})

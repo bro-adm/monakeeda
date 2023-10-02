@@ -1,4 +1,4 @@
-from .base_annotation import Annotation
+from .base_annotations import Annotation
 
 
 class BasicAnnotation(Annotation):

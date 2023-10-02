@@ -1,9 +1,41 @@
 from abc import ABC
-from typing import List, Union, Generic, ClassVar, Type
+from typing import Dict, List, Union, Generic, ClassVar, Type
 
-from .composite_component import BaseComponentComposite, OneComponentPerLabelAllowedRule
-from .parameter_component import Parameter, TParameter
+from .component import Component, TComponent
+from .parameter_component import TParameter, Parameter
 from .rules import RuleException, Rule, Rules
+
+
+class OneComponentPerLabelAllowedRuleException(RuleException):
+    def __init__(self, duplicate_labels_components: Dict[str, List[Component]]):
+        self.duplicate_labels_components: Dict[str, List[Component]] = duplicate_labels_components
+
+    def __str__(self):
+        duplication_description = f"Following components can not be set together -> "
+
+        for label, components in self.duplicate_labels_components.items():
+            components_descriptions = [str(component) for component in components]
+            duplication_description = duplication_description + f"\n {components_descriptions} -> label: {label}"
+
+        return duplication_description
+
+
+class OneComponentPerLabelAllowedRule(Rule):
+
+    def validate(self, component: "ConfigurableComponentManager", monkey_cls) -> Union[RuleException, None]:
+        existing_labels: Dict[str, Component] = {}
+        duplicate_labels_components: Dict[str, List[Component]] = {}
+
+        for nested_component in component._components(monkey_cls):
+            label = nested_component.__label__
+            if label in existing_labels:
+                duplicate_labels_components.setdefault(label, [existing_labels[label]])
+                duplicate_labels_components[label].append(nested_component)
+            else:
+                existing_labels[label] = nested_component
+
+        if duplicate_labels_components:
+            return OneComponentPerLabelAllowedRuleException(duplicate_labels_components)
 
 
 class UnmatchedParameterKeyRuleException(RuleException):
@@ -16,7 +48,7 @@ class UnmatchedParameterKeyRuleException(RuleException):
 
 class UnmatchedParameterKeyRule(Rule):
 
-    def validate(self, component: "ConfigurableComponent", monkey_cls) -> Union[RuleException, None]:
+    def validate(self, component: "ConfigurableComponentManager", monkey_cls) -> Union[RuleException, None]:
         unmatched_params = {}
 
         for param_key, param_val in component._init_params.items():
@@ -34,7 +66,7 @@ class UnmatchedParameterKeyRule(Rule):
             return UnmatchedParameterKeyRuleException(unmatched_params)
 
 
-class ConfigurableComponent(BaseComponentComposite[TParameter], Generic[TParameter], ABC):
+class ConfigurableComponent(Component[TComponent], ABC, Generic[TComponent]):
     __rules__: ClassVar[Rules] = Rules([OneComponentPerLabelAllowedRule(), UnmatchedParameterKeyRule()])
     __parameters_components__: List[Type[TParameter]] = []
 

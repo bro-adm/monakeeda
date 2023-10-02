@@ -1,7 +1,7 @@
 from abc import ABC
 
 from monakeeda.consts import FieldConsts, NamespacesConsts
-from ..component import ConfigurableComponent, Parameter
+from ..component import ConfigurableComponent, Parameter, Stages
 
 
 class FieldParameter(Parameter, ABC):
@@ -10,7 +10,7 @@ class FieldParameter(Parameter, ABC):
         self._field_key = None
         super().__init__(param_val)
 
-    def _set_cls_landscape(self, monkey_cls, bases, monkey_attrs):
+    def build(self, monkey_cls, bases, monkey_attrs):
         monkey_cls.__map__[NamespacesConsts.FIELDS][self._field_key][self.__key__] = self.param_val
 
 
@@ -29,6 +29,22 @@ class NoField(Field, copy_parameter_components=False):
         # hard set: no params available for initialization
         super(NoField, self).__init__()
 
-    def _set_cls_landscape(self, monkey_cls, bases, monkey_attrs):
-        super(NoField, self)._set_cls_landscape(monkey_cls, bases, monkey_attrs)
+    def build(self, monkey_cls, bases, monkey_attrs):
+        super(NoField, self).build(monkey_cls, bases, monkey_attrs)
         monkey_cls.__map__[NamespacesConsts.FIELDS][self._field_key][FieldConsts.REQUIRED] = True
+
+
+@Field.parameter
+class DefaultParameter(FieldParameter):
+    __key__: str = 'default'
+    __label__ = 'default_provider'
+
+    def handle_values(self, model_instance, values, stage) -> dict:
+        if stage == Stages.INIT:
+            return {self._field_key: values.get(self._field_key, self.param_val)}
+
+        return {}
+
+    def build(self, monkey_cls, bases, monkey_attrs):
+        super(DefaultParameter, self).build(monkey_cls, bases, monkey_attrs)
+        monkey_cls.__map__[NamespacesConsts.FIELDS][self._field_key][FieldConsts.REQUIRED] = False

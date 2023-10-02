@@ -1,7 +1,7 @@
 from typing import Type
 
 from monakeeda.helpers import defaultdictvalue
-from .base_annotation import Annotation
+from .base_annotations import Annotation
 from .errors import NotAnAnnotationException
 from .helpers import get_type_cls
 

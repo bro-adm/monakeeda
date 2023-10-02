@@ -1,8 +1,8 @@
 from abc import ABCMeta
 from collections import OrderedDict
 
-from monakeeda.base.component import RulesException
 from monakeeda.consts import NamespacesConsts
+from ..component import RulesException, organize_components
 
 
 class MonkeyMeta(ABCMeta):
@@ -10,24 +10,28 @@ class MonkeyMeta(ABCMeta):
         cls = super(MonkeyMeta, mcs).__new__(mcs, name, bases, attrs)
         return cls
 
-    def __init__(cls, name, bases, attrs, model_components=None, annotation_mapping=None, priority=None):
+    def __init__(cls, name, bases, attrs, component_managers=None, annotation_mapping=None):
         if not bases:
-            if model_components == None or annotation_mapping == None or priority == None:
-                raise ValueError('direct metaclass users needs to pass the model_components, annotation_mapping and priority')
-            cls.__model_components__ = model_components
+            if component_managers == None or annotation_mapping == None:
+                raise ValueError('direct metaclass users needs to pass the model_components, annotation_mapping')
+            cls.__component_managers__ = component_managers
             cls.__annotation_mapping__ = annotation_mapping
-            cls.__priority__ = priority
         else:
-            cls.__model_components__ = model_components if model_components else bases[0].__model_components__
+            cls.__component_managers__ = component_managers if component_managers else bases[0].__component_managers__
             cls.__annotation_mapping__ = annotation_mapping if annotation_mapping else bases[0].__annotation_mapping__
-            cls.__priority__ = priority if priority else bases[0].__priority__
 
+        attrs.setdefault('__map__', {NamespacesConsts.COMPONENTS: [], NamespacesConsts.BUILD: {}, NamespacesConsts.FIELDS: OrderedDict()})
         super(MonkeyMeta, cls).__init__(name, bases, attrs)
 
-        cls.__map__ = {NamespacesConsts.BUILD: {}, NamespacesConsts.FIELDS: OrderedDict()}
+        for component_manager in component_managers:
+            component_manager.build(cls, bases, attrs)
 
-        attrs[NamespacesConsts.BUILD] = {}
-        cls.__model_components__.run_bases(cls, bases, attrs)
-        attrs[NamespacesConsts.BUILD][NamespacesConsts.EXCEPTIONS] = RulesException(name, [])
-        if not cls.__model_components__.build(cls, bases, attrs):
-            raise attrs[NamespacesConsts.BUILD][NamespacesConsts.EXCEPTIONS]
+        model_components = cls.__map__[NamespacesConsts.COMPONENTS]
+        cls.__organized_components__ = organize_components(model_components)
+
+        for component in cls.__organized_components__:
+            component.validate(cls, bases, attrs)
+
+        rules_exception: RulesException = cls.__map__[NamespacesConsts.BUILD][NamespacesConsts.EXCEPTIONS]
+        if not rules_exception.is_empty():
+            raise rules_exception

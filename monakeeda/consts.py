@@ -3,6 +3,7 @@ class PythonNamingConsts:
 
 
 class NamespacesConsts:
+    COMPONENTS = 'components'
     BUILD = 'build'
     EXCEPTIONS = 'exceptions'
     DECORATORS = 'decorators'

@@ -3,7 +3,7 @@ from typing import List
 from monakeeda.consts import NamespacesConsts, ConfigConsts
 from monakeeda.helpers import get_cls_attrs
 from .base_config import Config
-from ..component import MainComponent
+from ..component import ComponentManager
 
 """
 class A(MonkeyModel):
@@ -31,7 +31,7 @@ U WANT TO NEGATE !!!
 """
 
 
-class ConfigMainComponent(MainComponent[Config]):
+class ConfigManager(ComponentManager[Config]):
 
     def _components(self, monkey_cls) -> List[Config]:
         return [monkey_cls.__map__[NamespacesConsts.BUILD][NamespacesConsts.CONFIG]]
