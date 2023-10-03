@@ -7,9 +7,14 @@ class NamespacesConsts:
     BUILD = 'build'
     EXCEPTIONS = 'exceptions'
     DECORATORS = 'decorators'
+    VALIDATORS = 'validators'
+    CREATOR = 'creator'
+    DEPENDENCIES = 'dependencies'
+    DEPENDENTS = 'dependents'
     FIELDS = 'fields_info'
     FIELDS_KEYS = 'main_field_keys'
     ANNOTATIONS = 'annotations'
+
     CONFIG = '__config__'
     MAP = '__map__'
 
