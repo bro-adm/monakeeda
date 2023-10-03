@@ -3,6 +3,7 @@ from enum import Enum
 from monakeeda.base import ConfigParameter, Config, Rules
 from monakeeda.consts import NamespacesConsts
 from ..rules import BasicParameterValueTypeValidationRule
+from ..valid_values import ValidValues
 
 
 class Extras(Enum):
@@ -15,9 +16,9 @@ class ExtrasParameter(ConfigParameter):
     __key__ = 'extra'
     __label__ = 'extras'
     __rules__ = Rules([BasicParameterValueTypeValidationRule(Extras)])
-    __priority__ = 4
+    __prior_handler__ = ValidValues
 
-    def _values_handler(self, priority, model_instance, values, stage) -> dict:
+    def handle_values(self, model_instance, values, stage) -> dict:
         if self.param_val == Extras.IGNORE:
             acknowledged_fields = model_instance.__map__[NamespacesConsts.FIELDS_KEYS]
             unacknowledged = []
@@ -31,5 +32,5 @@ class ExtrasParameter(ConfigParameter):
 
         return {}
 
-    def _set_cls_landscape(self, monkey_cls, bases, monkey_attrs):
+    def build(self, monkey_cls, bases, monkey_attrs):
         pass

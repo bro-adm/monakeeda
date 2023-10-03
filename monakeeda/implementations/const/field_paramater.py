@@ -1,6 +1,7 @@
 from monakeeda.base import FieldParameter, Rules, Field, Stages
 from .exceptions import ConstError
 from ..rules import BasicParameterValueTypeValidationRule
+from .annotation import Const
 
 
 @Field.parameter
@@ -8,9 +9,9 @@ class AllowMutation(FieldParameter):
     __key__ = 'const'
     __label__ = 'mutation'
     __rules__ = Rules([BasicParameterValueTypeValidationRule(bool)])
-    __priority__ = 2
+    __prior_handler__ = Const
 
-    def _values_handler(self, priority, model_instance, values, stage) -> dict:
+    def handle_values(self, model_instance, values, stage) -> dict:
         if stage == Stages.UPDATE:
             curr_val = getattr(model_instance, self._field_key)
             new_val = values[self._field_key]

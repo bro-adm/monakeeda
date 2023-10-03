@@ -31,15 +31,20 @@ class MonkeyMeta(ABCMeta):
         model_components = cls.__map__[NamespacesConsts.COMPONENTS]
         cls.__organized_components__ = organize_components(model_components)
 
-        print(name)
-        print(cls.__organized_components__)
-        print(cls.__map__[NamespacesConsts.FIELDS])
+        # print(name)
+        # print(cls.__organized_components__)
+        # print(cls.__map__[NamespacesConsts.FIELDS])
         # print(cls.__map__[NamespacesConsts.BUILD])
         # print(cls.__map__[NamespacesConsts.COMPONENTS])
-        print('------------------------------------------')
+        # print('------------------------------------------')
 
-        for component in cls.__organized_components__:
-            component.validate(cls, bases, attrs)
+        for component_type, components in cls.__organized_components__.items():
+            for component in components:
+                component.validate(cls, bases, attrs)
+
+        for component_type, components in cls.__organized_components__.items():
+            for component in components:
+                component.build(cls, bases, attrs)
 
         rules_exception: RulesException = cls.__map__[NamespacesConsts.BUILD][NamespacesConsts.EXCEPTIONS]
         if not rules_exception.is_empty():

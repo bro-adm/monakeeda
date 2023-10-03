@@ -1,6 +1,7 @@
 from monakeeda.base import FieldParameter, Rules, Field, Stages
-from monakeeda.base.fields.default_parameter import DefaultParameter
+# from monakeeda.base.fields.default_parameter import DefaultParameter
 from ..rules import CallableParameterSignatureValidationRule
+from .default_field_parameter import DefaultParameter
 
 
 @Field.parameter

@@ -28,8 +28,11 @@ class RulesException(RuleException):
         return len(self.exceptions) == 0
 
     def __str__(self):
-        return f"{self._component_type} validations failed -> " + str(
-            reduce(lambda exc1, exc2: f'{exc1}\n{exc2}', self._exceptions))
+        if self.exceptions:
+            return f"{self.component_type} validations failed -> " + str(
+                reduce(lambda exc1, exc2: f'{exc1}\n{exc2}', self.exceptions))
+
+        return str(self.exceptions)
 
     __repr__ = __str__
 

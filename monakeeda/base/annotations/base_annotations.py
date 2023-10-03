@@ -8,7 +8,6 @@ from ..component import Component, Stages
 
 
 class Annotation(Component, ABC):
-    __label__ = 'annotation'
 
     def __init__(self, field_key, base_type):
         self._field_key = field_key

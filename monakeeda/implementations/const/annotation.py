@@ -3,10 +3,12 @@ from typing import Generic, T, Any
 from monakeeda.base import GenericAnnotation, Stages
 from monakeeda.consts import FieldConsts
 from .exceptions import ConstError
+from ..cast import Cast
 
 
 class Const(GenericAnnotation, Generic[T]):
-    __priority__ = 2
+    __label__ = 'const'
+    __prior_handler__ = Cast
 
     def _act_with_value(self, value, cls, current_field_info, stage) -> Any:
         const_type = self._types[0]

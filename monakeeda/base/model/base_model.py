@@ -11,9 +11,10 @@ component_managers = [FieldManager(), AnnotationManager(annotation_mapping), Con
 class MonkeyModel(metaclass=MonkeyMeta, component_managers=component_managers, annotation_mapping=annotation_mapping):
 
     def _handle_values(self, values: dict, stage):
-        for component in self.__organized_components__:
-            kwargs = component.handle_values(self, values, stage)
-            values.update(kwargs)
+        for component_type, components in self.__organized_components__.items():
+            for component in components:
+                kwargs = component.handle_values(self, values, stage)
+                values.update(kwargs)
 
         # kwargs = ignore_unwanted_params(self.__class__, kwargs)
 
