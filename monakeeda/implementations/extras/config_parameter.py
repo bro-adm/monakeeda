@@ -3,7 +3,7 @@ from enum import Enum
 from monakeeda.base import ConfigParameter, Config, Rules
 from monakeeda.consts import NamespacesConsts
 from ..rules import BasicParameterValueTypeValidationRule
-from ..valid_values import ValidValues
+from ..creators import CreateFrom
 
 
 class Extras(Enum):
@@ -16,7 +16,7 @@ class ExtrasParameter(ConfigParameter):
     __key__ = 'extra'
     __label__ = 'extras'
     __rules__ = Rules([BasicParameterValueTypeValidationRule(Extras)])
-    __prior_handler__ = ValidValues
+    __prior_handler__ = CreateFrom
 
     def handle_values(self, model_instance, values, stage) -> dict:
         if self.param_val == Extras.IGNORE:
