@@ -1,11 +1,12 @@
 from ..component import Stages
 from ..fields import FieldManager
 from ..annotations import AnnotationManager, annotation_mapping, ModelAnnotation
+from ..decorators import DecoratorManager
 from ..config import ConfigManager, Config
 from ..meta import MonkeyMeta
 from ...utils import deep_update
 
-component_managers = [FieldManager(), AnnotationManager(annotation_mapping), ConfigManager()]
+component_managers = [FieldManager(), AnnotationManager(annotation_mapping), DecoratorManager(), ConfigManager()]
 
 
 class MonkeyModel(metaclass=MonkeyMeta, component_managers=component_managers, annotation_mapping=annotation_mapping):
