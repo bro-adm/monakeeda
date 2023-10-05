@@ -31,8 +31,5 @@ class Component(RulesValidator, MonkeyBuilder, ValuesHandler, ABC):
     def accept_operator(self, operator_visitor: OperatorVisitor, context: Any):
         pass
 
-    def __str__(self):
-        return f"{self.__class__.__name__} component"
-
 
 TComponent = TypeVar('TComponent', bound=Type[Component])
