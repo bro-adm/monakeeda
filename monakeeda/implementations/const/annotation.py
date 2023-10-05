@@ -4,6 +4,7 @@ from monakeeda.base import GenericAnnotation, Stages
 from monakeeda.consts import FieldConsts
 from .exceptions import ConstError
 from ..cast import Cast
+from ..implemenations_base_operator_visitor import ImplementationsOperatorVisitor
 
 
 class Const(GenericAnnotation, Generic[T]):
@@ -25,3 +26,6 @@ class Const(GenericAnnotation, Generic[T]):
                 raise ConstError(current_field_info['default'], value)
 
         return value
+
+    def accept_operator(self, operator_visitor: ImplementationsOperatorVisitor, context: Any):
+        operator_visitor.operate_const_annotation(self, context)

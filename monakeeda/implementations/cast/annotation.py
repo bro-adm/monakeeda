@@ -3,6 +3,7 @@ from typing import Generic, T, Any
 from monakeeda.base import GenericAnnotation
 from monakeeda.consts import FieldConsts
 from ..alias import Alias
+from ..implemenations_base_operator_visitor import ImplementationsOperatorVisitor
 
 
 class CastingError(ValueError):
@@ -23,3 +24,6 @@ class Cast(GenericAnnotation, Generic[T]):
             return wanted_value
         except TypeError:
             raise CastingError(value, cast_to)
+
+    def accept_operator(self, operator_visitor: ImplementationsOperatorVisitor, context: Any):
+        operator_visitor.operate_cast_annotation(self, context)

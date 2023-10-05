@@ -1,12 +1,16 @@
 from typing import Union, List, Any
 
 from monakeeda.base import Annotation, annotation_mapper, GenericAnnotation
+from .implemenations_base_operator_visitor import ImplementationsOperatorVisitor
 
 
 @annotation_mapper(object, Any)
 class ObjectAnnotation(Annotation):
     def _act_with_value(self, value, *_, **__):
         return value
+
+    def accept_operator(self, operator_visitor: ImplementationsOperatorVisitor, context: Any):
+        operator_visitor.operate_object_annotation(self, context)
 
 
 @annotation_mapper(int, str, list)
@@ -15,6 +19,9 @@ class BasicTypeAnnotation(Annotation):
         if not isinstance(value, self.base_type):
             raise TypeError(f'{value} is not a {self.base_type.__name__}')
         return value
+
+    def accept_operator(self, operator_visitor: ImplementationsOperatorVisitor, context: Any):
+        operator_visitor.operate_basic_annotation(self, context)
 
 
 @annotation_mapper(Union)
@@ -25,6 +32,9 @@ class UnionAnnotation(GenericAnnotation):
             raise TypeError(f'{value} is not one of possible types {union_types}')
         return value
 
+    def accept_operator(self, operator_visitor: ImplementationsOperatorVisitor, context: Any):
+        operator_visitor.operate_union_annotation(self, context)
+
 
 @annotation_mapper(List)
 class TypeListAnnotation(GenericAnnotation):
@@ -34,3 +44,6 @@ class TypeListAnnotation(GenericAnnotation):
             if not isinstance(val, list_types):
                 raise TypeError(f'{val} is not one of possible types {list_types}')
         return value
+
+    def accept_operator(self, operator_visitor: ImplementationsOperatorVisitor, context: Any):
+        operator_visitor.operate_list_annotation(self, context)

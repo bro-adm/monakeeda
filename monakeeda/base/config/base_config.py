@@ -1,7 +1,9 @@
 from abc import ABC
+from typing import Any
 
 from ..component import ConfigurableComponent, Parameter
 from ..fields import Field
+from ..operator import OperatorVisitor
 
 
 class ConfigParameter(Parameter, ABC):
@@ -25,3 +27,6 @@ class Config(ConfigurableComponent[ConfigParameter]):
 
     def handle_values(self, model_instance, values, stage) -> dict:
         return {}
+
+    def accept_operator(self, operator_visitor: OperatorVisitor, context: Any):
+        operator_visitor.operate_config(self, context)

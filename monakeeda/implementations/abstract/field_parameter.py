@@ -1,7 +1,10 @@
+from typing import Any
+
 from monakeeda.base import FieldParameter, Rules, Field
 from .exceptions import AbstractFieldFoundError
 from .annotation import Abstract
 from ..rules import BasicParameterValueTypeValidationRule
+from ..implemenations_base_operator_visitor import ImplementationsOperatorVisitor
 
 
 @Field.parameter
@@ -16,3 +19,6 @@ class AbstractParameter(FieldParameter):
             raise AbstractFieldFoundError(self._field_key)
 
         return values
+
+    def accept_operator(self, operator_visitor: ImplementationsOperatorVisitor, context: Any):
+        operator_visitor.operate_abstract_field_parameter(self, context)

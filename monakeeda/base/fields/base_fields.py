@@ -1,7 +1,9 @@
 from abc import ABC
+from typing import Any
 
 from monakeeda.consts import FieldConsts, NamespacesConsts
 from ..component import Parameter, ConfigurableComponent
+from ..operator import OperatorVisitor
 
 
 class FieldParameter(Parameter, ABC):
@@ -22,6 +24,9 @@ class Field(ConfigurableComponent[FieldParameter]):
 
     def handle_values(self, model_instance, values, stage) -> dict:
         return {}
+
+    def accept_operator(self, operator_visitor: OperatorVisitor, context: Any):
+        operator_visitor.operate_field(self, context)
 
 
 class NoField(Field, copy_parameter_components=False):

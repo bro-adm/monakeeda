@@ -1,8 +1,10 @@
 import inspect
+from typing import Any
 
 from monakeeda.base import FieldParameter, Rules, Field
 from .config_parameter import AliasGenerator
 from ..rules import BasicParameterValueTypeValidationRule
+from ..implemenations_base_operator_visitor import ImplementationsOperatorVisitor
 
 
 @Field.parameter
@@ -22,3 +24,6 @@ class Alias(FieldParameter):
             updated_values[self._field_key] = field_val_by_alias
 
         return updated_values
+
+    def accept_operator(self, operator_visitor: ImplementationsOperatorVisitor, context: Any):
+        operator_visitor.operate_alias_field_parameter(self, context)

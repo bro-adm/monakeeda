@@ -1,9 +1,10 @@
-from typing import Union
+from typing import Union, Any
 
 from monakeeda.utils import get_wanted_params, wrap_in_list
 from monakeeda.consts import NamespacesConsts
 from .base_decorator import BaseCreatorDecorator
 from ..validators import Validator
+from ..implemenations_base_operator_visitor import ImplementationsOperatorVisitor
 
 
 class CreateFrom(BaseCreatorDecorator):
@@ -31,6 +32,9 @@ class CreateFrom(BaseCreatorDecorator):
             return self.func(cls, kwargs, config)
 
         return self.func(cls, get_wanted_params(kwargs, self.from_keys), config)
+
+    def accept_operator(self, operator_visitor: ImplementationsOperatorVisitor, context: Any):
+        operator_visitor.operate_create_from_decorator(self, context)
 
 
 # class GenerateDynamically(BaseCreatorDecorator):

@@ -1,9 +1,11 @@
 from enum import Enum
+from typing import Any
 
 from monakeeda.base import ConfigParameter, Config, Rules
 from monakeeda.consts import NamespacesConsts
 from ..rules import BasicParameterValueTypeValidationRule
 from ..creators import CreateFrom
+from ..implemenations_base_operator_visitor import ImplementationsOperatorVisitor
 
 
 class Extras(Enum):
@@ -34,3 +36,6 @@ class ExtrasParameter(ConfigParameter):
 
     def build(self, monkey_cls, bases, monkey_attrs):
         pass
+
+    def accept_operator(self, operator_visitor: ImplementationsOperatorVisitor, context: Any):
+        operator_visitor.operate_extras_config_parameter(self, context)

@@ -13,15 +13,17 @@ class MonkeyMeta(ABCMeta):
         cls = super(MonkeyMeta, mcs).__new__(mcs, name, bases, attrs)
         return cls
 
-    def __init__(cls, name, bases, attrs, component_managers=None, annotation_mapping=None):
+    def __init__(cls, name, bases, attrs, component_managers=None, annotation_mapping=None, operators_visitors=None):
         if not bases:
-            if component_managers == None or annotation_mapping == None:
-                raise ValueError('direct metaclass users needs to pass the model_components, annotation_mapping')
+            if component_managers == None or annotation_mapping == None and operators_visitors == None:
+                raise ValueError('direct metaclass users needs to pass the model_components, annotation_mapping, operators_visitors')
             cls.__component_managers__ = component_managers
             cls.__annotation_mapping__ = annotation_mapping
+            cls.__operators_visitors__ = operators_visitors
         else:
             cls.__component_managers__ = component_managers if component_managers else bases[0].__component_managers__
             cls.__annotation_mapping__ = annotation_mapping if annotation_mapping else bases[0].__annotation_mapping__
+            cls.__operators_visitors__ = operators_visitors if operators_visitors else bases[0].__operators_visitors__
 
         super(MonkeyMeta, cls).__init__(name, bases, attrs)
 

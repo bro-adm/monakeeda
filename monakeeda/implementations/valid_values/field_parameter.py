@@ -1,6 +1,9 @@
+from typing import Any
+
 from monakeeda.base import FieldParameter, Rules, Field
 from ..rules import BasicParameterValueTypeValidationRule
 from ..const import AllowMutation
+from ..implemenations_base_operator_visitor import ImplementationsOperatorVisitor
 
 
 class NotAValidValue(ValueError):
@@ -23,3 +26,6 @@ class ValidValues(FieldParameter):
             raise NotAValidValue(self.param_val, val)
 
         return values
+
+    def accept_operator(self, operator_visitor: ImplementationsOperatorVisitor, context: Any):
+        operator_visitor.operate_valid_values_field_parameter(self, context)

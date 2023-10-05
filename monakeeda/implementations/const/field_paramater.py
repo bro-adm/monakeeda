@@ -1,7 +1,10 @@
+from typing import Any
+
 from monakeeda.base import FieldParameter, Rules, Field, Stages
 from .exceptions import ConstError
 from ..rules import BasicParameterValueTypeValidationRule
 from .annotation import Const
+from ..implemenations_base_operator_visitor import ImplementationsOperatorVisitor
 
 
 @Field.parameter
@@ -20,3 +23,6 @@ class AllowMutation(FieldParameter):
                 raise ConstError(curr_val, new_val)
 
         return values
+
+    def accept_operator(self, operator_visitor: ImplementationsOperatorVisitor, context: Any):
+        operator_visitor.operate_const_field_parameter(self, context)

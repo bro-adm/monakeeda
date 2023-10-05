@@ -1,11 +1,12 @@
 import inspect
-from abc import ABC
-from typing import ClassVar, TypeVar, Type, List
+from abc import ABC, abstractmethod
+from typing import ClassVar, TypeVar, Type, List, Any
 
 from .monkey_builder import MonkeyBuilder
 from .rules import Rules, NoComponentDependenciesFailedRule
 from .rules_validator import RulesValidator
 from .values_handler import ValuesHandler
+from ..operator import OperatorVisitor
 
 all_components = []
 
@@ -25,6 +26,10 @@ class Component(RulesValidator, MonkeyBuilder, ValuesHandler, ABC):
                 all_components.insert(position+1, str(cls))
             else:
                 all_components.append(str(cls))
+
+    @abstractmethod
+    def accept_operator(self, operator_visitor: OperatorVisitor, context: Any):
+        pass
 
     def __str__(self):
         return f"{self.__label__} component"

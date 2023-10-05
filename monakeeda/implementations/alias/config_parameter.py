@@ -1,7 +1,10 @@
+from typing import Any
+
 from monakeeda.base import ConfigParameter, Config, Rules, get_parameter_component_by_label
 from monakeeda.consts import NamespacesConsts, FieldConsts
 from ..default import DefaultFactory
 from ..rules import CallableParameterSignatureValidationRule, AllModelFieldsAcknowledgeParameterRule
+from ..implemenations_base_operator_visitor import ImplementationsOperatorVisitor
 
 
 @Config.parameter
@@ -25,3 +28,6 @@ class AliasGenerator(ConfigParameter):
 
             field._initialized_params.append(alias_parameter)
             monkey_cls.__organized_components__[str(alias_parameter_type)].append(alias_parameter)
+
+    def accept_operator(self, operator_visitor: ImplementationsOperatorVisitor, context: Any):
+        operator_visitor.operate_alias_generator_config_parameter(self, context)
