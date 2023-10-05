@@ -6,6 +6,8 @@ from .implemenations_base_operator_visitor import ImplementationsOperatorVisitor
 
 @annotation_mapper(object, Any)
 class ObjectAnnotation(Annotation):
+    __label__ = 'object'
+
     def _act_with_value(self, value, *_, **__):
         return value
 
@@ -15,6 +17,8 @@ class ObjectAnnotation(Annotation):
 
 @annotation_mapper(int, str, list)
 class BasicTypeAnnotation(Annotation):
+    __label__ = 'basic'
+
     def _act_with_value(self, value, *_, **__):
         if not isinstance(value, self.base_type):
             raise TypeError(f'{value} is not a {self.base_type.__name__}')
@@ -26,6 +30,8 @@ class BasicTypeAnnotation(Annotation):
 
 @annotation_mapper(Union)
 class UnionAnnotation(GenericAnnotation):
+    __label__ = 'union'
+
     def _act_with_value(self, value, *_, **__):
         union_types = self._types
         if not isinstance(value, union_types):
@@ -38,6 +44,8 @@ class UnionAnnotation(GenericAnnotation):
 
 @annotation_mapper(List)
 class TypeListAnnotation(GenericAnnotation):
+    __label__ = 'list'
+
     def _act_with_value(self, value, *_, **__):
         list_types = self._types
         for val in value:

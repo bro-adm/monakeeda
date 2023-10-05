@@ -25,6 +25,8 @@ class ModelAnnotation(BasicAnnotation):
     The type of lol (Lol) is wrapped under the ModelAnnotation implementation
     """
 
+    __label__ = 'model'
+
     def _act_with_value(self, value, cls, current_field_info, stage):
         if isinstance(value, dict):
             return self.base_type(**value)

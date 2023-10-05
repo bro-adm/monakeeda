@@ -32,7 +32,7 @@ class Component(RulesValidator, MonkeyBuilder, ValuesHandler, ABC):
         pass
 
     def __str__(self):
-        return f"{self.__label__} component"
+        return f"{self.__class__.__name__} component"
 
 
 TComponent = TypeVar('TComponent', bound=Type[Component])
