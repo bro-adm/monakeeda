@@ -44,10 +44,10 @@ class MonkeyMeta(ABCMeta):
             for component in components:
                 component.validate(cls, bases, attrs)
 
-        for component_type, components in cls.__organized_components__.items():
-            for component in components:
-                component.build(cls, bases, attrs)
-
         rules_exception: RulesException = cls.__map__[NamespacesConsts.BUILD][NamespacesConsts.EXCEPTIONS]
         if not rules_exception.is_empty():
             raise rules_exception
+
+        for component_type, components in cls.__organized_components__.items():
+            for component in components:
+                component.build(cls, bases, attrs)
