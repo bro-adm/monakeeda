@@ -2,7 +2,7 @@ from typing import Any
 
 from monakeeda.base import ConfigParameter, Config, Rules, get_parameter_component_by_label
 from monakeeda.consts import NamespacesConsts, FieldConsts
-from ..default import DefaultFactory
+from ..default import DefaultFactoryFieldParameter
 from ..rules import CallableParameterSignatureValidationRule, AllModelFieldsAcknowledgeParameterRule
 from ..implemenations_base_operator_visitor import ImplementationsOperatorVisitor
 
@@ -11,7 +11,7 @@ from ..implemenations_base_operator_visitor import ImplementationsOperatorVisito
 class AliasGenerator(ConfigParameter):
     __key__ = 'alias_generator'
     __label__ = 'alias_generator'
-    __prior_handler__ = DefaultFactory
+    __prior_handler__ = DefaultFactoryFieldParameter
     __rules__ = Rules([CallableParameterSignatureValidationRule(1), AllModelFieldsAcknowledgeParameterRule('alias')])
 
     def handle_values(self, model_instance, values, stage) -> dict:

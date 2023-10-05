@@ -1,16 +1,16 @@
 from typing import Any
 
-from monakeeda.base import FieldParameter, Rules, Field, Stages
+from monakeeda.base import Rules, Field, Stages
 from ..rules import CallableParameterSignatureValidationRule
-from .default_field_parameter import DefaultParameter
 from ..implemenations_base_operator_visitor import ImplementationsOperatorVisitor
+from .base import BaseDefaultFieldParameter
+from .default_field_parameter import DefaultFieldParameter
 
 
 @Field.parameter
-class DefaultFactory(FieldParameter):
+class DefaultFactoryFieldParameter(BaseDefaultFieldParameter):
     __key__ = 'default_factory'
-    __label__ = 'default_provider'
-    __prior_handler__ = DefaultParameter
+    __prior_handler__ = DefaultFieldParameter
     __rules__ = Rules([CallableParameterSignatureValidationRule(0)])
 
     def handle_values(self, model_instance, values, stage) -> dict:
