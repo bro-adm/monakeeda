@@ -12,7 +12,7 @@ from ...utils import deep_update
 component_managers = [FieldManager(), AnnotationManager(annotation_mapping), DecoratorManager(), ConfigManager()]
 
 
-class MonkeyModel(metaclass=MonkeyMeta, component_managers=component_managers, annotation_mapping=annotation_mapping, operators_visitors=all_operators):
+class BaseModel(metaclass=MonkeyMeta, component_managers=component_managers, annotation_mapping=annotation_mapping, operators_visitors=all_operators):
 
     def __init_subclass__(cls):
         super().__init_subclass__()
@@ -28,7 +28,7 @@ class MonkeyModel(metaclass=MonkeyMeta, component_managers=component_managers, a
         # kwargs = ignore_unwanted_params(self.__class__, kwargs)
 
         for key in values:
-            super(MonkeyModel, self).__setattr__(key, values[key])
+            super(BaseModel, self).__setattr__(key, values[key])
         # The super setter because the setter logic can be changed and in teh init we have data as we want it already
 
     def __init__(self, **kwargs):
@@ -42,10 +42,11 @@ class MonkeyModel(metaclass=MonkeyMeta, component_managers=component_managers, a
     def __setattr__(self, key, value):
         self.update(**{key: value})
 
-    def _operate(self, operator_type: str, context: Any):
-        operator_visitor = self.__operators_visitors__[operator_type]
+    @staticmethod
+    def _operate(model, operator_type: str, context: Any):
+        operator_visitor = model.__operators_visitors__[operator_type]
 
-        for component_type, components in self.__organized_components__.items():
+        for component_type, components in model.__organized_components__.items():
             for component in components:
                 component.accept_operator(operator_visitor, context)
 

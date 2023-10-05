@@ -1,2 +1,2 @@
-from .base import MonkeyModel, Config, Field
+from .base import Config, Field
 from .implementations import *
