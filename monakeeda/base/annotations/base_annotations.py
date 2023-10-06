@@ -1,11 +1,9 @@
-import inspect
-from abc import ABC, abstractmethod
-from typing import Any
+from abc import ABC
 
 from typing_extensions import get_args
 
 from monakeeda.consts import NamespacesConsts, FieldConsts
-from ..component import Component, Stages
+from ..component import Component
 
 
 class Annotation(Component, ABC):
@@ -14,35 +12,9 @@ class Annotation(Component, ABC):
         self._field_key = field_key
         self.base_type = base_type
 
-    def handle_values(self, model_instance, values, stage) -> dict:
-        """
-        As I see it, this needs to stand to the components API and so the AnnotationsMainComponent will be the one
-        to set the scope of operation of the Annotation implementation instance.
-
-        This basically happens as a result of the instance being per implementation and not per field usage
-        as opposed to other components .
-
-        Until that changes it is expected logically to pass the single key,val in the values dict to each run.
-        """
-
-        field_info = getattr(model_instance, NamespacesConsts.STRUCT)[NamespacesConsts.FIELDS][self._field_key]
-        value = values.get(self._field_key, inspect._empty)
-
-        if value != inspect._empty:
-            if stage == Stages.UPDATE:
-                field_info[FieldConsts.VALUE] = getattr(model_instance, self._field_key)
-
-            return {self._field_key: self._act_with_value(value, model_instance, field_info, stage)}
-
-        return {}
-
     def build(self, monkey_cls, bases, monkey_attrs):
         monkey_attrs[NamespacesConsts.STRUCT][NamespacesConsts.FIELDS][self._field_key][FieldConsts.TYPE] = self.base_type
         monkey_attrs[NamespacesConsts.STRUCT][NamespacesConsts.FIELDS][self._field_key][FieldConsts.ANNOTATION] = self
-
-    @abstractmethod
-    def _act_with_value(self, value, cls, current_field_info, stage) -> Any:
-        pass
 
 
 class GenericAnnotation(Annotation, ABC):

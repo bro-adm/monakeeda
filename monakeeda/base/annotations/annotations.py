@@ -1,18 +1,12 @@
-from abc import ABC
-from typing import Any
+import inspect
+from typing import Any, Union
 
 from .base_annotations import Annotation
+from .helpers import type_validation
 from ..operator import OperatorVisitor
 
 
-class BasicAnnotation(Annotation, ABC):
-    def _act_with_value(self, value, cls, current_field_info, stage):
-        if not isinstance(value, self.base_type):
-            raise TypeError(f'{value} needs to be of type {self.base_type}')
-        return value
-
-
-class ModelAnnotation(BasicAnnotation):
+class ModelAnnotation(Annotation):
     """
     When specifying a field type to another MonkeyModel
 
@@ -27,11 +21,22 @@ class ModelAnnotation(BasicAnnotation):
 
     __label__ = 'model'
 
-    def _act_with_value(self, value, cls, current_field_info, stage):
-        if isinstance(value, dict):
-            return self.base_type(**value)
+    def handle_values(self, model_instance, values, stage) -> Union[Exception, None]:
+        value = values.get(self._field_key, inspect._empty)
+
+        if value == inspect._empty:
+            return
+
+        elif isinstance(value, dict):
+            try:
+                monkey = self.base_type(**value)
+            except Exception as e:
+                return e
+
+            values[self._field_key] = monkey
+
         else:
-            return super(ModelAnnotation, self)._act_with_value(value, cls, current_field_info, stage)
+            return type_validation(value, self.base_type)
 
     def accept_operator(self, operator_visitor: OperatorVisitor, context: Any):
         operator_visitor.operate_model_annotation(self, context)

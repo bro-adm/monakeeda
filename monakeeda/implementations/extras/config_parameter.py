@@ -1,5 +1,5 @@
 from enum import Enum
-from typing import Any
+from typing import Any, Union
 
 from monakeeda.base import ConfigParameter, Config, Rules
 from monakeeda.consts import NamespacesConsts, FieldConsts
@@ -21,7 +21,7 @@ class ExtrasParameter(ConfigParameter):
     __rules__ = Rules([BasicParameterValueTypeValidationRule(Extras)])
     __prior_handler__ = AllowMutation
 
-    def handle_values(self, model_instance, values, stage) -> dict:
+    def handle_values(self, model_instance, values, stage) -> Union[Extras, None]:
         if self.param_val != Extras.ALLOW:
             fields = getattr(model_instance, NamespacesConsts.STRUCT)[NamespacesConsts.FIELDS]
 
@@ -38,7 +38,7 @@ class ExtrasParameter(ConfigParameter):
             for key in unacknowledged:
                 values.pop(key)
 
-        return {}
+        return
 
     def accept_operator(self, operator_visitor: ImplementationsOperatorVisitor, context: Any):
         operator_visitor.operate_extras_config_parameter(self, context)

@@ -1,4 +1,4 @@
-from typing import Any
+from typing import Any, Union
 
 from monakeeda.base import FieldParameter, Rules, Field, Stages
 from .exceptions import ConstError
@@ -14,15 +14,15 @@ class AllowMutation(FieldParameter):
     __rules__ = Rules([BasicParameterValueTypeValidationRule(bool)])
     __prior_handler__ = Const
 
-    def handle_values(self, model_instance, values, stage) -> dict:
+    def handle_values(self, model_instance, values, stage) -> Union[Exception, None]:
         if stage == Stages.UPDATE:
             curr_val = getattr(model_instance, self._field_key)
             new_val = values[self._field_key]
 
             if self.param_val and new_val != curr_val:
-                raise ConstError(curr_val, new_val)
+                return ConstError(curr_val, new_val)
 
-        return values
+        return
 
     def accept_operator(self, operator_visitor: ImplementationsOperatorVisitor, context: Any):
         operator_visitor.operate_const_field_parameter(self, context)

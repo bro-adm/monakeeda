@@ -9,6 +9,7 @@ from ..decorators import DecoratorManager
 from ..config import ConfigManager, Config
 from ..meta import MonkeyMeta
 from ..operator import all_operators
+from .errors import MonkeyValuesHandlingException
 
 component_managers = [FieldManager(), AnnotationManager(annotation_mapping), DecoratorManager(), ConfigManager()]
 
@@ -25,10 +26,17 @@ class BaseModel(metaclass=MonkeyMeta, component_managers=component_managers, ann
         return getattr(cls, NamespacesConsts.STRUCT).copy()
 
     def _handle_values(self, values: dict, stage):
+        exceptions = []
+
         for component_type, components in self.__organized_components__.items():
             for component in components:
-                kwargs = component.handle_values(self, values, stage)
-                values.update(kwargs)
+                result = component.handle_values(self, values, stage)
+
+                if result:
+                    exceptions.append(result)
+
+        if exceptions:
+            raise MonkeyValuesHandlingException(self.__class__.__name__, values, exceptions)
 
         # kwargs = ignore_unwanted_params(self.__class__, kwargs)
 

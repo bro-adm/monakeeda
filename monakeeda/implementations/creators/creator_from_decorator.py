@@ -28,11 +28,20 @@ class CreateFrom(BaseCreatorDecorator):
             for key in self.from_keys:
                 monkey_attrs[NamespacesConsts.STRUCT][NamespacesConsts.FIELDS].setdefault(key, {}).setdefault(FieldConsts.DEPENDENTS, []).append(self.wanted_data_member)
 
-    def wrapper(self, cls, kwargs, config, wanted_fields_info):
-        if self.from_keys[0] == '*':
-            return self.func(cls, kwargs, config)
+    def handle_values(self, model_instance, values, stage) -> Union[Exception, None]:
+        fields_info = getattr(model_instance, NamespacesConsts.STRUCT)[NamespacesConsts.FIELDS]
+        config = getattr(model_instance, NamespacesConsts.STRUCT)[NamespacesConsts.CONFIG]
 
-        return self.func(cls, get_wanted_params(kwargs, self.from_keys), config)
+        wanted_val = self.wrapper(model_instance, values, config, fields_info)
+        values[self.wanted_data_member] = wanted_val
+
+        return
+
+    def wrapper(self, monkey_cls, values, config, fields_info):
+        if self.from_keys[0] == '*':
+            return self.func(monkey_cls, values, config, fields_info)
+
+        return self.func(monkey_cls, config, get_wanted_params(fields_info, self.from_keys), get_wanted_params(values, self.from_keys))
 
     def accept_operator(self, operator_visitor: ImplementationsOperatorVisitor, context: Any):
         operator_visitor.operate_create_from_decorator(self, context)

@@ -6,4 +6,4 @@ from .parameter_component import Parameter, TParameter, BaseParameterValueTypeVa
     ParameterValueTypeValidationFailedRuleException
 from .rules import Rule, Rules, RuleException, RulesException
 from .helpers import organize_components, get_parameter_component_by_label
-from .values_handler import Stages
+from .stages import Stages

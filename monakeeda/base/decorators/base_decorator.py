@@ -31,7 +31,7 @@ will run on load time, making all the methods in the class decorated be marked a
 
 class BaseDecorator(Component, ABC):
     @abstractmethod
-    def wrapper(self, monkey_cls, kwargs, config, wanted_fields_info):
+    def wrapper(self, monkey_cls, values, config, fields_info):
         """
 
         :param monkey_cls: model ClsType

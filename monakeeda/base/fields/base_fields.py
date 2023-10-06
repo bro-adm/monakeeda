@@ -1,5 +1,5 @@
 from abc import ABC
-from typing import Any
+from typing import Any, Union
 
 from monakeeda.consts import FieldConsts, NamespacesConsts
 from ..component import Parameter, ConfigurableComponent
@@ -22,8 +22,8 @@ class Field(ConfigurableComponent[FieldParameter]):
     def build(self, monkey_cls, bases, monkey_attrs):
         pass
 
-    def handle_values(self, model_instance, values, stage) -> dict:
-        return {}
+    def handle_values(self, model_instance, values, stage) -> Union[Exception, None]:
+        pass
 
     def accept_operator(self, operator_visitor: OperatorVisitor, context: Any):
         operator_visitor.operate_field(self, context)

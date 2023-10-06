@@ -1,4 +1,4 @@
-from typing import Any
+from typing import Any, Union
 
 from monakeeda.base import FieldParameter, Rules, Field
 from ..rules import BasicParameterValueTypeValidationRule
@@ -19,13 +19,13 @@ class ValidValues(FieldParameter):
     __rules__ = Rules([BasicParameterValueTypeValidationRule((list, tuple, set))])
     __prior_handler__ = DictAnnotation
 
-    def handle_values(self, model_instance, values, stage) -> dict:
+    def handle_values(self, model_instance, values, stage) -> Union[Exception, None]:
         val = values[self._field_key]
 
         if val not in self.param_val:
-            raise NotAValidValue(self.param_val, val)
+            return NotAValidValue(self.param_val, val)
 
-        return values
+        return
 
     def accept_operator(self, operator_visitor: ImplementationsOperatorVisitor, context: Any):
         operator_visitor.operate_valid_values_field_parameter(self, context)

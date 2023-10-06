@@ -10,3 +10,6 @@ class MonkeyModel(BaseModel):
         cls._operate(cls, OpenAPIOperatorVisitor.__type__, model_schema)
 
         return model_schema
+
+    # class Config(BaseModel.Config):
+    #     validate_missing_fields = True

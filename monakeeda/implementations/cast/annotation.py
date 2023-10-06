@@ -1,7 +1,7 @@
-from typing import Generic, T, Any
+import inspect
+from typing import Generic, T, Any, Union
 
 from monakeeda.base import GenericAnnotation
-from monakeeda.consts import FieldConsts
 from ..default import DefaultFactoryFieldParameter
 from ..implemenations_base_operator_visitor import ImplementationsOperatorVisitor
 
@@ -16,14 +16,21 @@ class Cast(GenericAnnotation, Generic[T]):
     __label__ = 'cast'
     __prior_handler__ = DefaultFactoryFieldParameter
 
-    def _act_with_value(self, value, cls, current_field_info, stage) -> Any:
+    def handle_values(self, model_instance, values, stage) -> Union[Exception, None]:
         cast_to = self._types[0]
+        value = values.get(self._field_key, inspect._empty)
+
+        if value == inspect._empty:
+            return
+
         try:
             wanted_value = cast_to(value)
-            current_field_info[FieldConsts.TYPE] = cast_to
-            return wanted_value
         except TypeError:
-            raise CastingError(value, cast_to)
+            return CastingError(value, cast_to)
+
+        values[self._field_key] = wanted_value
+
+        return
 
     def accept_operator(self, operator_visitor: ImplementationsOperatorVisitor, context: Any):
         operator_visitor.operate_cast_annotation(self, context)

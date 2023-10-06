@@ -70,7 +70,7 @@ class ImplementationsOperatorVisitor(OperatorVisitor[TOperatorContext], ABC, Gen
         pass
 
     @abstractmethod
-    def operate_list_annotation(self, annotation: 'TypeListAnnotation', context: TOperatorContext):
+    def operate_list_annotation(self, annotation: 'ListAnnotation', context: TOperatorContext):
         pass
 
     @abstractmethod

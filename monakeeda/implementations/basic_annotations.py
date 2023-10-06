@@ -1,6 +1,7 @@
+import inspect
 from typing import Union, List, Any, Dict
 
-from monakeeda.base import Annotation, annotation_mapper, GenericAnnotation
+from monakeeda.base import Annotation, annotation_mapper, GenericAnnotation, type_validation
 from .implemenations_base_operator_visitor import ImplementationsOperatorVisitor
 from .cast import Cast
 
@@ -10,22 +11,25 @@ class ObjectAnnotation(Annotation):
     __label__ = 'object'
     __prior_handler__ = Cast
 
-    def _act_with_value(self, value, *_, **__):
-        return value
+    def handle_values(self, model_instance, values, stage) -> Union[Exception, None]:
+        return
 
     def accept_operator(self, operator_visitor: ImplementationsOperatorVisitor, context: Any):
         operator_visitor.operate_object_annotation(self, context)
 
 
-@annotation_mapper(int, str, list)
+@annotation_mapper(int, str, list, dict)
 class BasicTypeAnnotation(Annotation):
     __label__ = 'basic'
     __prior_handler__ = ObjectAnnotation
 
-    def _act_with_value(self, value, *_, **__):
-        if not isinstance(value, self.base_type):
-            raise TypeError(f'{value} is not a {self.base_type.__name__}')
-        return value
+    def handle_values(self, model_instance, values, stage) -> Union[Exception, None]:
+        value = values.get(self._field_key, inspect._empty)
+
+        if value == inspect._empty:
+            return
+
+        return type_validation(value, self.base_type)
 
     def accept_operator(self, operator_visitor: ImplementationsOperatorVisitor, context: Any):
         operator_visitor.operate_basic_annotation(self, context)
@@ -36,27 +40,41 @@ class UnionAnnotation(GenericAnnotation):
     __label__ = 'union'
     __prior_handler__ = BasicTypeAnnotation
 
-    def _act_with_value(self, value, *_, **__):
+    def handle_values(self, model_instance, values, stage) -> Union[Exception, None]:
+        value = values.get(self._field_key, inspect._empty)
+
+        if value == inspect._empty:
+            return
+
         union_types = self._types
-        if not isinstance(value, union_types):
-            raise TypeError(f'{value} is not one of possible types {union_types}')
-        return value
+        return type_validation(value, union_types)
 
     def accept_operator(self, operator_visitor: ImplementationsOperatorVisitor, context: Any):
         operator_visitor.operate_union_annotation(self, context)
 
 
 @annotation_mapper(List)
-class TypeListAnnotation(GenericAnnotation):
+class ListAnnotation(GenericAnnotation):
     __label__ = 'list'
     __prior_handler__ = UnionAnnotation
 
-    def _act_with_value(self, value, *_, **__):
-        list_types = self._types
+    def handle_values(self, model_instance, values, stage) -> Union[Exception, None]:
+        value = values.get(self._field_key, inspect._empty)
+
+        if value == inspect._empty:
+            return
+
+        list_type = self._types
+        unmatched_values = []
+
         for val in value:
-            if not isinstance(val, list_types):
-                raise TypeError(f'{val} is not one of possible types {list_types}')
-        return value
+            if not isinstance(val, list_type):
+                unmatched_values.append(value)
+
+        if unmatched_values:
+            return TypeError(f'the following values are not of type {list_type} -> {unmatched_values}')
+
+        return
 
     def accept_operator(self, operator_visitor: ImplementationsOperatorVisitor, context: Any):
         operator_visitor.operate_list_annotation(self, context)
@@ -65,14 +83,26 @@ class TypeListAnnotation(GenericAnnotation):
 @annotation_mapper(Dict)
 class DictAnnotation(GenericAnnotation):
     __label__ = 'dict'
-    __prior_handler__ = TypeListAnnotation
+    __prior_handler__ = ListAnnotation
 
-    def _act_with_value(self, value, *_, **__):
+    def handle_values(self, model_instance, values, stage) -> Union[Exception, None]:
+        value = values.get(self._field_key, inspect._empty)
+
+        if value == inspect._empty:
+            return
+
         key_type, value_type = self._types
+        unmatched_pairs = {}
+
         for key, val in value.items():
             if not isinstance(key, key_type) or not isinstance(val, value_type):
+                unmatched_pairs[key] = val
                 raise TypeError(f'{value} is not a dict of {key_type} key and {value_type} value -> {key}, {val}')
-        return value
+
+        if unmatched_pairs:
+            return TypeError(f'{self._field_key} is not a dict of {key_type} key and {value_type} value -> {unmatched_pairs}')
+
+        return
 
     def accept_operator(self, operator_visitor: ImplementationsOperatorVisitor, context: Any):
         operator_visitor.operate_dict_annotation(self, context)

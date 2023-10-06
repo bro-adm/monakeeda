@@ -1,4 +1,4 @@
-from typing import Any
+from typing import Any, Union
 
 from monakeeda.base import FieldParameter, Rules, Field
 from .exceptions import AbstractFieldFoundError
@@ -14,11 +14,11 @@ class AbstractParameter(FieldParameter):
     __rules__ = Rules([BasicParameterValueTypeValidationRule(bool)])
     __prior_handler__ = Abstract
 
-    def handle_values(self, model_instance, values, stage) -> dict:
+    def handle_values(self, model_instance, values, stage) -> Union[Exception, None]:
         if self.param_val:
-            raise AbstractFieldFoundError(self._field_key)
+            return AbstractFieldFoundError(self._field_key)
 
-        return values
+        return
 
     def accept_operator(self, operator_visitor: ImplementationsOperatorVisitor, context: Any):
         operator_visitor.operate_abstract_field_parameter(self, context)

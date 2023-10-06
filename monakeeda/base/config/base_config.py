@@ -1,5 +1,5 @@
 from abc import ABC
-from typing import Any
+from typing import Any, Union
 
 from monakeeda.consts import NamespacesConsts
 from ..component import ConfigurableComponent, Parameter
@@ -27,8 +27,8 @@ class Config(ConfigurableComponent[ConfigParameter]):
     def build(self, monkey_cls, bases, monkey_attrs):
         pass
 
-    def handle_values(self, model_instance, values, stage) -> dict:
-        return {}
+    def handle_values(self, model_instance, values, stage) -> Union[Exception, None]:
+        pass
 
     def accept_operator(self, operator_visitor: OperatorVisitor, context: Any):
         operator_visitor.operate_config(self, context)

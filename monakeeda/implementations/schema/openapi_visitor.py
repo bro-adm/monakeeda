@@ -1,7 +1,10 @@
-from monakeeda.base import Field, Config, ModelAnnotation
+from typing import List, Dict
+
+from monakeeda.base import Field, Config, ModelAnnotation, BaseModel
 from ..implemenations_base_operator_visitor import ImplementationsOperatorVisitor
 from ..abstract import Abstract, AbstractParameter
 from ..alias import Alias, AliasGenerator
+from ..input import NoInputFieldParameter
 from ..cast import Cast
 from ..const import Const, AllowMutation
 from ..creators import CreateFrom
@@ -9,7 +12,28 @@ from ..default import DefaultFieldParameter, DefaultFactoryFieldParameter
 from ..extras import ExtrasParameter
 from ..valid_values import ValidValues
 from ..validators import Validator
-from ..basic_annotations import ObjectAnnotation, BasicTypeAnnotation, UnionAnnotation, TypeListAnnotation
+from ..basic_annotations import ObjectAnnotation, BasicTypeAnnotation, UnionAnnotation, ListAnnotation, DictAnnotation
+
+
+class OpenAPIPropertySpec(BaseModel):
+    type: str = '1'
+    format: str = '1'
+    default: str = '1'
+    description: str = '1'
+    enum: List[str] = []
+    example: str = '1'
+    minimum: str = '1'
+    maximum: str = '1'
+    ref: str = Field(alias="$ref", default='1')
+
+
+class OpenAPIObjectSpec(BaseModel):
+    type: Const[str] = Field(default='object', no_input=True)
+    required: List[str]
+    properties: Dict[str, OpenAPIPropertySpec]
+
+
+# OpenAPIObjectSpec(required=[], properties={'a': 1, 'b': OpenAPIPropertySpec()})
 
 
 class OpenAPIOperatorVisitor(ImplementationsOperatorVisitor[dict]):
@@ -72,5 +96,11 @@ class OpenAPIOperatorVisitor(ImplementationsOperatorVisitor[dict]):
     def operate_union_annotation(self, annotation: UnionAnnotation, context: dict):
         pass
 
-    def operate_list_annotation(self, annotation: TypeListAnnotation, context: dict):
+    def operate_list_annotation(self, annotation: ListAnnotation, context: dict):
+        pass
+
+    def operate_dict_annotation(self, annotation: DictAnnotation, context: dict):
+        pass
+
+    def operate_no_input_field_parameter(self, parameter: NoInputFieldParameter, context: dict):
         pass

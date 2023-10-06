@@ -1,13 +1,8 @@
 from abc import ABC, abstractmethod
-from enum import Enum
-
-
-class Stages(Enum):
-    INIT = 'init'
-    UPDATE = 'update'
+from typing import Union
 
 
 class ValuesHandler(ABC):
     @abstractmethod
-    def handle_values(self, model_instance, values, stage) -> dict:
+    def handle_values(self, model_instance, values, stage) -> Union[Exception, None]:
         pass

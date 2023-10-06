@@ -11,9 +11,6 @@ class Parameter(Component, ABC):
     def __init__(self, param_val):
         self.param_val = param_val
 
-    def __str__(self):
-        return self.__key__
-
 
 TParameter = TypeVar('TParameter', bound=Type[Parameter])
 

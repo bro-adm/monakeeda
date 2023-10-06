@@ -1,4 +1,4 @@
-from typing import Any
+from typing import Any, Union
 
 from monakeeda.base import ConfigParameter, Config, Rules, get_parameter_component_by_label
 from monakeeda.consts import NamespacesConsts, FieldConsts
@@ -14,8 +14,8 @@ class AliasGenerator(ConfigParameter):
     __prior_handler__ = AbstractParameter
     __rules__ = Rules([CallableParameterSignatureValidationRule(1), AllModelFieldsAcknowledgeParameterRule('alias')])
 
-    def handle_values(self, model_instance, values, stage) -> dict:
-        return values
+    def handle_values(self, model_instance, values, stage) -> Union[Exception, None]:
+        return
 
     def build(self, monkey_cls, bases, monkey_attrs):
         super().build(monkey_cls, bases, monkey_attrs)
