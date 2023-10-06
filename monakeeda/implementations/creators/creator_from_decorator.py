@@ -26,7 +26,9 @@ class CreateFrom(BaseCreatorDecorator):
                     monkey_attrs[NamespacesConsts.STRUCT][NamespacesConsts.FIELDS].setdefault(key, {}).setdefault(FieldConsts.DEPENDENTS, []).append(self.wanted_data_member)
         else:
             for key in self.from_keys:
-                monkey_attrs[NamespacesConsts.STRUCT][NamespacesConsts.FIELDS].setdefault(key, {}).setdefault(FieldConsts.DEPENDENTS, []).append(self.wanted_data_member)
+                monkey_attrs[NamespacesConsts.STRUCT][NamespacesConsts.FIELDS].setdefault(key, {})
+                monkey_attrs[NamespacesConsts.STRUCT][NamespacesConsts.FIELDS][key].setdefault(FieldConsts.DEPENDENTS, []).append(self.wanted_data_member)
+                monkey_attrs[NamespacesConsts.STRUCT][NamespacesConsts.FIELDS][key][FieldConsts.REQUIRED] = True
 
     def handle_values(self, model_instance, values, stage) -> Union[Exception, None]:
         fields_info = getattr(model_instance, NamespacesConsts.STRUCT)[NamespacesConsts.FIELDS]

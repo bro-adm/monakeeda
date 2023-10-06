@@ -1,6 +1,7 @@
 from monakeeda.base import BaseModel
 from monakeeda.consts import NamespacesConsts
-from .schema import OpenAPIOperatorVisitor
+from .base import Config
+from .implementations import OpenAPIOperatorVisitor
 
 
 class MonkeyModel(BaseModel):
@@ -11,5 +12,5 @@ class MonkeyModel(BaseModel):
 
         return model_schema
 
-    # class Config(BaseModel.Config):
-    #     validate_missing_fields = True
+    class Config(Config):
+        validate_missing_fields = True

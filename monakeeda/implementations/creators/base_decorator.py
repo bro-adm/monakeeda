@@ -12,4 +12,4 @@ class BaseCreatorDecorator(BaseDecorator, ABC):
 
     def build(self, monkey_cls, bases, monkey_attrs):
         # setdefault is in use because this can be set on a none schema parameter
-        monkey_attrs[NamespacesConsts.STRUCT][NamespacesConsts.FIELDS].setdefault(self.wanted_data_member, {}).update({FieldConsts.CREATOR: self, FieldConsts.DEPENDENCIES: []})
+        monkey_attrs[NamespacesConsts.STRUCT][NamespacesConsts.FIELDS].setdefault(self.wanted_data_member, {}).update({FieldConsts.CREATOR: self, FieldConsts.DEPENDENCIES: [], FieldConsts.REQUIRED: False})

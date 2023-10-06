@@ -2,7 +2,7 @@ import inspect
 from typing import Generic, T, Any, Union
 
 from monakeeda.base import GenericAnnotation
-from ..default import DefaultFactoryFieldParameter
+from ..missing import ValidateMissingFieldsConfigParameter
 from ..implemenations_base_operator_visitor import ImplementationsOperatorVisitor
 
 
@@ -14,7 +14,7 @@ class CastingError(ValueError):
 
 class Cast(GenericAnnotation, Generic[T]):
     __label__ = 'cast'
-    __prior_handler__ = DefaultFactoryFieldParameter
+    __prior_handler__ = ValidateMissingFieldsConfigParameter
 
     def handle_values(self, model_instance, values, stage) -> Union[Exception, None]:
         cast_to = self._types[0]

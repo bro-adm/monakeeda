@@ -20,7 +20,7 @@ class Field(ConfigurableComponent[FieldParameter]):
     __label__ = 'field'
 
     def build(self, monkey_cls, bases, monkey_attrs):
-        pass
+        monkey_attrs[NamespacesConsts.STRUCT][NamespacesConsts.FIELDS][self._field_key][FieldConsts.REQUIRED] = True
 
     def handle_values(self, model_instance, values, stage) -> Union[Exception, None]:
         pass
@@ -40,7 +40,3 @@ class NoField(Field, copy_parameter_components=False):
     def __init__(self):
         # hard set: no params available for initialization
         super(NoField, self).__init__()
-
-    def build(self, monkey_cls, bases, monkey_attrs):
-        super(NoField, self).build(monkey_cls, bases, monkey_attrs)
-        monkey_attrs[NamespacesConsts.STRUCT][NamespacesConsts.FIELDS][self._field_key][FieldConsts.REQUIRED] = True
