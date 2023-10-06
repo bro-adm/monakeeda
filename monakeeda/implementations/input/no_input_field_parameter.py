@@ -17,7 +17,8 @@ class NoInputFieldParameter(BaseInputFieldParameter):
 
     def handle_values(self, model_instance, values, stage) -> dict:
         if stage == Stages.INIT and self.param_val:
-            values.pop(self._field_key, inspect._empty)
+            values.setdefault(self._field_key, inspect._empty)
+            values.pop(self._field_key)  # in order to remove the extra created field
 
         return {}
 
