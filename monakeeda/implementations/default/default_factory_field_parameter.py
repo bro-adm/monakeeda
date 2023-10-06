@@ -15,7 +15,7 @@ class DefaultFactoryFieldParameter(BaseDefaultFieldParameter):
 
     def handle_values(self, model_instance, values, stage) -> dict:
         if stage == Stages.INIT:
-            return {self._field_key: self.param_val()}
+            return {self._field_key: values.get(self._field_key, self.param_val())}
 
         return {}
 

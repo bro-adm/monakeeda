@@ -72,3 +72,7 @@ class ImplementationsOperatorVisitor(OperatorVisitor[TOperatorContext], ABC, Gen
     @abstractmethod
     def operate_list_annotation(self, annotation: 'TypeListAnnotation', context: TOperatorContext):
         pass
+
+    @abstractmethod
+    def operate_no_input_field_parameter(self, parameter: 'NoInputFieldParameter', context: TOperatorContext):
+        pass

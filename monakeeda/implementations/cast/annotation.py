@@ -2,7 +2,7 @@ from typing import Generic, T, Any
 
 from monakeeda.base import GenericAnnotation
 from monakeeda.consts import FieldConsts
-from ..alias import Alias
+from ..default import DefaultFactoryFieldParameter
 from ..implemenations_base_operator_visitor import ImplementationsOperatorVisitor
 
 
@@ -14,7 +14,7 @@ class CastingError(ValueError):
 
 class Cast(GenericAnnotation, Generic[T]):
     __label__ = 'cast'
-    __prior_handler__ = Alias
+    __prior_handler__ = DefaultFactoryFieldParameter
 
     def _act_with_value(self, value, cls, current_field_info, stage) -> Any:
         cast_to = self._types[0]
