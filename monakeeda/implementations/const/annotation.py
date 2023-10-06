@@ -3,13 +3,13 @@ from typing import Generic, T, Any
 from monakeeda.base import GenericAnnotation, Stages
 from monakeeda.consts import FieldConsts
 from .exceptions import ConstError
-from ..cast import Cast
+from ..basic_annotations import ObjectAnnotation
 from ..implemenations_base_operator_visitor import ImplementationsOperatorVisitor
 
 
 class Const(GenericAnnotation, Generic[T]):
     __label__ = 'const'
-    __prior_handler__ = Cast
+    __prior_handler__ = ObjectAnnotation
 
     def _act_with_value(self, value, cls, current_field_info, stage) -> Any:
         const_type = self._types[0]
