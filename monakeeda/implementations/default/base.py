@@ -9,4 +9,4 @@ class BaseDefaultFieldParameter(FieldParameter, ABC):
 
     def build(self, monkey_cls, bases, monkey_attrs):
         super(BaseDefaultFieldParameter, self).build(monkey_cls, bases, monkey_attrs)
-        monkey_cls.__map__[NamespacesConsts.FIELDS][self._field_key][FieldConsts.REQUIRED] = False
+        monkey_attrs[NamespacesConsts.STRUCT][NamespacesConsts.FIELDS][self._field_key][FieldConsts.REQUIRED] = False

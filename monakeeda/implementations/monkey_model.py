@@ -1,12 +1,12 @@
 from monakeeda.base import BaseModel
 from monakeeda.consts import NamespacesConsts
-from .schema import SchemaOperatorVisitor
+from .schema import OpenAPIOperatorVisitor
 
 
 class MonkeyModel(BaseModel):
     @classmethod
-    def schema(cls) -> dict:
-        model_schema = cls.__map__[NamespacesConsts.FIELDS].copy()
-        cls._operate(cls, SchemaOperatorVisitor.__type__, model_schema)
+    def openapi(cls) -> dict:
+        model_schema = getattr(cls, NamespacesConsts.FIELDS).copy()
+        cls._operate(cls, OpenAPIOperatorVisitor.__type__, model_schema)
 
         return model_schema

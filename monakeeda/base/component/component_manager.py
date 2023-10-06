@@ -27,4 +27,4 @@ class ComponentManager(MonkeyBuilder, ABC):
         self._set_curr_cls(monkey_cls, bases, monkey_attrs)
 
         components = self._components(monkey_cls)
-        monkey_cls.__map__[NamespacesConsts.COMPONENTS].extend(components)
+        monkey_attrs[NamespacesConsts.COMPONENTS].extend(components)

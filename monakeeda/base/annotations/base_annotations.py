@@ -24,7 +24,7 @@ class Annotation(Component, ABC):
         Until that changes it is expected logically to pass the single key,val in the values dict to each run.
         """
 
-        field_info = model_instance.__map__[NamespacesConsts.FIELDS][self._field_key]
+        field_info = getattr(model_instance, NamespacesConsts.STRUCT)[NamespacesConsts.FIELDS][self._field_key]
         value = values[self._field_key]
 
         if stage == Stages.UPDATE:
@@ -33,8 +33,8 @@ class Annotation(Component, ABC):
         return {self._field_key: self._act_with_value(value, model_instance, field_info, stage)}
 
     def build(self, monkey_cls, bases, monkey_attrs):
-        monkey_cls.__map__[NamespacesConsts.FIELDS][self._field_key][FieldConsts.TYPE] = self.base_type
-        monkey_cls.__map__[NamespacesConsts.FIELDS][self._field_key][FieldConsts.ANNOTATION] = self
+        monkey_attrs[NamespacesConsts.STRUCT][NamespacesConsts.FIELDS][self._field_key][FieldConsts.TYPE] = self.base_type
+        monkey_attrs[NamespacesConsts.STRUCT][NamespacesConsts.FIELDS][self._field_key][FieldConsts.ANNOTATION] = self
 
     @abstractmethod
     def _act_with_value(self, value, cls, current_field_info, stage) -> Any:

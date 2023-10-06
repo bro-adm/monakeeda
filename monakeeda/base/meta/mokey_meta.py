@@ -1,5 +1,4 @@
 from abc import ABCMeta
-from collections import OrderedDict
 
 from monakeeda.consts import NamespacesConsts
 from ..component import RulesException, organize_components
@@ -7,8 +6,9 @@ from ..component import RulesException, organize_components
 
 class MonkeyMeta(ABCMeta):
     def __new__(mcs, name, bases, attrs, **_):
-        attrs.setdefault(NamespacesConsts.MAP, {NamespacesConsts.COMPONENTS: [], NamespacesConsts.BUILD: {}, NamespacesConsts.FIELDS: OrderedDict()})
-        attrs[NamespacesConsts.MAP][NamespacesConsts.BUILD][NamespacesConsts.EXCEPTIONS] = RulesException(name, [])
+        attrs.setdefault(NamespacesConsts.STRUCT, {})
+        attrs.setdefault(NamespacesConsts.COMPONENTS, [])
+        attrs[NamespacesConsts.EXCEPTIONS] = RulesException(name, [])
 
         cls = super(MonkeyMeta, mcs).__new__(mcs, name, bases, attrs)
         return cls
@@ -30,7 +30,7 @@ class MonkeyMeta(ABCMeta):
         for component_manager in cls.__component_managers__:
             component_manager.build(cls, bases, attrs)
 
-        model_components = cls.__map__[NamespacesConsts.COMPONENTS]
+        model_components = attrs[NamespacesConsts.COMPONENTS]
         cls.__organized_components__ = organize_components(model_components)
 
         # print(name)
@@ -44,7 +44,7 @@ class MonkeyMeta(ABCMeta):
             for component in components:
                 component.validate(cls, bases, attrs)
 
-        rules_exception: RulesException = cls.__map__[NamespacesConsts.BUILD][NamespacesConsts.EXCEPTIONS]
+        rules_exception: RulesException = attrs[NamespacesConsts.EXCEPTIONS]
         if not rules_exception.is_empty():
             raise rules_exception
 

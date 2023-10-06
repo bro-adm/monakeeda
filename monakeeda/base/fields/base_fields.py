@@ -13,7 +13,7 @@ class FieldParameter(Parameter, ABC):
         super().__init__(param_val)
 
     def build(self, monkey_cls, bases, monkey_attrs):
-        monkey_cls.__map__[NamespacesConsts.FIELDS][self._field_key][self.__key__] = self.param_val
+        monkey_attrs[NamespacesConsts.STRUCT][NamespacesConsts.FIELDS][self._field_key][self.__key__] = self.param_val
 
 
 class Field(ConfigurableComponent[FieldParameter]):
@@ -42,4 +42,4 @@ class NoField(Field, copy_parameter_components=False):
 
     def build(self, monkey_cls, bases, monkey_attrs):
         super(NoField, self).build(monkey_cls, bases, monkey_attrs)
-        monkey_cls.__map__[NamespacesConsts.FIELDS][self._field_key][FieldConsts.REQUIRED] = True
+        monkey_attrs[NamespacesConsts.STRUCT][NamespacesConsts.FIELDS][self._field_key][FieldConsts.REQUIRED] = True

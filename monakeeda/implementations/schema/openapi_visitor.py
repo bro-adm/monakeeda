@@ -5,15 +5,15 @@ from ..alias import Alias, AliasGenerator
 from ..cast import Cast
 from ..const import Const, AllowMutation
 from ..creators import CreateFrom
-from ..default import DefaultParameter, DefaultFactory
+from ..default import DefaultFieldParameter, DefaultFactoryFieldParameter
 from ..extras import ExtrasParameter
 from ..valid_values import ValidValues
 from ..validators import Validator
 from ..basic_annotations import ObjectAnnotation, BasicTypeAnnotation, UnionAnnotation, TypeListAnnotation
 
 
-class SchemaOperatorVisitor(ImplementationsOperatorVisitor[dict]):
-    __type__ = 'schema'
+class OpenAPIOperatorVisitor(ImplementationsOperatorVisitor[dict]):
+    __type__ = 'openapi'
 
     def operate_field(self, field: Field, context: dict):
         pass
@@ -48,10 +48,10 @@ class SchemaOperatorVisitor(ImplementationsOperatorVisitor[dict]):
     def operate_create_from_decorator(self, decorator: CreateFrom, context: dict):
         pass
 
-    def operate_default_field_parameter(self, parameter: DefaultParameter, context: dict):
+    def operate_default_field_parameter(self, parameter: DefaultFieldParameter, context: dict):
         pass
 
-    def operate_default_factory_field_parameter(self, parameter: DefaultFactory, context: dict):
+    def operate_default_factory_field_parameter(self, parameter: DefaultFactoryFieldParameter, context: dict):
         pass
 
     def operate_extras_config_parameter(self, parameter: ExtrasParameter, context: dict):

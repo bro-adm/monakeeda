@@ -1,7 +1,7 @@
 from typing import Union, Any
 
 from monakeeda.utils import get_wanted_params, wrap_in_list
-from monakeeda.consts import NamespacesConsts
+from monakeeda.consts import NamespacesConsts, FieldConsts
 from .base_decorator import BaseCreatorDecorator
 from ..validators import Validator
 from ..implemenations_base_operator_visitor import ImplementationsOperatorVisitor
@@ -17,15 +17,16 @@ class CreateFrom(BaseCreatorDecorator):
     def build(self, monkey_cls, bases, monkey_attrs):
         super(CreateFrom, self).build(monkey_cls, bases, monkey_attrs)
 
-        monkey_cls.__map__[NamespacesConsts.FIELDS][self.wanted_data_member][NamespacesConsts.DEPENDENCIES].extend(self.from_keys)
+        monkey_attrs[NamespacesConsts.STRUCT][NamespacesConsts.FIELDS][self.wanted_data_member][FieldConsts.DEPENDENCIES].extend(self.from_keys)
 
+        # dependency key-values can be none schema parameters - therefore setdeafult is in use
         if self.from_keys[0] == '*':
-            for key in monkey_cls.__map__[NamespacesConsts.FIELDS]:
+            for key in monkey_attrs[NamespacesConsts.STRUCT][NamespacesConsts.FIELDS]:
                 if key != self.wanted_data_member:
-                    monkey_cls.__map__[NamespacesConsts.FIELDS].setdefault(key, {}).setdefault(NamespacesConsts.DEPENDENTS, []).append(self.wanted_data_member)
+                    monkey_attrs[NamespacesConsts.STRUCT][NamespacesConsts.FIELDS].setdefault(key, {}).setdefault(FieldConsts.DEPENDENTS, []).append(self.wanted_data_member)
         else:
             for key in self.from_keys:
-                monkey_cls.__map__[NamespacesConsts.FIELDS].setdefault(key, {}).setdefault(NamespacesConsts.DEPENDENTS, []).append(self.wanted_data_member)
+                monkey_attrs[NamespacesConsts.STRUCT][NamespacesConsts.FIELDS].setdefault(key, {}).setdefault(FieldConsts.DEPENDENTS, []).append(self.wanted_data_member)
 
     def wrapper(self, cls, kwargs, config, wanted_fields_info):
         if self.from_keys[0] == '*':

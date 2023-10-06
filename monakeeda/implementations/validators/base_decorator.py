@@ -1,7 +1,7 @@
 from abc import ABC
 
 from monakeeda.base import BaseDecorator
-from monakeeda.consts import NamespacesConsts
+from monakeeda.consts import NamespacesConsts, FieldConsts
 
 
 class BaseValidatorDecorator(BaseDecorator, ABC):
@@ -11,12 +11,15 @@ class BaseValidatorDecorator(BaseDecorator, ABC):
         self.data_members = data_members
 
     def handle_values(self, model_instance, values, stage) -> dict:
-        fields_info = model_instance.__map__[NamespacesConsts.FIELDS]
+        fields_info = getattr(model_instance, NamespacesConsts.STRUCT)[NamespacesConsts.FIELDS]
+        config = getattr(model_instance, NamespacesConsts.STRUCT)[NamespacesConsts.CONFIG]
+
         for dtm in self.data_members:
-            self.wrapper(model_instance, values, model_instance.__map__[NamespacesConsts.BUILD][NamespacesConsts.CONFIG], fields_info[dtm])
+            self.wrapper(model_instance, values, config, fields_info[dtm])
 
         return {}
 
     def build(self, monkey_cls, bases, monkey_attrs):
         for dtm in self.data_members:
-            monkey_cls.__map__[NamespacesConsts.FIELDS].setdefault(dtm, {}).setdefault(NamespacesConsts.VALIDATORS, []).append(self)
+            # setdefault is in use because this can be set on a none schema parameter
+            monkey_attrs[NamespacesConsts.STRUCT][NamespacesConsts.FIELDS].setdefault(dtm, {}).setdefault(FieldConsts.VALIDATORS, []).append(self)

@@ -1,5 +1,7 @@
 from typing import Any
 
+from monakeeda.consts import NamespacesConsts
+from monakeeda.utils import deep_update
 from ..component import Stages
 from ..fields import FieldManager
 from ..annotations import AnnotationManager, annotation_mapping, ModelAnnotation
@@ -7,7 +9,6 @@ from ..decorators import DecoratorManager
 from ..config import ConfigManager, Config
 from ..meta import MonkeyMeta
 from ..operator import all_operators
-from ...utils import deep_update
 
 component_managers = [FieldManager(), AnnotationManager(annotation_mapping), DecoratorManager(), ConfigManager()]
 
@@ -18,6 +19,10 @@ class BaseModel(metaclass=MonkeyMeta, component_managers=component_managers, ann
         super().__init_subclass__()
         # can't put the start of __map__ here because the set_cls_namespace happens before in the meta cls
         cls.__annotation_mapping__[cls] = ModelAnnotation
+
+    @classmethod
+    def struct(cls) -> dict:
+        return getattr(cls, NamespacesConsts.STRUCT).copy()
 
     def _handle_values(self, values: dict, stage):
         for component_type, components in self.__organized_components__.items():

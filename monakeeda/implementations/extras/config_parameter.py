@@ -2,7 +2,7 @@ from enum import Enum
 from typing import Any
 
 from monakeeda.base import ConfigParameter, Config, Rules
-from monakeeda.consts import NamespacesConsts
+from monakeeda.consts import NamespacesConsts, FieldConsts
 from ..rules import BasicParameterValueTypeValidationRule
 from ..creators import CreateFrom
 from ..implemenations_base_operator_visitor import ImplementationsOperatorVisitor
@@ -11,6 +11,7 @@ from ..implemenations_base_operator_visitor import ImplementationsOperatorVisito
 class Extras(Enum):
     ALLOW = 'allow'
     IGNORE = 'ignore'
+    KEEP_USED = 'keep_used'
 
 
 @Config.parameter
@@ -21,21 +22,23 @@ class ExtrasParameter(ConfigParameter):
     __prior_handler__ = CreateFrom
 
     def handle_values(self, model_instance, values, stage) -> dict:
-        if self.param_val == Extras.IGNORE:
-            acknowledged_fields = model_instance.__map__[NamespacesConsts.FIELDS_KEYS]
+        if self.param_val != Extras.ALLOW:
+            fields = getattr(model_instance, NamespacesConsts.STRUCT)[NamespacesConsts.FIELDS]
+
+            if self.param_val == Extras.IGNORE:
+                # fields with no Field attr are not schema fields and in this if they are ignored
+                fields = dict(filter(lambda tup: tup[1].get(FieldConsts.FIELD, False), fields.items()))
+
             unacknowledged = []
 
             for key in values:
-                if key not in acknowledged_fields:
+                if key not in fields:
                     unacknowledged.append(key)
 
             for key in unacknowledged:
                 values.pop(key)
 
         return {}
-
-    def build(self, monkey_cls, bases, monkey_attrs):
-        pass
 
     def accept_operator(self, operator_visitor: ImplementationsOperatorVisitor, context: Any):
         operator_visitor.operate_extras_config_parameter(self, context)

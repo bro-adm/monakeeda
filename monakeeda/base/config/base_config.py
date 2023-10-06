@@ -1,6 +1,7 @@
 from abc import ABC
 from typing import Any
 
+from monakeeda.consts import NamespacesConsts
 from ..component import ConfigurableComponent, Parameter
 from ..fields import Field
 from ..operator import OperatorVisitor
@@ -11,7 +12,9 @@ class ConfigParameter(Parameter, ABC):
     Just a class for simple differentiating between parameters implementations
     """
 
-    pass
+    def build(self, monkey_cls, bases, monkey_attrs):
+        monkey_attrs[NamespacesConsts.STRUCT][NamespacesConsts.CONFIG][self.__key__] = self.param_val
+
 
 
 class Config(ConfigurableComponent[ConfigParameter]):

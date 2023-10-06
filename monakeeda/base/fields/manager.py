@@ -1,8 +1,9 @@
 import inspect
+from collections import OrderedDict
 from typing import List
 
 from monakeeda.consts import FieldConsts, NamespacesConsts, PythonNamingConsts
-from monakeeda.utils import deep_update, get_ordered_set_list
+from monakeeda.utils import deep_update
 from .base_fields import Field, NoField
 from ..component import ComponentManager
 
@@ -15,7 +16,7 @@ class FieldManager(ComponentManager):
                 filter(
                     lambda x: True if x else False,
                     [field_info.get(FieldConsts.FIELD, None) for field_info in
-                     monkey_cls.__map__[NamespacesConsts.FIELDS].values()]
+                     getattr(monkey_cls, NamespacesConsts.STRUCT)[NamespacesConsts.FIELDS].values()]
                 )
             )
 
@@ -29,10 +30,9 @@ class FieldManager(ComponentManager):
 
     def _set_curr_cls(self, monkey_cls, bases, monkey_attrs):
         annotations: dict = monkey_attrs.get(PythonNamingConsts.annotations, {})
-        monkey_cls.__map__[NamespacesConsts.FIELDS_KEYS] = get_ordered_set_list(annotations.keys())
 
         for field_key in annotations:
-            monkey_cls.__map__[NamespacesConsts.FIELDS].setdefault(field_key, {})
+            monkey_attrs[NamespacesConsts.STRUCT][NamespacesConsts.FIELDS].setdefault(field_key, {})
             value = monkey_attrs.get(field_key, inspect._empty)
 
             if not isinstance(value, Field):
@@ -46,13 +46,12 @@ class FieldManager(ComponentManager):
                 param._field_key = field_key
 
             monkey_attrs[field_key] = value
-            monkey_cls.__map__[NamespacesConsts.FIELDS][field_key][FieldConsts.FIELD] = value
+            monkey_attrs[NamespacesConsts.STRUCT][NamespacesConsts.FIELDS][field_key][FieldConsts.FIELD] = value
 
     def _set_by_base(self, monkey_cls, base, attrs):
-        monkey_cls.__map__[NamespacesConsts.FIELDS_KEYS].extend(base.__map__[NamespacesConsts.FIELDS_KEYS])
-        base_fields_info = base.__map__[NamespacesConsts.FIELDS]
-        deep_update(monkey_cls.__map__[NamespacesConsts.FIELDS], base_fields_info)
+        base_fields_info = getattr(base, NamespacesConsts.STRUCT)[NamespacesConsts.FIELDS]
+        deep_update(attrs[NamespacesConsts.STRUCT][NamespacesConsts.FIELDS], base_fields_info)
 
     def build(self, monkey_cls, bases, monkey_attrs):
-        monkey_cls.__map__.setdefault(NamespacesConsts.FIELDS_KEYS, [])
+        monkey_attrs[NamespacesConsts.STRUCT].setdefault(NamespacesConsts.FIELDS, OrderedDict())
         super(FieldManager, self).build(monkey_cls, bases, monkey_attrs)

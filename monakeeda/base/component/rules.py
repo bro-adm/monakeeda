@@ -68,7 +68,7 @@ class NoComponentDependenciesFailedRule(Rule):
     def validate(self, component: "Component", monkey_cls) -> Union[RuleException, None]:
         failed_dependencies = []
 
-        for exception in monkey_cls.__map__[NamespacesConsts.BUILD][NamespacesConsts.EXCEPTIONS].exceptions:
+        for exception in getattr(monkey_cls, NamespacesConsts.EXCEPTIONS).exceptions:
             if exception.component_type in component.__dependencies__:
                 failed_dependencies.append(exception.component_type)
 

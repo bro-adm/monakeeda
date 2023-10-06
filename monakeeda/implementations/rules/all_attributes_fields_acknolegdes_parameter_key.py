@@ -21,7 +21,7 @@ class AllModelFieldsAcknowledgeParameterRule(Rule):
     def validate(self, component: ConfigParameter, monkey_cls) -> Union[RuleException, None]:
         unacknowledged_fields = {}
 
-        for field_key, field_info in monkey_cls.__map__[NamespacesConsts.FIELDS].items():
+        for field_key, field_info in getattr(monkey_cls, NamespacesConsts.STRUCT)[NamespacesConsts.FIELDS].items():
             field = field_info[FieldConsts.FIELD]
 
             if self.key not in [field_parameter.__key__ for field_parameter in field.__parameter_components__]:

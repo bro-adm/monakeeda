@@ -1,24 +1,17 @@
 class PythonNamingConsts:
     annotations = '__annotations__'
+    CONFIG = 'Config'
 
 
 class NamespacesConsts:
-    COMPONENTS = 'components'
-    BUILD = 'build'
-    EXCEPTIONS = 'exceptions'
-    DECORATORS = 'decorators'
-    VALIDATORS = 'validators'
-    CREATOR = 'creator'
-    DEPENDENCIES = 'dependencies'
-    DEPENDENTS = 'dependents'
-    FIELDS = 'fields_info'
-    FIELDS_KEYS = 'main_field_keys'
+    COMPONENTS = '__monkey_components__'
+    STRUCT = '__monkey_struct__'
+    EXCEPTIONS = '__monkey_exceptions__'
+
+    FIELDS = 'fields'
     ANNOTATIONS = 'annotations'
-
-    CONFIG = '__config__'
-    MAP = '__map__'
-
-    DECORATED_WITH = '__decorated_with__'  # model methods decorators instances space
+    DECORATORS = 'decorators'
+    CONFIG = 'config'
 
 
 class FieldConsts:
@@ -26,8 +19,16 @@ class FieldConsts:
     REQUIRED = 'required'
     TYPE = 'type'
     ANNOTATION = 'annotation_cls'
+    VALIDATORS = 'validators'
+    CREATOR = 'creator'
+    DEPENDENTS = 'dependents'
+    DEPENDENCIES = 'dependencies'
     VALUE = 'value'
 
 
 class ConfigConsts:
-    CONFIG = 'Config'
+    OBJECT = 'object'
+
+
+class DecoratorConsts:
+    DECORATED_WITH = '__decorated_with__'  # model methods decorators instances space

@@ -18,7 +18,9 @@ class AliasGenerator(ConfigParameter):
         return values
 
     def build(self, monkey_cls, bases, monkey_attrs):
-        for field_key, field_info in monkey_cls.__map__[NamespacesConsts.FIELDS].items():
+        super().build(monkey_cls, bases, monkey_attrs)
+
+        for field_key, field_info in monkey_attrs[NamespacesConsts.STRUCT][NamespacesConsts.FIELDS].items():
             field = field_info[FieldConsts.FIELD]
             alias_parameter_type = get_parameter_component_by_label(field, 'alias')
 

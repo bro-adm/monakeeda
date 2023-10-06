@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-from monakeeda.consts import NamespacesConsts
+from monakeeda.consts import DecoratorConsts
 from monakeeda.utils import set_default_attr_if_does_not_exist
 from ..component import Component
 
@@ -45,7 +45,7 @@ class BaseDecorator(Component, ABC):
 
     def _set_func_landscape(self):
         # Adds the decorator class instance to the function attributes for further usage in the DecoratorMainComponent
-        getattr(self.func, NamespacesConsts.DECORATED_WITH).append(self)
+        getattr(self.func, DecoratorConsts.DECORATED_WITH).append(self)
 
     def __call__(self, func):
         """
@@ -53,7 +53,7 @@ class BaseDecorator(Component, ABC):
         """
 
         self.func = func
-        set_default_attr_if_does_not_exist(self.func, NamespacesConsts.DECORATED_WITH, [])
+        set_default_attr_if_does_not_exist(self.func, DecoratorConsts.DECORATED_WITH, [])
         self._set_func_landscape()
 
         return func
