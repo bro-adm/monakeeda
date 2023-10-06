@@ -35,6 +35,7 @@ class NoField(Field, copy_parameter_components=False):
     meaning all the parameters available to it will be available here which is important for cases parameter
     initializations are added by code and not user like alias in AliasGenerator.
     """
+    __prior_handler__ = Field
 
     def __init__(self):
         # hard set: no params available for initialization

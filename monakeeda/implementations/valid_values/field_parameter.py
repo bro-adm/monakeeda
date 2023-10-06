@@ -2,7 +2,7 @@ from typing import Any
 
 from monakeeda.base import FieldParameter, Rules, Field
 from ..rules import BasicParameterValueTypeValidationRule
-from ..const import AllowMutation
+from ..basic_annotations import DictAnnotation
 from ..implemenations_base_operator_visitor import ImplementationsOperatorVisitor
 
 
@@ -17,7 +17,7 @@ class ValidValues(FieldParameter):
     __key__ = 'valid_values'
     __label__ = 'specific_value'
     __rules__ = Rules([BasicParameterValueTypeValidationRule((list, tuple, set))])
-    __prior_handler__ = AllowMutation
+    __prior_handler__ = DictAnnotation
 
     def handle_values(self, model_instance, values, stage) -> dict:
         val = values[self._field_key]

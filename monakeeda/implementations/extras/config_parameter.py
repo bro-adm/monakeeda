@@ -4,7 +4,7 @@ from typing import Any
 from monakeeda.base import ConfigParameter, Config, Rules
 from monakeeda.consts import NamespacesConsts, FieldConsts
 from ..rules import BasicParameterValueTypeValidationRule
-from ..creators import CreateFrom
+from ..const import AllowMutation
 from ..implemenations_base_operator_visitor import ImplementationsOperatorVisitor
 
 
@@ -19,7 +19,7 @@ class ExtrasParameter(ConfigParameter):
     __key__ = 'extra'
     __label__ = 'extras'
     __rules__ = Rules([BasicParameterValueTypeValidationRule(Extras)])
-    __prior_handler__ = CreateFrom
+    __prior_handler__ = AllowMutation
 
     def handle_values(self, model_instance, values, stage) -> dict:
         if self.param_val != Extras.ALLOW:

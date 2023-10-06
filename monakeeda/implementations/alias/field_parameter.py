@@ -18,8 +18,9 @@ class Alias(FieldParameter):
         updated_values = {}
 
         values.setdefault(self.param_val, inspect._empty)
-        field_val_by_alias = values.pop(self.param_val)
+        field_val_by_alias = values.pop(self.param_val)  # in order to remove the extra created field
 
+        # alias takes priority over the actual field key
         if field_val_by_alias != inspect._empty:
             updated_values[self._field_key] = field_val_by_alias
 

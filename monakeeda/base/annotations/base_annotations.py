@@ -1,3 +1,4 @@
+import inspect
 from abc import ABC, abstractmethod
 from typing import Any
 
@@ -25,12 +26,15 @@ class Annotation(Component, ABC):
         """
 
         field_info = getattr(model_instance, NamespacesConsts.STRUCT)[NamespacesConsts.FIELDS][self._field_key]
-        value = values[self._field_key]
+        value = values.get(self._field_key, inspect._empty)
 
-        if stage == Stages.UPDATE:
-            field_info[FieldConsts.VALUE] = getattr(model_instance, self._field_key)
+        if value != inspect._empty:
+            if stage == Stages.UPDATE:
+                field_info[FieldConsts.VALUE] = getattr(model_instance, self._field_key)
 
-        return {self._field_key: self._act_with_value(value, model_instance, field_info, stage)}
+            return {self._field_key: self._act_with_value(value, model_instance, field_info, stage)}
+
+        return {}
 
     def build(self, monkey_cls, bases, monkey_attrs):
         monkey_attrs[NamespacesConsts.STRUCT][NamespacesConsts.FIELDS][self._field_key][FieldConsts.TYPE] = self.base_type
