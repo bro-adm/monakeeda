@@ -74,5 +74,9 @@ class ImplementationsOperatorVisitor(OperatorVisitor[TOperatorContext], ABC, Gen
         pass
 
     @abstractmethod
+    def operate_dict_annotation(self, annotation: 'DictAnnotation', context: TOperatorContext):
+        pass
+
+    @abstractmethod
     def operate_no_input_field_parameter(self, parameter: 'NoInputFieldParameter', context: TOperatorContext):
         pass

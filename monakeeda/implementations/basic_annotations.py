@@ -1,4 +1,4 @@
-from typing import Union, List, Any
+from typing import Union, List, Any, Dict
 
 from monakeeda.base import Annotation, annotation_mapper, GenericAnnotation
 from .implemenations_base_operator_visitor import ImplementationsOperatorVisitor
@@ -60,3 +60,19 @@ class TypeListAnnotation(GenericAnnotation):
 
     def accept_operator(self, operator_visitor: ImplementationsOperatorVisitor, context: Any):
         operator_visitor.operate_list_annotation(self, context)
+
+
+@annotation_mapper(Dict)
+class DictAnnotation(GenericAnnotation):
+    __label__ = 'dict'
+    __prior_handler__ = TypeListAnnotation
+
+    def _act_with_value(self, value, *_, **__):
+        key_type, value_type = self._types
+        for key, val in value.items():
+            if not isinstance(key, key_type) or not isinstance(val, value_type):
+                raise TypeError(f'{value} is not a dict of {key_type} key and {value_type} value -> {key}, {val}')
+        return value
+
+    def accept_operator(self, operator_visitor: ImplementationsOperatorVisitor, context: Any):
+        operator_visitor.operate_dict_annotation(self, context)
