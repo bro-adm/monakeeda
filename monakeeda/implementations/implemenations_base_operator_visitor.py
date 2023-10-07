@@ -84,3 +84,7 @@ class ImplementationsOperatorVisitor(OperatorVisitor[TOperatorContext], ABC, Gen
     @abstractmethod
     def operate_validate_missing_fields_config_parameter(self, parameter: 'ValidateMissingFieldsConfigParameter', context: TOperatorContext):
         pass
+
+    @abstractmethod
+    def operate_optional_annotation(self, annotation: 'OptionalAnnotation', context: TOperatorContext):
+        pass

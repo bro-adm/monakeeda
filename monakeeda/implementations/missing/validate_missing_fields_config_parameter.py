@@ -4,7 +4,7 @@ from monakeeda.base import ConfigParameter, Config, Rules
 from monakeeda.consts import NamespacesConsts, FieldConsts
 from ..implemenations_base_operator_visitor import ImplementationsOperatorVisitor
 from ..rules import AllowedValuesRule
-from ..default import DefaultFactoryFieldParameter
+from ..optional import OptionalAnnotation
 from .errors import MissingFieldValuesException
 
 
@@ -13,7 +13,7 @@ class ValidateMissingFieldsConfigParameter(ConfigParameter):
     __key__ = 'validate_missing_fields'
     __label__ = 'values_manager'
     __rules__ = Rules([AllowedValuesRule([True])])
-    __prior_handler__ = DefaultFactoryFieldParameter
+    __prior_handler__ = OptionalAnnotation
 
     def handle_values(self, model_instance, values, stage) -> Union[Exception, None]:
         if self.param_val:
