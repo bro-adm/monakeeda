@@ -1,7 +1,7 @@
 from typing import Type
 
 from monakeeda.helpers import defaultdictvalue
-from .base_annotations import Annotation
+from .base_annotations import Annotation, GenericAnnotation
 from .errors import NotAnAnnotationException
 from .helpers import get_type_cls
 
@@ -31,3 +31,14 @@ def annotation_mapper(*key_annotations: Type, annotation_mapping=annotation_mapp
         return annotation_cls
 
     return inner_get_annotation_cls
+
+
+def get_generics_annotations(annotation: GenericAnnotation):
+    annotations = []
+
+    for t in annotation._types:
+        if t != type(None):
+            annotations.append(annotation_mapping[t](annotation._field_key, t))
+
+    return annotations
+

@@ -24,12 +24,7 @@ class BasicTypeAnnotation(Annotation):
     __prior_handler__ = ObjectAnnotation
 
     def handle_values(self, model_instance, values, stage) -> Union[Exception, None]:
-        value = values.get(self._field_key, inspect._empty)
-
-        if value == inspect._empty:
-            return
-
-        return type_validation(value, self.base_type)
+        return type_validation(values[self._field_key], self.base_type)
 
     def accept_operator(self, operator_visitor: ImplementationsOperatorVisitor, context: Any):
         operator_visitor.operate_basic_annotation(self, context)
@@ -41,13 +36,8 @@ class UnionAnnotation(GenericAnnotation):
     __prior_handler__ = BasicTypeAnnotation
 
     def handle_values(self, model_instance, values, stage) -> Union[Exception, None]:
-        value = values.get(self._field_key, inspect._empty)
-
-        if value == inspect._empty:
-            return
-
         union_types = self._types
-        return type_validation(value, union_types)
+        return type_validation(values[self._field_key], union_types)
 
     def accept_operator(self, operator_visitor: ImplementationsOperatorVisitor, context: Any):
         operator_visitor.operate_union_annotation(self, context)
@@ -59,10 +49,7 @@ class ListAnnotation(GenericAnnotation):
     __prior_handler__ = UnionAnnotation
 
     def handle_values(self, model_instance, values, stage) -> Union[Exception, None]:
-        value = values.get(self._field_key, inspect._empty)
-
-        if value == inspect._empty:
-            return
+        value = values[self._field_key]
 
         list_type = self._types
         unmatched_values = []
@@ -86,10 +73,7 @@ class DictAnnotation(GenericAnnotation):
     __prior_handler__ = ListAnnotation
 
     def handle_values(self, model_instance, values, stage) -> Union[Exception, None]:
-        value = values.get(self._field_key, inspect._empty)
-
-        if value == inspect._empty:
-            return
+        value = values[self._field_key]
 
         key_type, value_type = self._types
         unmatched_pairs = {}
