@@ -52,26 +52,3 @@ class Rules(Rule):
             return RulesException(component.__class__.__name__, exceptions)
 
         return
-
-
-class NoComponentDependenciesFailedRuleException(RuleException):
-    def __init__(self, component_type: str, failed_dependencies: Set[str]):
-        super().__init__(component_type)
-        self.failed_dependencies = failed_dependencies
-
-    def __str__(self):
-        return f"Could not run rule validations on component {self.component_type} " \
-               f"because it is dependent on prior failed components {self.failed_dependencies}"
-
-
-class NoComponentDependenciesFailedRule(Rule):
-    def validate(self, component: "Component", monkey_cls) -> Union[RuleException, None]:
-        failed_dependencies = []
-
-        for exception in getattr(monkey_cls, NamespacesConsts.EXCEPTIONS).exceptions:
-            if exception.component_type in component.__dependencies__:
-                failed_dependencies.append(exception.component_type)
-
-        if failed_dependencies:
-            failed_dependencies = set(failed_dependencies)
-            return NoComponentDependenciesFailedRuleException(str(component.__class__), failed_dependencies)

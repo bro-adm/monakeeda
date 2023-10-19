@@ -3,7 +3,7 @@ from abc import ABC, abstractmethod
 from typing import ClassVar, TypeVar, Type, List, Any
 
 from .monkey_builder import MonkeyBuilder
-from .rules import Rules, NoComponentDependenciesFailedRule
+from .rules import Rules
 from .rules_validator import RulesValidator
 from .values_handler import ValuesHandler
 from ..operator import OperatorVisitor
@@ -14,7 +14,7 @@ all_components = []
 class Component(RulesValidator, MonkeyBuilder, ValuesHandler, ABC):
     __label__: ClassVar[str]
     __prior_handler__: ClassVar[Type['Component']] = None
-    __rules__: ClassVar[Rules] = Rules([NoComponentDependenciesFailedRule()])
+    __rules__: ClassVar[Rules] = Rules([])
     __dependencies__: ClassVar[List[Type['Component']]] = []
 
     def __init_subclass__(cls):
