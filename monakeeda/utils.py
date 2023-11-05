@@ -1,5 +1,5 @@
 import collections
-from typing import Any
+from typing import Any, List
 
 
 def get_wanted_params(kwargs: dict, keys: list):
@@ -65,3 +65,7 @@ def get_items_from_list(items: list, main_list: list) -> list:
             existing_items.append(item)
 
     return existing_items
+
+
+def exclude_keys(the_dict: dict, keys: List[str]):
+    return {key: val for key, val in the_dict.items() if key not in keys}

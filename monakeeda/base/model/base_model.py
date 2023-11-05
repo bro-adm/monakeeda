@@ -1,7 +1,7 @@
 from typing import Any
 
 from monakeeda.consts import NamespacesConsts
-from monakeeda.utils import deep_update
+from monakeeda.utils import deep_update, exclude_keys
 from ..component import Stages
 from ..fields import FieldManager
 from ..annotations import AnnotationManager, annotation_mapping, ModelAnnotation
@@ -28,6 +28,7 @@ class BaseModel(metaclass=MonkeyMeta, component_managers=component_managers, ann
     def _handle_values(self, values: dict, stage):
         exceptions = []  # pass by reference - so updates will be available
         super(BaseModel, self).__setattr__(NamespacesConsts.EXCEPTIONS, exceptions)
+        # this is an instance level field as opposed to the class level exceptions list used in the build phase
 
         for component_type, components in self.__organized_components__.items():
             for component in components:
@@ -61,7 +62,8 @@ class BaseModel(metaclass=MonkeyMeta, component_managers=component_managers, ann
 
     # this is for run debug purposes.
     def __repr__(self):
-        return str(self.__dict__)
+        the_dict = exclude_keys(self.__dict__, [NamespacesConsts.EXCEPTIONS])
+        return str(the_dict)
 
     class Config(Config):
         pass
