@@ -13,12 +13,10 @@ class DefaultFactoryFieldParameter(BaseDefaultFieldParameter):
     __prior_handler__ = DefaultFieldParameter
     __rules__ = Rules([CallableParameterSignatureValidationRule(0)])
 
-    def handle_values(self, model_instance, values, stage) -> Union[Exception, None]:
+    def _handle_values(self, model_instance, values, stage):
         if stage == Stages.INIT:
             value = values.get(self._field_key, self.param_val())
             values[self._field_key] = value
-
-        return
 
     def accept_operator(self, operator_visitor: ImplementationsOperatorVisitor, context: Any):
         operator_visitor.operate_default_factory_field_parameter(self, context)

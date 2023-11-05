@@ -55,3 +55,13 @@ def get_ordered_set_list(seq) -> list:
     seen = set()
     seen_add = seen.add
     return [x for x in seq if not (x in seen or seen_add(x))]
+
+
+def get_items_from_list(items: list, main_list: list) -> list:
+    existing_items = []
+
+    for item in items:
+        if item in main_list:
+            existing_items.append(item)
+
+    return existing_items

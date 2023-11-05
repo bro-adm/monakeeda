@@ -26,19 +26,15 @@ class BaseModel(metaclass=MonkeyMeta, component_managers=component_managers, ann
         return getattr(cls, NamespacesConsts.STRUCT).copy()
 
     def _handle_values(self, values: dict, stage):
-        exceptions = []
+        exceptions = []  # pass by reference - so updates will be available
+        super(BaseModel, self).__setattr__(NamespacesConsts.EXCEPTIONS, exceptions)
 
         for component_type, components in self.__organized_components__.items():
             for component in components:
-                result = component.handle_values(self, values, stage)
-
-                if result:
-                    exceptions.append(result)
+                component.handle_values(self, values, stage)
 
         if exceptions:
             raise MonkeyValuesHandlingException(self.__class__.__name__, values, exceptions)
-
-        # kwargs = ignore_unwanted_params(self.__class__, kwargs)
 
         for key in values:
             super(BaseModel, self).__setattr__(key, values[key])

@@ -14,8 +14,8 @@ class AliasGenerator(ConfigParameter):
     __prior_handler__ = AbstractParameter
     __rules__ = Rules([CallableParameterSignatureValidationRule(1), AllModelFieldsAcknowledgeParameterRule('alias')])
 
-    def handle_values(self, model_instance, values, stage) -> Union[Exception, None]:
-        return
+    def _handle_values(self, model_instance, values, stage):
+        pass
 
     def build(self, monkey_cls, bases, monkey_attrs):
         super().build(monkey_cls, bases, monkey_attrs)

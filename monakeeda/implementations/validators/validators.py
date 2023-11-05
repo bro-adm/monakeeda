@@ -15,7 +15,7 @@ class Validator(BaseValidatorDecorator):
         super(Validator, self).__init__(data_members)
         self.dependencies = dependencies if dependencies else []
 
-    def handle_values(self, model_instance, values, stage) -> Union[Exception, None]:
+    def _handle_values(self, model_instance, values, stage) -> Union[Exception, None]:
         config = getattr(model_instance, NamespacesConsts.STRUCT)[NamespacesConsts.CONFIG]
         fields_info = getattr(model_instance, NamespacesConsts.STRUCT)[NamespacesConsts.FIELDS]
 

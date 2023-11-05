@@ -5,6 +5,7 @@ from .exceptions import ConstError
 from ..rules import BasicParameterValueTypeValidationRule
 from .annotation import Const
 from ..implemenations_base_operator_visitor import ImplementationsOperatorVisitor
+from monakeeda.consts import NamespacesConsts
 
 
 @Field.parameter
@@ -14,13 +15,13 @@ class AllowMutation(FieldParameter):
     __rules__ = Rules([BasicParameterValueTypeValidationRule(bool)])
     __prior_handler__ = Const
 
-    def handle_values(self, model_instance, values, stage) -> Union[Exception, None]:
+    def _handle_values(self, model_instance, values, stage):
         if stage == Stages.UPDATE:
             curr_val = getattr(model_instance, self._field_key)
             new_val = values[self._field_key]
 
             if self.param_val and new_val != curr_val:
-                return ConstError(curr_val, new_val)
+                getattr(model_instance, NamespacesConsts.EXCEPTIONS).append(ConstError(curr_val, new_val))
 
         return
 

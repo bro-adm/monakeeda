@@ -21,7 +21,7 @@ class ExtrasParameter(ConfigParameter):
     __rules__ = Rules([BasicParameterValueTypeValidationRule(Extras)])
     __prior_handler__ = AllowMutation
 
-    def handle_values(self, model_instance, values, stage) -> Union[Extras, None]:
+    def _handle_values(self, model_instance, values, stage):
         if self.param_val != Extras.ALLOW:
             fields = getattr(model_instance, NamespacesConsts.STRUCT)[NamespacesConsts.FIELDS]
 
@@ -37,8 +37,6 @@ class ExtrasParameter(ConfigParameter):
 
             for key in unacknowledged:
                 values.pop(key)
-
-        return
 
     def accept_operator(self, operator_visitor: ImplementationsOperatorVisitor, context: Any):
         operator_visitor.operate_extras_config_parameter(self, context)

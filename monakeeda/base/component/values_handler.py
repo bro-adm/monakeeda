@@ -4,5 +4,5 @@ from typing import Union
 
 class ValuesHandler(ABC):
     @abstractmethod
-    def handle_values(self, model_instance, values, stage) -> Union[Exception, None]:
+    def _handle_values(self, model_instance, values, stage):
         pass

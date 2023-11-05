@@ -5,10 +5,12 @@ from monakeeda.consts import NamespacesConsts, FieldConsts
 from .base_decorator import BaseCreatorDecorator
 from ..validators import Validator
 from ..implemenations_base_operator_visitor import ImplementationsOperatorVisitor
+from ..missing.errors import MissingFieldValuesException
 
 
 class CreateFrom(BaseCreatorDecorator):
     __prior_handler__ = Validator
+    __pass_on_errors__ = [MissingFieldValuesException]
 
     def __init__(self, wanted_data_member: str, from_keys: Union[list, str] = '*'):
         super(CreateFrom, self).__init__(wanted_data_member)
@@ -30,14 +32,12 @@ class CreateFrom(BaseCreatorDecorator):
                 monkey_attrs[NamespacesConsts.STRUCT][NamespacesConsts.FIELDS][key].setdefault(FieldConsts.DEPENDENTS, []).append(self.wanted_data_member)
                 monkey_attrs[NamespacesConsts.STRUCT][NamespacesConsts.FIELDS][key][FieldConsts.REQUIRED] = True
 
-    def handle_values(self, model_instance, values, stage) -> Union[Exception, None]:
+    def _handle_values(self, model_instance, values, stage):
         fields_info = getattr(model_instance, NamespacesConsts.STRUCT)[NamespacesConsts.FIELDS]
         config = getattr(model_instance, NamespacesConsts.STRUCT)[NamespacesConsts.CONFIG]
 
         wanted_val = self.wrapper(model_instance, values, config, fields_info)
         values[self.wanted_data_member] = wanted_val
-
-        return
 
     def wrapper(self, monkey_cls, values, config, fields_info):
         if self.from_keys[0] == '*':

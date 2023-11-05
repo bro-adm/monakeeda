@@ -5,6 +5,7 @@ from .exceptions import AbstractFieldFoundError
 from .annotation import Abstract
 from ..rules import BasicParameterValueTypeValidationRule
 from ..implemenations_base_operator_visitor import ImplementationsOperatorVisitor
+from monakeeda.consts import NamespacesConsts
 
 
 @Field.parameter
@@ -14,11 +15,9 @@ class AbstractParameter(FieldParameter):
     __rules__ = Rules([BasicParameterValueTypeValidationRule(bool)])
     __prior_handler__ = Abstract
 
-    def handle_values(self, model_instance, values, stage) -> Union[Exception, None]:
+    def _handle_values(self, model_instance, values, stage):
         if self.param_val:
-            return AbstractFieldFoundError(self._field_key)
-
-        return
+            getattr(model_instance, NamespacesConsts.EXCEPTIONS).append(AbstractFieldFoundError(self._field_key))
 
     def accept_operator(self, operator_visitor: ImplementationsOperatorVisitor, context: Any):
         operator_visitor.operate_abstract_field_parameter(self, context)

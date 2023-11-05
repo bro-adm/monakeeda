@@ -15,7 +15,7 @@ class ValidateMissingFieldsConfigParameter(ConfigParameter):
     __rules__ = Rules([AllowedValuesRule([True])])
     __prior_handler__ = OptionalAnnotation
 
-    def handle_values(self, model_instance, values, stage) -> Union[Exception, None]:
+    def _handle_values(self, model_instance, values, stage):
         if self.param_val:
             fields_info = getattr(model_instance, NamespacesConsts.STRUCT)[NamespacesConsts.FIELDS]
 
@@ -26,9 +26,7 @@ class ValidateMissingFieldsConfigParameter(ConfigParameter):
                     missing_fields.append(key)
 
             if missing_fields:
-                return MissingFieldValuesException(missing_fields)
-
-        return
+                getattr(model_instance, NamespacesConsts.EXCEPTIONS).append(MissingFieldValuesException(missing_fields))
 
     def accept_operator(self, operator_visitor: ImplementationsOperatorVisitor, context: Any):
         operator_visitor.operate_validate_missing_fields_config_parameter(self, context)

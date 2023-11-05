@@ -4,6 +4,7 @@ from typing import Any, Union
 from .base_annotations import Annotation
 from .helpers import type_validation
 from ..operator import OperatorVisitor
+from monakeeda.consts import NamespacesConsts
 
 
 class ModelAnnotation(Annotation):
@@ -21,7 +22,7 @@ class ModelAnnotation(Annotation):
 
     __label__ = 'model'
 
-    def handle_values(self, model_instance, values, stage) -> Union[Exception, None]:
+    def _handle_values(self, model_instance, values, stage):
         value = values.get(self._field_key, inspect._empty)
 
         if value == inspect._empty:
@@ -31,12 +32,15 @@ class ModelAnnotation(Annotation):
             try:
                 monkey = self.base_type(**value)
             except Exception as e:
-                return e
+                getattr(model_instance, NamespacesConsts.EXCEPTIONS).append(e)
 
             values[self._field_key] = monkey
 
         else:
-            return type_validation(value, self.base_type)
+            result = type_validation(value, self.base_type)
+
+            if result:
+                getattr(model_instance, NamespacesConsts.EXCEPTIONS).append(result)
 
     def accept_operator(self, operator_visitor: OperatorVisitor, context: Any):
         operator_visitor.operate_model_annotation(self, context)

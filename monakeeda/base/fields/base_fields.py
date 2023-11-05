@@ -22,7 +22,7 @@ class Field(ConfigurableComponent[FieldParameter]):
     def build(self, monkey_cls, bases, monkey_attrs):
         monkey_attrs[NamespacesConsts.STRUCT][NamespacesConsts.FIELDS][self._field_key][FieldConsts.REQUIRED] = True
 
-    def handle_values(self, model_instance, values, stage) -> Union[Exception, None]:
+    def _handle_values(self, model_instance, values, stage):
         pass
 
     def accept_operator(self, operator_visitor: OperatorVisitor, context: Any):

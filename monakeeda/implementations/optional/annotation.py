@@ -11,11 +11,9 @@ class OptionalAnnotation(GenericAnnotation):
     __label__ = 'optional'
     __prior_handler__ = DefaultFactoryFieldParameter
 
-    def handle_values(self, model_instance, values, stage) -> Union[Exception, None]:
+    def _handle_values(self, model_instance, values, stage):
         if self._field_key in values:
-            return get_generics_annotations(self)[0].handle_values(model_instance, values, stage)
-
-        return
+            get_generics_annotations(self)[0].handle_values(model_instance, values, stage)
 
     def build(self, monkey_cls, bases, monkey_attrs):
         super().build(monkey_cls, bases, monkey_attrs)
