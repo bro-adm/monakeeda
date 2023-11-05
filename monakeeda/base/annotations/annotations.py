@@ -52,7 +52,11 @@ class TypeVarAnnotation(Annotation):
     __label__ = 'type vars'
 
     def _get_actual_type(self, model_instance):
-        return get_args(model_instance.__orig_class__)[0]
+        instance_types = get_args(model_instance.__orig_class__)  # preserves order
+        model_generics = model_instance.__class__.__parameters__  # saved attr for Generics -> saved in tuple which preserves order
+
+        index = model_generics.index(self.base_type)  # in this specific anntoation the base_type is mapped to the TypeVar instance
+        return instance_types[index]
 
     def _handle_values(self, model_instance, values, stage):
         from .mapping import annotation_mapping
