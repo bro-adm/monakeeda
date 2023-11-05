@@ -1,8 +1,9 @@
 from collections import OrderedDict
-from typing import List
+from typing import List, TypeVar, get_args, Union, get_origin
 
 from monakeeda.consts import NamespacesConsts, PythonNamingConsts
 from .base_annotations import Annotation
+from .mapping import get_type_cls
 from ..component import ComponentManager
 
 
@@ -19,8 +20,8 @@ class AnnotationManager(ComponentManager):
 
     def _set_curr_cls(self, monkey_cls, bases, monkey_attrs):
         annotations = monkey_attrs.get(PythonNamingConsts.annotations, {})  # shouldn't be {}
-
         for key, annotation in annotations.items():
+            self._annotation_mapping[annotation]
             annotation_cls_instance = self._annotation_mapping[annotation](key, annotation)
             monkey_attrs[NamespacesConsts.STRUCT][NamespacesConsts.ANNOTATIONS][key] = annotation_cls_instance
 

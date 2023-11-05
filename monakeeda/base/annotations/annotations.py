@@ -1,5 +1,5 @@
 import inspect
-from typing import Any, Union
+from typing import Any, get_args
 
 from .base_annotations import Annotation
 from .helpers import type_validation
@@ -30,7 +30,8 @@ class ModelAnnotation(Annotation):
 
         elif isinstance(value, dict):
             try:
-                monkey = self.base_type(**value)
+                monkey = self.base_type()
+                monkey.set(**value)
             except Exception as e:
                 getattr(model_instance, NamespacesConsts.EXCEPTIONS).append(e)
 
@@ -41,6 +42,25 @@ class ModelAnnotation(Annotation):
 
             if result:
                 getattr(model_instance, NamespacesConsts.EXCEPTIONS).append(result)
+
+    def accept_operator(self, operator_visitor: OperatorVisitor, context: Any):
+        operator_visitor.operate_model_annotation(self, context)
+
+
+class TypeVarAnnotation(Annotation):
+
+    __label__ = 'type vars'
+
+    def _get_actual_type(self, model_instance):
+        return get_args(model_instance.__orig_class__)[0]
+
+    def _handle_values(self, model_instance, values, stage):
+        from .mapping import annotation_mapping
+
+        instance_type = self._get_actual_type(model_instance)
+        annotation = annotation_mapping[instance_type](self._field_key, instance_type)
+
+        annotation.handle_values(model_instance, values, stage)
 
     def accept_operator(self, operator_visitor: OperatorVisitor, context: Any):
         operator_visitor.operate_model_annotation(self, context)

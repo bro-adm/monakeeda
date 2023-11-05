@@ -1,7 +1,8 @@
-from typing import Type
+from typing import Type, TypeVar
 
 from monakeeda.helpers import defaultdictvalue
 from .base_annotations import Annotation, GenericAnnotation
+from .annotations import TypeVarAnnotation
 from .errors import NotAnAnnotationException
 from .helpers import get_type_cls
 
@@ -13,7 +14,9 @@ class AnnotationDefaultDict(defaultdictvalue):
         return gotten
 
     def __setitem__(self, key, item):
-        if issubclass(item.mro()[0], Annotation):
+        if isinstance(item, TypeVar):  # item and key will be the same on TypeVars
+            super(AnnotationDefaultDict, self).__setitem__(key, TypeVarAnnotation)
+        elif issubclass(item.mro()[0], Annotation):
             super(AnnotationDefaultDict, self).__setitem__(key, item)
         else:
             raise NotAnAnnotationException(key)

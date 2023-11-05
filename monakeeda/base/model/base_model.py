@@ -1,7 +1,7 @@
-from typing import Any
+from typing import Any, _TYPING_INTERNALS
 
 from monakeeda.consts import NamespacesConsts
-from monakeeda.utils import deep_update, exclude_keys
+from monakeeda.utils import deep_update
 from ..component import Stages
 from ..fields import FieldManager
 from ..annotations import AnnotationManager, annotation_mapping, ModelAnnotation
@@ -41,16 +41,20 @@ class BaseModel(metaclass=MonkeyMeta, component_managers=component_managers, ann
             super(BaseModel, self).__setattr__(key, values[key])
         # The super setter because the setter logic can be changed and in teh init we have data as we want it already
 
-    def __init__(self, **kwargs):
+    def set(self, **kwargs):
         self._handle_values(kwargs, Stages.INIT)
-        # The super setter because the setter logic can be changed and in teh init we have data as we want it already
+        # not set in actual init because python typing shit happens there ALWAYS after custom init logic.
+        # that shit is needed to run the actual init logic for generics :(
 
     def update(self, **kwargs):
         kwargs = deep_update(self.__dict__.copy(), kwargs)
         self._handle_values(kwargs, Stages.UPDATE)
 
     def __setattr__(self, key, value):
-        self.update(**{key: value})
+        if key in _TYPING_INTERNALS:  # F Python and its weird usage of inheritence with generics and their initalization
+            super().__setattr__(key, value)
+        else:
+            self.update(**{key: value})
 
     @staticmethod
     def _operate(model, operator_type: str, context: Any):
@@ -59,11 +63,6 @@ class BaseModel(metaclass=MonkeyMeta, component_managers=component_managers, ann
         for component_type, components in model.__organized_components__.items():
             for component in components:
                 component.accept_operator(operator_visitor, context)
-
-    # this is for run debug purposes.
-    def __repr__(self):
-        the_dict = exclude_keys(self.__dict__, [NamespacesConsts.EXCEPTIONS])
-        return str(the_dict)
 
     class Config(Config):
         pass

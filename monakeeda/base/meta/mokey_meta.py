@@ -27,8 +27,10 @@ class MonkeyMeta(ABCMeta):
 
         super(MonkeyMeta, cls).__init__(name, bases, attrs)
 
+        monkey_bases = [base for base in bases if type(base) == MonkeyMeta]
+
         for component_manager in cls.__component_managers__:
-            component_manager.build(cls, bases, attrs)
+            component_manager.build(cls, monkey_bases, attrs)
 
         model_components = attrs[NamespacesConsts.COMPONENTS]
         cls.__organized_components__ = organize_components(model_components)
