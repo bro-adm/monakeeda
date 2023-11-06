@@ -5,12 +5,10 @@ from monakeeda.consts import NamespacesConsts, FieldConsts
 from .base_decorator import BaseCreatorDecorator
 from ..validators import Validator
 from ..implemenations_base_operator_visitor import ImplementationsOperatorVisitor
-from ..missing.errors import MissingFieldValuesException
 
 
 class CreateFrom(BaseCreatorDecorator):
     __prior_handler__ = Validator
-    __pass_on_errors__ = [MissingFieldValuesException]
 
     def __init__(self, wanted_data_member: str, from_keys: Union[list, str] = '*'):
         super(CreateFrom, self).__init__(wanted_data_member)

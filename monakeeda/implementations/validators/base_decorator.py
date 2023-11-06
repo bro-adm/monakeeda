@@ -3,10 +3,12 @@ from typing import List
 
 from monakeeda.base import BaseDecorator
 from monakeeda.consts import NamespacesConsts, FieldConsts
+from ..missing.errors import MissingFieldValuesException
 
 
 class BaseValidatorDecorator(BaseDecorator, ABC):
     __label__ = 'validators'
+    __pass_on_errors__ = [MissingFieldValuesException, TypeError]
 
     def __init__(self, data_members: List[str]):
         self.data_members = data_members
