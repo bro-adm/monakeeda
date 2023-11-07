@@ -4,11 +4,11 @@ from monakeeda.base import Field, Config, ModelAnnotation, BaseModel
 from ..implemenations_base_operator_visitor import ImplementationsOperatorVisitor
 from ..abstract import Abstract, AbstractParameter
 from ..alias import Alias, AliasGenerator
-from ..input import NoInputFieldParameter
+# from ..input import NoInputFieldParameter
 from ..cast import Cast
 from ..const import Const, AllowMutation
 from ..creators import CreateFrom
-from ..default import DefaultFieldParameter, DefaultFactoryFieldParameter
+from ..values import DefaultFieldParameter, DefaultFactoryFieldParameter
 from ..extras import ExtrasParameter
 from ..valid_values import ValidValues
 from ..validators import Validator
@@ -28,7 +28,7 @@ class OpenAPIPropertySpec(BaseModel):
 
 
 class OpenAPIObjectSpec(BaseModel):
-    type: Const[str] = Field(default='object', no_input=True)
+    type: Const[str] = Field(value='object')
     required: List[str]
     properties: Dict[str, OpenAPIPropertySpec]
 
@@ -100,7 +100,4 @@ class OpenAPIOperatorVisitor(ImplementationsOperatorVisitor[dict]):
         pass
 
     def operate_dict_annotation(self, annotation: DictAnnotation, context: dict):
-        pass
-
-    def operate_no_input_field_parameter(self, parameter: NoInputFieldParameter, context: dict):
         pass

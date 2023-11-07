@@ -9,9 +9,11 @@ class BaseCreatorDecorator(BaseDecorator, ABC):
     __label__ = 'creator'
     __pass_on_errors__ = [MissingFieldValuesException, TypeError]
 
-    def __init__(self, wanted_data_member: str):
-        self.wanted_data_member = wanted_data_member
+    def __init__(self, field_key: str):
+        self._field_key = field_key
 
     def build(self, monkey_cls, bases, monkey_attrs):
         # setdefault is in use because this can be set on a none schema parameter
-        monkey_attrs[NamespacesConsts.STRUCT][NamespacesConsts.FIELDS].setdefault(self.wanted_data_member, {}).update({FieldConsts.CREATOR: self, FieldConsts.DEPENDENCIES: [], FieldConsts.REQUIRED: False})
+        monkey_attrs[NamespacesConsts.STRUCT][NamespacesConsts.FIELDS].setdefault(self._field_key, {}).update({FieldConsts.CREATOR: self, FieldConsts.DEPENDENCIES: [], FieldConsts.REQUIRED: False})
+        monkey_attrs[NamespacesConsts.STRUCT][NamespacesConsts.FIELDS][self._field_key][FieldConsts.COMPONENTS].append(self)
+

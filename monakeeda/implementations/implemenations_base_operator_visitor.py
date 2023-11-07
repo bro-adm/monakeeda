@@ -78,10 +78,6 @@ class ImplementationsOperatorVisitor(OperatorVisitor[TOperatorContext], ABC, Gen
         pass
 
     @abstractmethod
-    def operate_no_input_field_parameter(self, parameter: 'NoInputFieldParameter', context: TOperatorContext):
-        pass
-
-    @abstractmethod
     def operate_validate_missing_fields_config_parameter(self, parameter: 'ValidateMissingFieldsConfigParameter', context: TOperatorContext):
         pass
 

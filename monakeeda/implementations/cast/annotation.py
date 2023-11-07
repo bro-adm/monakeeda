@@ -2,10 +2,10 @@ import inspect
 from typing import Generic, T, Any, Union
 
 from monakeeda.base import GenericAnnotation
-from ..missing import ValidateMissingFieldsConfigParameter
 from ..implemenations_base_operator_visitor import ImplementationsOperatorVisitor
 from monakeeda.consts import NamespacesConsts
 from ..missing.errors import MissingFieldValuesException
+from ..creators import CreateFrom
 
 
 class CastingError(ValueError):
@@ -16,7 +16,7 @@ class CastingError(ValueError):
 
 class Cast(GenericAnnotation, Generic[T]):
     __label__ = 'cast'
-    __prior_handler__ = ValidateMissingFieldsConfigParameter
+    __prior_handler__ = CreateFrom
     __pass_on_errors__ = [MissingFieldValuesException]
 
     def _handle_values(self, model_instance, values, stage):

@@ -10,10 +10,11 @@ class BaseValidatorDecorator(BaseDecorator, ABC):
     __label__ = 'validators'
     __pass_on_errors__ = [MissingFieldValuesException, TypeError]
 
-    def __init__(self, data_members: List[str]):
-        self.data_members = data_members
+    def __init__(self, field_key: str):
+        self._field_key = field_key
 
     def build(self, monkey_cls, bases, monkey_attrs):
-        for dtm in self.data_members:
-            # setdefault is in use because this can be set on a none schema parameter
-            monkey_attrs[NamespacesConsts.STRUCT][NamespacesConsts.FIELDS].setdefault(dtm, {}).setdefault(FieldConsts.VALIDATORS, []).append(self)
+        # setdefault is in use because this can be set on a none schema parameter
+        monkey_attrs[NamespacesConsts.STRUCT][NamespacesConsts.FIELDS].setdefault(self._field_key, {}).setdefault(FieldConsts.VALIDATORS, []).append(self)
+        monkey_attrs[NamespacesConsts.STRUCT][NamespacesConsts.FIELDS][self._field_key][FieldConsts.COMPONENTS].append(self)
+

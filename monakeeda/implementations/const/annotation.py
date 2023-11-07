@@ -3,14 +3,14 @@ from typing import Generic, T, Any, Union
 
 from monakeeda.base import GenericAnnotation, Stages, get_generics_annotations
 from .exceptions import ConstError
-from ..creators import CreateFrom
+from ..validators import Validator
 from ..implemenations_base_operator_visitor import ImplementationsOperatorVisitor
 from monakeeda.consts import NamespacesConsts
 
 
 class Const(GenericAnnotation, Generic[T]):
     __label__ = 'const'
-    __prior_handler__ = CreateFrom
+    __prior_handler__ = Validator
 
     def _handle_values(self, model_instance, values, stage):
         value = values[self._field_key]
