@@ -14,6 +14,7 @@ class FieldParameter(Parameter, ABC):
 
     def build(self, monkey_cls, bases, monkey_attrs):
         monkey_attrs[NamespacesConsts.STRUCT][NamespacesConsts.FIELDS][self._field_key][self.__key__] = self.param_val
+        monkey_attrs[NamespacesConsts.STRUCT][NamespacesConsts.FIELDS][self._field_key][FieldConsts.COMPONENTS].append(self)
 
 
 class Field(ConfigurableComponent[FieldParameter]):
@@ -21,6 +22,7 @@ class Field(ConfigurableComponent[FieldParameter]):
 
     def build(self, monkey_cls, bases, monkey_attrs):
         monkey_attrs[NamespacesConsts.STRUCT][NamespacesConsts.FIELDS][self._field_key][FieldConsts.REQUIRED] = True
+        monkey_attrs[NamespacesConsts.STRUCT][NamespacesConsts.FIELDS][self._field_key][FieldConsts.COMPONENTS].append(self)
 
     def _handle_values(self, model_instance, values, stage):
         pass

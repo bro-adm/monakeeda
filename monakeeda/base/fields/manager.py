@@ -47,6 +47,7 @@ class FieldManager(ComponentManager):
 
             monkey_attrs[field_key] = value
             monkey_attrs[NamespacesConsts.STRUCT][NamespacesConsts.FIELDS][field_key][FieldConsts.FIELD] = value
+            monkey_attrs[NamespacesConsts.STRUCT][NamespacesConsts.FIELDS][field_key][FieldConsts.COMPONENTS] = []
 
     def _set_by_base(self, monkey_cls, base, attrs):
         base_fields_info = getattr(base, NamespacesConsts.STRUCT)[NamespacesConsts.FIELDS]
