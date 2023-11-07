@@ -3,6 +3,10 @@ class PythonNamingConsts:
     CONFIG = 'Config'
 
 
+class ComponentConsts:
+    FIELD_KEY = '_field_key'
+
+
 class NamespacesConsts:
     COMPONENTS = '__monkey_components__'
     STRUCT = '__monkey_struct__'
@@ -24,6 +28,7 @@ class FieldConsts:
     DEPENDENTS = 'dependents'
     DEPENDENCIES = 'dependencies'
     VALUE = 'value'
+    COMPONENTS = 'components'
 
 
 class ConfigConsts:

@@ -1,14 +1,14 @@
-from typing import Any, Union
+from typing import Any
 
 from monakeeda.base import Rules, Field, Stages
-from ..rules import CallableParameterSignatureValidationRule
-from ..implemenations_base_operator_visitor import ImplementationsOperatorVisitor
-from .base import BaseDefaultFieldParameter
+from .base import BaseValueFieldParameter
 from .default_field_parameter import DefaultFieldParameter
+from ..implemenations_base_operator_visitor import ImplementationsOperatorVisitor
+from ..rules import CallableParameterSignatureValidationRule
 
 
 @Field.parameter
-class DefaultFactoryFieldParameter(BaseDefaultFieldParameter):
+class DefaultFactoryFieldParameter(BaseValueFieldParameter):
     __key__ = 'default_factory'
     __prior_handler__ = DefaultFieldParameter
     __rules__ = Rules([CallableParameterSignatureValidationRule(0)])

@@ -2,14 +2,14 @@ from typing import Any, Union
 
 from monakeeda.base import Field, Stages
 from ..implemenations_base_operator_visitor import ImplementationsOperatorVisitor
-from ..input import NoInputFieldParameter
-from .base import BaseDefaultFieldParameter
+from .base import BaseValueFieldParameter
+from .value_field_parameter import ValueFieldParameter
 
 
 @Field.parameter
-class DefaultFieldParameter(BaseDefaultFieldParameter):
+class DefaultFieldParameter(BaseValueFieldParameter):
     __key__: str = 'default'
-    __prior_handler__ = NoInputFieldParameter
+    __prior_handler__ = ValueFieldParameter
 
     def _handle_values(self, model_instance, values, stage):
         if stage == Stages.INIT:
