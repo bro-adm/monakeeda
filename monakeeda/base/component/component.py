@@ -3,7 +3,6 @@ from abc import ABC, abstractmethod
 from typing import ClassVar, TypeVar, Type, List, Any
 
 from .monkey_builder import MonkeyBuilder
-from .rules import Rules
 from .rules_validator import RulesValidator
 from .values_handler import ValuesHandler
 from ..operator import OperatorVisitor
@@ -23,10 +22,10 @@ class Component(RulesValidator, MonkeyBuilder, ValuesHandler, ABC):
 
         if not inspect.isabstract(cls):
             if cls.__prior_handler__:
-                position = all_components.index(str(cls.__prior_handler__))
-                all_components.insert(position+1, str(cls))
+                position = all_components.index(cls.__prior_handler__)
+                all_components.insert(position+1, cls)
             else:
-                all_components.append(str(cls))
+                all_components.append(cls)
 
     def handle_values(self, model_instance, values, stage):
         exceptions = [type(e) for e in getattr(model_instance, NamespacesConsts.EXCEPTIONS)]
