@@ -24,10 +24,12 @@ class CreateFrom(BaseCreatorDecorator):
             for key in monkey_attrs[NamespacesConsts.STRUCT][NamespacesConsts.FIELDS]:
                 if key != self._field_key:
                     monkey_attrs[NamespacesConsts.STRUCT][NamespacesConsts.FIELDS].setdefault(key, {}).setdefault(FieldConsts.DEPENDENTS, []).append(self._field_key)
+                    monkey_attrs[NamespacesConsts.STRUCT][NamespacesConsts.FIELDS].setdefault(key, {}).setdefault(FieldConsts.COMPONENTS, [])
         else:
             for key in self.from_keys:
                 monkey_attrs[NamespacesConsts.STRUCT][NamespacesConsts.FIELDS].setdefault(key, {})
                 monkey_attrs[NamespacesConsts.STRUCT][NamespacesConsts.FIELDS][key].setdefault(FieldConsts.DEPENDENTS, []).append(self._field_key)
+                monkey_attrs[NamespacesConsts.STRUCT][NamespacesConsts.FIELDS][key].setdefault(FieldConsts.COMPONENTS, [])
                 monkey_attrs[NamespacesConsts.STRUCT][NamespacesConsts.FIELDS][key][FieldConsts.REQUIRED] = True
 
     def _handle_values(self, model_instance, values, stage):
