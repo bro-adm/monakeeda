@@ -36,3 +36,4 @@ creating a meta class:
 """
 
 from .mokey_meta import MonkeyMeta
+from .organizers import ComponentOrganizer

@@ -1,7 +1,8 @@
 from abc import ABCMeta
 
 from monakeeda.consts import NamespacesConsts
-from ..component import RulesException, organize_components
+from ..component import RulesException
+from .helpers import handle_class_inputs
 
 
 class MonkeyMeta(ABCMeta):
@@ -13,17 +14,8 @@ class MonkeyMeta(ABCMeta):
         cls = super(MonkeyMeta, mcs).__new__(mcs, name, bases, attrs)
         return cls
 
-    def __init__(cls, name, bases, attrs, component_managers=None, annotation_mapping=None, operators_visitors=None):
-        if not bases:
-            if component_managers == None or annotation_mapping == None and operators_visitors == None:
-                raise ValueError('direct metaclass users needs to pass the model_components, annotation_mapping, operators_visitors')
-            cls.__component_managers__ = component_managers
-            cls.__annotation_mapping__ = annotation_mapping
-            cls.__operators_visitors__ = operators_visitors
-        else:
-            cls.__component_managers__ = component_managers if component_managers else bases[0].__component_managers__
-            cls.__annotation_mapping__ = annotation_mapping if annotation_mapping else bases[0].__annotation_mapping__
-            cls.__operators_visitors__ = operators_visitors if operators_visitors else bases[0].__operators_visitors__
+    def __init__(cls, name, bases, attrs, component_managers=None, component_organizer=None, annotation_mapping=None, operators_visitors=None):
+        handle_class_inputs(cls, bases, component_managers=component_managers, component_organizer=component_organizer, annotation_mapping=annotation_mapping, operators_visitors=operators_visitors)
 
         super(MonkeyMeta, cls).__init__(name, bases, attrs)
 
@@ -33,14 +25,7 @@ class MonkeyMeta(ABCMeta):
             component_manager.build(cls, monkey_bases, attrs)
 
         model_components = attrs[NamespacesConsts.COMPONENTS]
-        cls.__organized_components__ = organize_components(model_components)
-
-        # print(name)
-        # print(cls.__organized_components__)
-        # print(cls.__map__[NamespacesConsts.FIELDS])
-        # print(cls.__map__[NamespacesConsts.BUILD])
-        # print(cls.__map__[NamespacesConsts.COMPONENTS])
-        # print('------------------------------------------')
+        cls.__organized_components__ = cls.__component_organizer__.order_by_chain_of_responsibility(model_components)
 
         for component_type, components in cls.__organized_components__.items():
             for component in components:
@@ -53,3 +38,5 @@ class MonkeyMeta(ABCMeta):
         for component_type, components in cls.__organized_components__.items():
             for component in components:
                 component.build(cls, bases, attrs)
+
+        cls.__organized_components__ = cls.__component_organizer__.order_for_instance_operation(cls, cls.__organized_components__)
