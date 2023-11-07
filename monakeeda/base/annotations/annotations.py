@@ -48,7 +48,7 @@ class ModelAnnotation(Annotation):
 
 
 class TypeVarAnnotation(Annotation):
-
+    __prior_handler__ = ModelAnnotation
     __label__ = 'type vars'
 
     def _get_actual_type(self, model_instance):
