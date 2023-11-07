@@ -10,11 +10,12 @@ from ..config import ConfigManager, Config
 from ..meta import MonkeyMeta
 from ..operator import all_operators
 from .errors import MonkeyValuesHandlingException
+from .basic_organizer import BaseComponentOrganizer
 
 component_managers = [FieldManager(), AnnotationManager(annotation_mapping), DecoratorManager(), ConfigManager()]
 
 
-class BaseModel(metaclass=MonkeyMeta, component_managers=component_managers, annotation_mapping=annotation_mapping, operators_visitors=all_operators):
+class BaseModel(metaclass=MonkeyMeta, component_managers=component_managers, component_organizer=BaseComponentOrganizer(), annotation_mapping=annotation_mapping, operators_visitors=all_operators):
 
     def __init_subclass__(cls):
         super().__init_subclass__()
@@ -22,17 +23,18 @@ class BaseModel(metaclass=MonkeyMeta, component_managers=component_managers, ann
         cls.__annotation_mapping__[cls] = ModelAnnotation
 
     @classmethod
+    @property
     def struct(cls) -> dict:
-        return getattr(cls, NamespacesConsts.STRUCT).copy()
+        return getattr(cls, NamespacesConsts.STRUCT)
 
     def _handle_values(self, values: dict, stage):
         exceptions = []  # pass by reference - so updates will be available
         super(BaseModel, self).__setattr__(NamespacesConsts.EXCEPTIONS, exceptions)
         # this is an instance level field as opposed to the class level exceptions list used in the build phase
 
-        for component_type, components in self.__organized_components__.items():
-            for component in components:
-                component.handle_values(self, values, stage)
+        for component in self.__organized_components__:
+            component.handle_values(self, values, stage)
+            # print(component, exceptions)
 
         if exceptions:
             raise MonkeyValuesHandlingException(self.__class__.__name__, values, exceptions)
