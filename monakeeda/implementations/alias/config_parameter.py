@@ -18,6 +18,7 @@ class AliasGenerator(ConfigParameter):
         pass
 
     def build(self, monkey_cls, bases, monkey_attrs):
+        from .field_parameter import Alias
         super().build(monkey_cls, bases, monkey_attrs)
 
         for field_key, field_info in monkey_attrs[NamespacesConsts.STRUCT][NamespacesConsts.FIELDS].items():
@@ -29,7 +30,8 @@ class AliasGenerator(ConfigParameter):
             alias_parameter._field_key = field_key
 
             field._initialized_params.append(alias_parameter)
-            monkey_cls.__organized_components__[str(alias_parameter_type)].insert(0, alias_parameter)
+            monkey_cls.__organized_components__[alias_parameter_type].insert(0, alias_parameter)
+            monkey_attrs[NamespacesConsts.COMPONENTS].append(alias_parameter)
 
     def accept_operator(self, operator_visitor: ImplementationsOperatorVisitor, context: Any):
         operator_visitor.operate_alias_generator_config_parameter(self, context)
