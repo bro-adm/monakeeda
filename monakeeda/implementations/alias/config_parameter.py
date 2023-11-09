@@ -29,9 +29,9 @@ class AliasGenerator(ConfigParameter):
             alias_parameter = alias_parameter_type(alias_val)
             alias_parameter._field_key = field_key
 
-            field._initialized_params.append(alias_parameter)
-            monkey_cls.__organized_components__[alias_parameter_type].insert(0, alias_parameter)
-            monkey_attrs[NamespacesConsts.COMPONENTS].append(alias_parameter)
+            field._parameters.append(alias_parameter)  # only to be nice -
+            monkey_cls.__organized_components__[alias_parameter_type].insert(0, alias_parameter)  # adds to the currently running for loop
+            monkey_attrs[NamespacesConsts.COMPONENTS].append(alias_parameter)  # added it only to be nice - not required
 
     def accept_operator(self, operator_visitor: ImplementationsOperatorVisitor, context: Any):
         operator_visitor.operate_alias_generator_config_parameter(self, context)

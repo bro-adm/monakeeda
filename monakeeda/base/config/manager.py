@@ -1,53 +1,74 @@
-from typing import List
+from typing import List, Tuple
 
-from monakeeda.consts import NamespacesConsts, PythonNamingConsts, ConfigConsts
+from monakeeda.consts import NamespacesConsts, ConfigConsts
 from monakeeda.helpers import get_cls_attrs
-from .base_config import Config
-from ..component import ComponentManager, Component
-
-"""
-class A(MonkeyModel):
-    a: int
-    
-    class Config(Config):
-        x = 1
-        
-class B(A):
-    b: int
-    
-    class Config(Config):
-        y = 2
-        
-class C(A):
-    c: int
-    
-    class Config(A.Config):
-        y = 3
-        
-!!! NO MATTER OPTION B OR C BECAUSE WHEN THE MODEL ITSELF INHERITS FROM A ALL THE CLASS MAPPINGS OF A ARE PASSED 
-THROUGH INCLUDING THOSE THAT HAPPENED BECAUSE OF THE CONFIG CLASS PARAMETERS SO IN ORDER TO NEGATE WHAT HAPPENS IN THE 
-FATHER MODEL CONFIG CLASS U NEED TO CREATE A CONFIG CLASS IN THE CURRENT MODEL WITH THE NEGATIVE PARAMETER VALUES 
-U WANT TO NEGATE !!!  
-"""
+from .base_config import all_configs, ConfigParameter
+from ..component import ConfigurableComponentManager, Component
 
 
-class ConfigManager(ComponentManager):
+class ConfigManager(ConfigurableComponentManager[ConfigParameter]):
+
+    def __init__(self):
+        self._config_mapper = all_configs
 
     def _components(self, monkey_cls) -> List[Component]:
-        config: Config = getattr(monkey_cls, NamespacesConsts.STRUCT)[NamespacesConsts.CONFIG][ConfigConsts.OBJECT]
-        return [config, *config._components(monkey_cls)]
+        configs = monkey_cls.struct[NamespacesConsts.CONFIGS]
 
-    def _set_by_base(self, monkey_cls, base, attrs):
-        """
-        The effects of all the configurations in prior bases already effected their namespaces
-        which will be taken into account by prior configurations taking place
-        """
+        components = []
+        for config_info in configs.values():
+            if config_info:
+                config = config_info[ConfigConsts.OBJECT]
 
-        pass
+                components.append(config)
+                components.extend(config._parameters)
+
+        return components
+
+    def _set_by_base(self, monkey_cls, base, attrs, collisions):
+        print("set base ", base.__name__)
+        for config_name, config_type in self._config_mapper.items():
+            print(config_name, config_type)
+
+            current_config = monkey_cls.struct[NamespacesConsts.CONFIGS][config_name].setdefault(ConfigConsts.OBJECT, None)
+            current_parameters = current_config._parameters if current_config else []
+
+            base_config = base.struct[NamespacesConsts.CONFIGS][config_name].setdefault(ConfigConsts.OBJECT, None)
+            base_parameters = base_config._parameters if base_config else []
+
+            print(current_parameters, base_parameters)
+
+            merged_parameters = self._manage_parameters_inheritance(base_parameters, current_parameters, collisions, is_bases=True)
+            print(merged_parameters)
+
+            initialized_config = config_type(merged_parameters, unused_params={})
+            print(merged_parameters)
+            monkey_cls.struct[NamespacesConsts.CONFIGS][config_name][ConfigConsts.OBJECT] = initialized_config
 
     def _set_curr_cls(self, monkey_cls, bases, monkey_attrs):
-        monkey_cls_config = getattr(monkey_cls, PythonNamingConsts.CONFIG)
-        monkey_cls_config_attrs = get_cls_attrs(monkey_cls_config)
+        print("set main cls ", monkey_cls.__name__)
+        for config_name, config_type in self._config_mapper.items():
+            print(config_name, config_type)
+            config_cls = getattr(monkey_cls, config_name, None)
 
-        initialized_config: Config = monkey_cls_config(**monkey_cls_config_attrs)
-        monkey_attrs[NamespacesConsts.STRUCT].setdefault(NamespacesConsts.CONFIG, {})[ConfigConsts.OBJECT] = initialized_config
+            if config_cls:
+                bases_initialized_config = monkey_attrs[NamespacesConsts.STRUCT][NamespacesConsts.CONFIGS][config_name].setdefault(ConfigConsts.OBJECT, None)
+                bases_parameters = bases_initialized_config._parameters if bases_initialized_config else []
+                print(bases_parameters)
+
+                config_attrs = get_cls_attrs(config_cls)
+                new_parameters, unused_params = config_type.initiate_params(config_attrs)
+                print(new_parameters)
+
+                merged_parameters = self._manage_parameters_inheritance(bases_parameters, new_parameters)
+                initialized_config = config_type(merged_parameters, unused_params)
+                print(merged_parameters)
+
+                monkey_attrs[NamespacesConsts.STRUCT][NamespacesConsts.CONFIGS][config_name][ConfigConsts.OBJECT] = initialized_config
+
+    def build(self, monkey_cls, bases, monkey_attrs):
+        monkey_attrs[NamespacesConsts.STRUCT].setdefault(NamespacesConsts.CONFIGS, {})
+
+        for config_name, config_type in self._config_mapper.items():
+            monkey_cls.struct[NamespacesConsts.CONFIGS].setdefault(config_name, {})
+
+        super().build(monkey_cls, bases, monkey_attrs)

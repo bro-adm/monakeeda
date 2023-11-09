@@ -15,14 +15,14 @@ class Validator(BaseValidatorDecorator):
         self.dependencies = dependencies if dependencies else []
 
     def _handle_values(self, model_instance, values, stage) -> Union[Exception, None]:
-        config = getattr(model_instance, NamespacesConsts.STRUCT)[NamespacesConsts.CONFIG]
+        configs = getattr(model_instance, NamespacesConsts.STRUCT)[NamespacesConsts.CONFIGS]
         fields_info = getattr(model_instance, NamespacesConsts.STRUCT)[NamespacesConsts.FIELDS]
 
-        return self.wrapper(model_instance, values, config, fields_info)
+        return self.wrapper(model_instance, values, configs, fields_info)
 
-    def wrapper(self, monkey_cls, values, config, fields_info):
+    def wrapper(self, monkey_cls, values, configs, fields_info):
         wanted_fields = [self._field_key, *self.dependencies]
-        return self.func(monkey_cls, config, get_wanted_params(fields_info, wanted_fields), get_wanted_params(values, wanted_fields))
+        return self.func(monkey_cls, configs, get_wanted_params(fields_info, wanted_fields), get_wanted_params(values, wanted_fields))
 
     def accept_operator(self, operator_visitor: ImplementationsOperatorVisitor, context: Any):
         operator_visitor.operate_validator_decorator(self, context)

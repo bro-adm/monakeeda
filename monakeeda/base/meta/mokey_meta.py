@@ -15,6 +15,9 @@ class MonkeyMeta(ABCMeta):
         return cls
 
     def __init__(cls, name, bases, attrs, component_managers=None, component_organizer=None, annotation_mapping=None, operators_visitors=None):
+        print("###################")
+        print(name)
+
         handle_class_inputs(cls, bases, component_managers=component_managers, component_organizer=component_organizer, annotation_mapping=annotation_mapping, operators_visitors=operators_visitors)
 
         super(MonkeyMeta, cls).__init__(name, bases, attrs)
@@ -40,3 +43,15 @@ class MonkeyMeta(ABCMeta):
                 component.build(cls, bases, attrs)
 
         cls.__organized_components__ = cls.__component_organizer__.order_for_instance_operation(cls, cls.__organized_components__)
+
+        print("---------------------------")
+
+        for key, val in cls.struct.items():
+            print(key, val)
+
+        print("------------------------------")
+        #
+        for component in cls.__organized_components__:
+            print(type(component), getattr(component, '_field_key', 'global'))
+
+        print("------------------------------")

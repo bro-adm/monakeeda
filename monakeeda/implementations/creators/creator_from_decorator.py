@@ -5,6 +5,7 @@ from monakeeda.consts import NamespacesConsts, FieldConsts
 from .base_decorator import BaseCreatorDecorator
 from ..missing import ValidateMissingFieldsConfigParameter
 from ..implemenations_base_operator_visitor import ImplementationsOperatorVisitor
+from monakeeda.base import NoField
 
 
 class CreateFrom(BaseCreatorDecorator):
@@ -31,19 +32,22 @@ class CreateFrom(BaseCreatorDecorator):
                 monkey_attrs[NamespacesConsts.STRUCT][NamespacesConsts.FIELDS][key].setdefault(FieldConsts.DEPENDENTS, []).append(self._field_key)
                 monkey_attrs[NamespacesConsts.STRUCT][NamespacesConsts.FIELDS][key].setdefault(FieldConsts.COMPONENTS, [])
                 monkey_attrs[NamespacesConsts.STRUCT][NamespacesConsts.FIELDS][key][FieldConsts.REQUIRED] = True
+                no_field = NoField()
+                no_field._field_key = key
+                monkey_attrs[NamespacesConsts.STRUCT][NamespacesConsts.FIELDS][key].setdefault(FieldConsts.FIELD, no_field)
 
     def _handle_values(self, model_instance, values, stage):
         fields_info = getattr(model_instance, NamespacesConsts.STRUCT)[NamespacesConsts.FIELDS]
-        config = getattr(model_instance, NamespacesConsts.STRUCT)[NamespacesConsts.CONFIG]
+        configs = getattr(model_instance, NamespacesConsts.STRUCT)[NamespacesConsts.CONFIGS]
 
-        wanted_val = self.wrapper(model_instance, values, config, fields_info)
+        wanted_val = self.wrapper(model_instance, values, configs, fields_info)
         values[self._field_key] = wanted_val
 
-    def wrapper(self, monkey_cls, values, config, fields_info):
+    def wrapper(self, monkey_cls, values, configs, fields_info):
         if self.from_keys[0] == '*':
-            return self.func(monkey_cls, values, config, fields_info)
+            return self.func(monkey_cls, values, configs, fields_info)
 
-        return self.func(monkey_cls, config, get_wanted_params(fields_info, self.from_keys), get_wanted_params(values, self.from_keys))
+        return self.func(monkey_cls, configs, get_wanted_params(fields_info, self.from_keys), get_wanted_params(values, self.from_keys))
 
     def accept_operator(self, operator_visitor: ImplementationsOperatorVisitor, context: Any):
         operator_visitor.operate_create_from_decorator(self, context)

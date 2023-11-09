@@ -1,6 +1,5 @@
 class PythonNamingConsts:
     annotations = '__annotations__'
-    CONFIG = 'Config'
 
 
 class ComponentConsts:
@@ -15,7 +14,7 @@ class NamespacesConsts:
     FIELDS = 'fields'
     ANNOTATIONS = 'annotations'
     DECORATORS = 'decorators'
-    CONFIG = 'config'
+    CONFIGS = 'configs'
 
 
 class FieldConsts:
@@ -33,6 +32,7 @@ class FieldConsts:
 
 class ConfigConsts:
     OBJECT = 'object'
+    COMPONENTS = 'components'
 
 
 class DecoratorConsts:

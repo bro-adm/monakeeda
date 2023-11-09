@@ -69,3 +69,7 @@ def get_items_from_list(items: list, main_list: list) -> list:
 
 def exclude_keys(the_dict: dict, keys: List[str]):
     return {key: val for key, val in the_dict.items() if key not in keys}
+
+
+def is_subset(the_list: list, sub_list: list) -> bool:
+    return all(x in the_list for x in sub_list)

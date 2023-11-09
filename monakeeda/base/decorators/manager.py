@@ -10,7 +10,7 @@ class DecoratorManager(ComponentManager):
     def _components(self, monkey_cls) -> List[BaseDecorator]:
         return getattr(monkey_cls, NamespacesConsts.STRUCT)[NamespacesConsts.DECORATORS]
 
-    def _set_by_base(self, monkey_cls, base, attrs):
+    def _set_by_base(self, monkey_cls, base, attrs, collisions):
         attrs[NamespacesConsts.STRUCT][NamespacesConsts.DECORATORS].extend(
             getattr(base, NamespacesConsts.STRUCT)[NamespacesConsts.DECORATORS])
 

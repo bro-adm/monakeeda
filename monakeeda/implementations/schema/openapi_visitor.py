@@ -15,22 +15,22 @@ from ..validators import Validator
 from ..basic_annotations import ObjectAnnotation, BasicTypeAnnotation, UnionAnnotation, ListAnnotation, DictAnnotation
 
 
-class OpenAPIPropertySpec(BaseModel):
-    type: str = '1'
-    format: str = '1'
-    default: str = '1'
-    description: str = '1'
-    enum: List[str] = []
-    example: str = '1'
-    minimum: str = '1'
-    maximum: str = '1'
-    ref: str = Field(alias="$ref", default='1')
-
-
-class OpenAPIObjectSpec(BaseModel):
-    type: Const[str] = Field(value='object')
-    required: List[str]
-    properties: Dict[str, OpenAPIPropertySpec]
+# class OpenAPIPropertySpec(BaseModel):
+#     type: str = '1'
+#     format: str = '1'
+#     default: str = '1'
+#     description: str = '1'
+#     enum: List[str] = []
+#     example: str = '1'
+#     minimum: str = '1'
+#     maximum: str = '1'
+#     ref: str = Field(alias="$ref", default='1')
+#
+#
+# class OpenAPIObjectSpec(BaseModel):
+#     type: Const[str] = Field(value='object')
+#     required: List[str]
+#     properties: Dict[str, OpenAPIPropertySpec]
 
 
 # OpenAPIObjectSpec(required=[], properties={'a': 1, 'b': OpenAPIPropertySpec()})

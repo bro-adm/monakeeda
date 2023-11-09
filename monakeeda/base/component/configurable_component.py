@@ -1,5 +1,5 @@
-from abc import ABC
-from typing import Dict, List, Union, ClassVar, Type, Generic
+from abc import ABC, abstractmethod
+from typing import Dict, List, Union, ClassVar, Type, Generic, Any, Tuple
 
 from .component import Component
 from .parameter_component import TParameter, Parameter
@@ -22,11 +22,11 @@ class OneComponentPerLabelAllowedRuleException(RuleException):
 
 class OneComponentPerLabelAllowedRule(Rule):
 
-    def validate(self, component: "ConfigurableComponentManager", monkey_cls) -> Union[RuleException, None]:
+    def validate(self, component: "ConfigurableComponent", monkey_cls) -> Union[RuleException, None]:
         existing_labels: Dict[str, Component] = {}
         duplicate_labels_components: Dict[str, List[Component]] = {}
 
-        for nested_component in component._components(monkey_cls):
+        for nested_component in component._parameters:
             label = nested_component.__label__
             if label in existing_labels:
                 duplicate_labels_components.setdefault(label, [existing_labels[label]])
@@ -48,22 +48,9 @@ class UnmatchedParameterKeyRuleException(RuleException):
 
 class UnmatchedParameterKeyRule(Rule):
 
-    def validate(self, component: "ConfigurableComponentManager", monkey_cls) -> Union[RuleException, None]:
-        unmatched_params = {}
-
-        for param_key, param_val in component._init_params.items():
-            if component.__parameter_components__:
-                for parameter in component.__parameter_components__:
-                    if param_key == parameter.__key__:
-                        break
-                    if parameter == component.__parameter_components__[-1]:
-                        unmatched_params[param_key] = param_val
-            else:
-                # No parameters exist for the given component, so every given configuration is a mistake
-                unmatched_params[param_key] = param_val
-
-        if unmatched_params:
-            return UnmatchedParameterKeyRuleException(unmatched_params)
+    def validate(self, component: "ConfigurableComponent", monkey_cls) -> Union[RuleException, None]:
+        if component._unused_params:
+            return UnmatchedParameterKeyRuleException(component._unused_params)
 
 
 class ConfigurableComponent(Component, Generic[TParameter], ABC):
@@ -105,17 +92,29 @@ class ConfigurableComponent(Component, Generic[TParameter], ABC):
         if copy_parameter_components:
             cls.__parameter_components__ = cls.__parameter_components__.copy()
 
-    def __init__(self, **params):
-        self._init_params = params
-        self._initialized_params: List[Parameter] = []
-        self.__initiate_params(params)
+    @classmethod
+    @abstractmethod
+    def _initiate_param(cls, param_cls: Type[TParameter], param_val) -> TParameter:
+        pass
 
-    def __initiate_params(self, params: dict):
+    def __init__(self, parameters: List[TParameter], unused_params: Dict[str, Any]):
+        self._parameters = parameters
+        self._unused_params = unused_params
+
+    @classmethod
+    def initiate_params(cls, params: dict) -> Tuple[List[TParameter], Dict[str, Any]]:
+        initialized_params = []
+        unused_params = {}
+
         for param_key, param_val in params.items():
-            for possible_param in self.__parameter_components__:
+            for possible_param in cls.__parameter_components__:
                 if param_key == possible_param.__key__:
-                    self._initialized_params.append(possible_param(param_val))
+                    initialized_param = cls._initiate_param(possible_param, param_val)
+                    initialized_params.append(initialized_param)
                     break
 
-    def _components(self, monkey_cls) -> List[Parameter]:
-        return self._initialized_params
+                if possible_param == cls.__parameter_components__[-1]:  # end
+                    unused_params[param_key] = param_val
+
+        # if __parameters_components__ is empty so unused_params will be empty
+        return initialized_params, unused_params

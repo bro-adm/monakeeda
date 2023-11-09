@@ -65,6 +65,3 @@ class BaseModel(metaclass=MonkeyMeta, component_managers=component_managers, com
         for component_type, components in model.__organized_components__.items():
             for component in components:
                 component.accept_operator(operator_visitor, context)
-
-    class Config(Config):
-        pass

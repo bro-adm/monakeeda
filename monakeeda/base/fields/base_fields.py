@@ -1,5 +1,5 @@
 from abc import ABC
-from typing import Any, Union
+from typing import Any, Union, Type, List, Dict
 
 from monakeeda.consts import FieldConsts, NamespacesConsts
 from ..component import Parameter, ConfigurableComponent
@@ -13,12 +13,21 @@ class FieldParameter(Parameter, ABC):
         super().__init__(param_val)
 
     def build(self, monkey_cls, bases, monkey_attrs):
-        monkey_attrs[NamespacesConsts.STRUCT][NamespacesConsts.FIELDS][self._field_key][self.__key__] = self.param_val
         monkey_attrs[NamespacesConsts.STRUCT][NamespacesConsts.FIELDS][self._field_key][FieldConsts.COMPONENTS].append(self)
 
 
 class Field(ConfigurableComponent[FieldParameter]):
     __label__ = 'field'
+
+    # def __init__(self, field_key, parameters: List[FieldParameter], unused_params: Dict[str, Any]):
+    #     self._field_key = field_key
+    #     super().__init__(parameters, unused_params)
+
+    @classmethod
+    def init_from_params(cls, **params):
+        parameters, unused_params = cls.initiate_params(params)
+
+        return cls(parameters, unused_params)
 
     def build(self, monkey_cls, bases, monkey_attrs):
         monkey_attrs[NamespacesConsts.STRUCT][NamespacesConsts.FIELDS][self._field_key][FieldConsts.REQUIRED] = True
@@ -26,6 +35,10 @@ class Field(ConfigurableComponent[FieldParameter]):
 
     def _handle_values(self, model_instance, values, stage):
         pass
+
+    @classmethod
+    def _initiate_param(cls, param_cls: Type[FieldParameter], param_val) -> FieldParameter:
+        return param_cls(param_val)
 
     def accept_operator(self, operator_visitor: OperatorVisitor, context: Any):
         operator_visitor.operate_field(self, context)
@@ -41,4 +54,4 @@ class NoField(Field, copy_parameter_components=False):
 
     def __init__(self):
         # hard set: no params available for initialization
-        super(NoField, self).__init__()
+        super(NoField, self).__init__([], {})

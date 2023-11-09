@@ -14,7 +14,7 @@ class AnnotationManager(ComponentManager):
     def _components(self, monkey_cls) -> List[Annotation]:
         return getattr(monkey_cls, NamespacesConsts.STRUCT)[NamespacesConsts.ANNOTATIONS].values()
 
-    def _set_by_base(self, monkey_cls, base, monkey_attrs):
+    def _set_by_base(self, monkey_cls, base, monkey_attrs, collisions):
         monkey_attrs[NamespacesConsts.STRUCT][NamespacesConsts.ANNOTATIONS].\
             update(getattr(base, NamespacesConsts.STRUCT)[NamespacesConsts.ANNOTATIONS])
 
