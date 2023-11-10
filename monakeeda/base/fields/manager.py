@@ -46,16 +46,12 @@ class FieldManager(ConfigurableComponentManager[FieldParameter]):
                 if current_field_type == NoField:
                     monkey_cls.struct[NamespacesConsts.FIELDS][field_key][FieldConsts.FIELD] = base_field
                 else:
-                    no_field = NoField()
-                    no_field._field_key = field_key
+                    no_field = NoField.override_init(field_key, [], {})
                     monkey_cls.struct[NamespacesConsts.FIELDS][field_key][FieldConsts.FIELD] = no_field
 
             else:
                 merged_parameters = self._manage_parameters_inheritance(base_parameters, current_parameters, collisions, is_bases=True)
-                merged_field = base_field_type(merged_parameters, unused_params={})
-                merged_field._field_key = field_key
-                for param in merged_field._parameters:
-                    param._field_key = field_key
+                merged_field = base_field_type.override_init(field_key, merged_parameters, unused_params={})
                 monkey_cls.struct[NamespacesConsts.FIELDS][field_key][FieldConsts.FIELD] = merged_field
 
         new_fields_keys = base_annotations_keys - current_annotations_keys
@@ -78,17 +74,16 @@ class FieldManager(ConfigurableComponentManager[FieldParameter]):
                 if value is inspect._empty:
                     value = NoField()
                 else:
-                    value = Field.init_from_params(default=value)
+                    value = Field(default=value)
 
-            if bases_field_type and type(value)!=NoField and type(value)==bases_field_type:
-                merged_parameters = self._manage_parameters_inheritance(bases_parameters, value._parameters)
-                merged_field = Field(merged_parameters, value._unused_params)
+            field_type = type(value)
+            initialized_params, unused_params = value.initiate_params(value._init_params, field_key=field_key)
+
+            if bases_field_type and field_type!=NoField and field_type==bases_field_type:
+                merged_parameters = self._manage_parameters_inheritance(bases_parameters, initialized_params)
+                merged_field = Field.override_init(field_key, merged_parameters, unused_params)
             else:
-                merged_field = value
-
-            merged_field._field_key = field_key
-            for param in merged_field._parameters:
-                param._field_key = field_key
+                merged_field = field_type.override_init(field_key, initialized_params, unused_params)
 
             monkey_attrs[field_key] = merged_field
             monkey_attrs[NamespacesConsts.STRUCT][NamespacesConsts.FIELDS][field_key][FieldConsts.FIELD] = merged_field

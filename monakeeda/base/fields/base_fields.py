@@ -8,8 +8,8 @@ from ..operator import OperatorVisitor
 
 class FieldParameter(Parameter, ABC):
 
-    def __init__(self, param_val):
-        self._field_key = None
+    def __init__(self, param_val, field_key):
+        self._field_key = field_key
         super().__init__(param_val)
 
     def build(self, monkey_cls, bases, monkey_attrs):
@@ -19,15 +19,16 @@ class FieldParameter(Parameter, ABC):
 class Field(ConfigurableComponent[FieldParameter]):
     __label__ = 'field'
 
+    @classmethod
+    def override_init(cls, field_key: str, parameters: List[FieldParameter], unused_params: Dict[str, Any]):
+        instance = super().override_init(parameters, unused_params)
+        instance._field_key = field_key
+
+        return instance
+
     # def __init__(self, field_key, parameters: List[FieldParameter], unused_params: Dict[str, Any]):
     #     self._field_key = field_key
     #     super().__init__(parameters, unused_params)
-
-    @classmethod
-    def init_from_params(cls, **params):
-        parameters, unused_params = cls.initiate_params(params)
-
-        return cls(parameters, unused_params)
 
     def build(self, monkey_cls, bases, monkey_attrs):
         monkey_attrs[NamespacesConsts.STRUCT][NamespacesConsts.FIELDS][self._field_key][FieldConsts.REQUIRED] = True
@@ -35,10 +36,6 @@ class Field(ConfigurableComponent[FieldParameter]):
 
     def _handle_values(self, model_instance, values, stage):
         pass
-
-    @classmethod
-    def _initiate_param(cls, param_cls: Type[FieldParameter], param_val) -> FieldParameter:
-        return param_cls(param_val)
 
     def accept_operator(self, operator_visitor: OperatorVisitor, context: Any):
         operator_visitor.operate_field(self, context)
@@ -54,4 +51,4 @@ class NoField(Field, copy_parameter_components=False):
 
     def __init__(self):
         # hard set: no params available for initialization
-        super(NoField, self).__init__([], {})
+        super(NoField, self).__init__()

@@ -40,7 +40,7 @@ class ConfigManager(ConfigurableComponentManager[ConfigParameter]):
             merged_parameters = self._manage_parameters_inheritance(base_parameters, current_parameters, collisions, is_bases=True)
             print(merged_parameters)
 
-            initialized_config = config_type(merged_parameters, unused_params={})
+            initialized_config = config_type.override_init(merged_parameters, unused_params={})
             print(merged_parameters)
             monkey_cls.struct[NamespacesConsts.CONFIGS][config_name][ConfigConsts.OBJECT] = initialized_config
 
@@ -56,11 +56,11 @@ class ConfigManager(ConfigurableComponentManager[ConfigParameter]):
                 print(bases_parameters)
 
                 config_attrs = get_cls_attrs(config_cls)
-                new_parameters, unused_params = config_type.initiate_params(config_attrs)
+                new_parameters, unused_params = config_type.initiate_params(config_attrs, config_cls_name=config_name)
                 print(new_parameters)
 
                 merged_parameters = self._manage_parameters_inheritance(bases_parameters, new_parameters)
-                initialized_config = config_type(merged_parameters, unused_params)
+                initialized_config = config_type.override_init(merged_parameters, unused_params)
                 print(merged_parameters)
 
                 monkey_attrs[NamespacesConsts.STRUCT][NamespacesConsts.CONFIGS][config_name][ConfigConsts.OBJECT] = initialized_config

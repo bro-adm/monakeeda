@@ -93,23 +93,27 @@ class ConfigurableComponent(Component, Generic[TParameter], ABC):
             cls.__parameter_components__ = cls.__parameter_components__.copy()
 
     @classmethod
-    @abstractmethod
-    def _initiate_param(cls, param_cls: Type[TParameter], param_val) -> TParameter:
-        pass
+    def override_init(cls, parameters: List[TParameter], unused_params: Dict[str, Any]):
+        instance = cls()
+        instance._parameters = parameters
+        instance._unused_params = unused_params
 
-    def __init__(self, parameters: List[TParameter], unused_params: Dict[str, Any]):
-        self._parameters = parameters
-        self._unused_params = unused_params
+        return instance
+
+    def __init__(self, **params):
+        # Pretty init for client's sake
+        # Generally the override_init is the correct init api and holds the actual necessary attrs
+        self._init_params = params
 
     @classmethod
-    def initiate_params(cls, params: dict) -> Tuple[List[TParameter], Dict[str, Any]]:
+    def initiate_params(cls, params: dict, **kwargs) -> Tuple[List[TParameter], Dict[str, Any]]:
         initialized_params = []
         unused_params = {}
 
         for param_key, param_val in params.items():
             for possible_param in cls.__parameter_components__:
                 if param_key == possible_param.__key__:
-                    initialized_param = cls._initiate_param(possible_param, param_val)
+                    initialized_param = possible_param(param_val, **kwargs)
                     initialized_params.append(initialized_param)
                     break
 

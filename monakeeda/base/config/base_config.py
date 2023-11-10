@@ -12,9 +12,9 @@ class ConfigParameter(Parameter, ABC):
     Just a class for simple differentiating between parameters implementations
     """
 
-    def __init__(self, config_cls_name: str, param_val):
-        self._config_cls_name = config_cls_name
+    def __init__(self, param_val, config_cls_name: str):
         super().__init__(param_val)
+        self._config_cls_name = config_cls_name
 
     def build(self, monkey_cls, bases, monkey_attrs):
         pass
@@ -44,10 +44,6 @@ class Config(ConfigurableComponent[ConfigParameter]):
 
     def _handle_values(self, model_instance, values, stage):
         pass
-
-    @classmethod
-    def _initiate_param(cls, param_cls: Type[ConfigParameter], param_val) -> ConfigParameter:
-        return param_cls(cls.__name__, param_val)
 
     def accept_operator(self, operator_visitor: OperatorVisitor, context: Any):
         operator_visitor.operate_config(self, context)

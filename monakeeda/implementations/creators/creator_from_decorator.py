@@ -32,8 +32,7 @@ class CreateFrom(BaseCreatorDecorator):
                 monkey_attrs[NamespacesConsts.STRUCT][NamespacesConsts.FIELDS][key].setdefault(FieldConsts.DEPENDENTS, []).append(self._field_key)
                 monkey_attrs[NamespacesConsts.STRUCT][NamespacesConsts.FIELDS][key].setdefault(FieldConsts.COMPONENTS, [])
                 monkey_attrs[NamespacesConsts.STRUCT][NamespacesConsts.FIELDS][key][FieldConsts.REQUIRED] = True
-                no_field = NoField()
-                no_field._field_key = key
+                no_field = NoField.override_init(key, [], {})
                 monkey_attrs[NamespacesConsts.STRUCT][NamespacesConsts.FIELDS][key].setdefault(FieldConsts.FIELD, no_field)
 
     def _handle_values(self, model_instance, values, stage):
