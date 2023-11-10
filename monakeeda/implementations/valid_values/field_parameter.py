@@ -1,6 +1,6 @@
 from typing import Any, Union
 
-from monakeeda.base import FieldParameter, Rules, Field, TypeVarAnnotation
+from monakeeda.base import FieldParameter, Rules, Field, ArbitraryAnnotation
 from ..rules import BasicParameterValueTypeValidationRule
 from ..implemenations_base_operator_visitor import ImplementationsOperatorVisitor
 from monakeeda.consts import NamespacesConsts
@@ -18,7 +18,7 @@ class ValidValues(FieldParameter):
     __key__ = 'valid_values'
     __label__ = 'specific_value'
     __rules__ = Rules([BasicParameterValueTypeValidationRule((list, tuple, set))])
-    __prior_handler__ = TypeVarAnnotation
+    __prior_handler__ = ArbitraryAnnotation
     __pass_on_errors__ = [MissingFieldValuesException]
 
     def _handle_values(self, model_instance, values, stage):

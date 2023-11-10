@@ -68,3 +68,18 @@ class TypeVarAnnotation(Annotation):
 
     def accept_operator(self, operator_visitor: OperatorVisitor, context: Any):
         operator_visitor.operate_model_annotation(self, context)
+
+
+class ArbitraryAnnotation(Annotation):
+    __label__ = 'basic'
+    __prior_handler__ = TypeVarAnnotation
+    # __pass_on_errors__ = [MissingFieldValuesException]
+
+    def _handle_values(self, model_instance, values, stage):
+        result = type_validation(values[self._field_key], self.base_type)
+
+        if result:
+            getattr(model_instance, NamespacesConsts.EXCEPTIONS).append(result)
+
+    def accept_operator(self, operator_visitor: OperatorVisitor, context: Any):
+        operator_visitor.operate_model_annotation(self, context)

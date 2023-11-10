@@ -7,8 +7,8 @@ from .helpers import handle_class_inputs
 
 class MonkeyMeta(ABCMeta):
     def __new__(mcs, name, bases, attrs, **_):
-        attrs.setdefault(NamespacesConsts.STRUCT, {})
-        attrs.setdefault(NamespacesConsts.COMPONENTS, [])
+        attrs[NamespacesConsts.STRUCT] = {}
+        attrs[NamespacesConsts.COMPONENTS] = []
         attrs[NamespacesConsts.EXCEPTIONS] = RulesException(name, [])
 
         cls = super(MonkeyMeta, mcs).__new__(mcs, name, bases, attrs)
@@ -50,7 +50,7 @@ class MonkeyMeta(ABCMeta):
             print(key, val)
 
         print("------------------------------")
-        #
+
         for component in cls.__organized_components__:
             print(type(component), getattr(component, '_field_key', 'global'))
 
