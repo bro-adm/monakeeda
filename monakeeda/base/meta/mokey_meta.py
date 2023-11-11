@@ -10,13 +10,14 @@ class MonkeyMeta(ABCMeta):
         attrs[NamespacesConsts.STRUCT] = {}
         attrs[NamespacesConsts.COMPONENTS] = []
         attrs[NamespacesConsts.EXCEPTIONS] = RulesException(name, [])
+        attrs[NamespacesConsts.TMP] = {}
 
         cls = super(MonkeyMeta, mcs).__new__(mcs, name, bases, attrs)
         return cls
 
     def __init__(cls, name, bases, attrs, component_managers=None, component_organizer=None, annotation_mapping=None, operators_visitors=None):
         print("###################")
-        print(name)
+        print(name, bases)
 
         handle_class_inputs(cls, bases, component_managers=component_managers, component_organizer=component_organizer, annotation_mapping=annotation_mapping, operators_visitors=operators_visitors)
 

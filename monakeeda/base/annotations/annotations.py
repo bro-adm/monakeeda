@@ -4,7 +4,8 @@ from typing import Any, get_args
 from .base_annotations import Annotation
 from .helpers import type_validation
 from ..operator import OperatorVisitor
-from monakeeda.consts import NamespacesConsts
+from ..component import Stages
+from monakeeda.consts import NamespacesConsts, TmpConsts
 
 
 class ModelAnnotation(Annotation):
@@ -30,8 +31,7 @@ class ModelAnnotation(Annotation):
 
         elif isinstance(value, dict):
             try:
-                monkey = self.base_type()
-                monkey.set(**value)
+                monkey = self.base_type(**value)
             except Exception as e:
                 getattr(model_instance, NamespacesConsts.EXCEPTIONS).append(e)
 
@@ -51,8 +51,15 @@ class TypeVarAnnotation(Annotation):
     __prior_handler__ = ModelAnnotation
     __label__ = 'type vars'
 
-    def _get_actual_type(self, model_instance):
-        instance_types = get_args(model_instance.__orig_class__)  # preserves order
+    def _get_actual_type(self, model_instance, stage):
+        model_tmp = getattr(model_instance, NamespacesConsts.TMP)
+
+        if stage == Stages.INIT:
+            instance_types = model_tmp[TmpConsts.GENERICS]  # provided generics for model - either new TypeVar or an actual type
+        else:
+            # stage => Stages.UPDATE
+            instance_types = get_args(model_instance.__orig_class__)  # preserves order
+
         model_generics = model_instance.__class__.__parameters__  # saved attr for Generics -> saved in tuple which preserves order
 
         index = model_generics.index(self.base_type)  # in this specific anntoation the base_type is mapped to the TypeVar instance
@@ -61,7 +68,7 @@ class TypeVarAnnotation(Annotation):
     def _handle_values(self, model_instance, values, stage):
         from .mapping import annotation_mapping
 
-        instance_type = self._get_actual_type(model_instance)
+        instance_type = self._get_actual_type(model_instance, stage)
         annotation = annotation_mapping[instance_type](self._field_key, instance_type)
 
         annotation.handle_values(model_instance, values, stage)

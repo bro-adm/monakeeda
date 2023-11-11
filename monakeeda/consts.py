@@ -10,6 +10,7 @@ class NamespacesConsts:
     COMPONENTS = '__monkey_components__'
     STRUCT = '__monkey_struct__'
     EXCEPTIONS = '__monkey_exceptions__'
+    TMP = '__monkey_tmp__'
 
     FIELDS = 'fields'
     ANNOTATIONS = 'annotations'
@@ -37,3 +38,7 @@ class ConfigConsts:
 
 class DecoratorConsts:
     DECORATED_WITH = '__decorated_with__'  # model methods decorators instances space
+
+
+class TmpConsts:
+    GENERICS = 'generics'
