@@ -31,7 +31,6 @@ class AnnotationManager(ComponentManager):
 
             object_annotations = ArbitraryAnnotation(field_key, object)
 
-            # attrs[NamespacesConsts.STRUCT][NamespacesConsts.FIELDS][field_key][FieldConsts.ANNOTATION] = object_annotations
             attrs[NamespacesConsts.STRUCT][NamespacesConsts.ANNOTATIONS][field_key] = object_annotations
 
         new_fields_keys = base_annotations_keys - current_annotations_keys

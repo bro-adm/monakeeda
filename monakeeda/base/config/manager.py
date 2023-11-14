@@ -27,6 +27,7 @@ class ConfigManager(ConfigurableComponentManager[ConfigParameter]):
     def _set_by_base(self, monkey_cls, base, attrs, collisions):
         print("set base ", base.__name__)
         for config_name, config_type in self._config_mapper.items():
+            config_collisions = collisions.setdefault(config_name, [])
             print(config_name, config_type)
 
             current_config = monkey_cls.struct[NamespacesConsts.CONFIGS][config_name].setdefault(ConfigConsts.OBJECT, None)
@@ -37,7 +38,7 @@ class ConfigManager(ConfigurableComponentManager[ConfigParameter]):
 
             print(current_parameters, base_parameters)
 
-            merged_parameters = self._manage_parameters_inheritance(base_parameters, current_parameters, collisions, is_bases=True)
+            merged_parameters = self._manage_parameters_inheritance(base_parameters, current_parameters, config_collisions, is_bases=True)
             print(merged_parameters)
 
             initialized_config = config_type.override_init(merged_parameters, unused_params={})

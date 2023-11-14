@@ -14,7 +14,7 @@ class ComponentManager(MonkeyBuilder, ABC):
         pass
 
     @abstractmethod
-    def _set_by_base(self, monkey_cls, base, attrs, collisions: list):
+    def _set_by_base(self, monkey_cls, base, attrs, collisions: dict):
         pass
 
     @abstractmethod
@@ -22,7 +22,7 @@ class ComponentManager(MonkeyBuilder, ABC):
         pass
 
     def build(self, monkey_cls, bases, monkey_attrs):
-        collisions = []
+        collisions = {}
 
         for base in bases:
             self._set_by_base(monkey_cls, base, monkey_attrs, collisions)

@@ -34,6 +34,8 @@ class FieldManager(ConfigurableComponentManager[FieldParameter]):
 
         collided_fields = current_annotations_keys & base_annotations_keys  # intersection
         for field_key in collided_fields:
+            field_collisions = collisions.setdefault(field_key, [])
+
             current_field = monkey_cls.struct[NamespacesConsts.FIELDS][field_key].setdefault(FieldConsts.FIELD, None)
             current_parameters = current_field._parameters if current_field else []
             current_field_type = type(current_field) if current_field else None
@@ -50,7 +52,7 @@ class FieldManager(ConfigurableComponentManager[FieldParameter]):
                     monkey_cls.struct[NamespacesConsts.FIELDS][field_key][FieldConsts.FIELD] = no_field
 
             else:
-                merged_parameters = self._manage_parameters_inheritance(base_parameters, current_parameters, collisions, is_bases=True)
+                merged_parameters = self._manage_parameters_inheritance(base_parameters, current_parameters, field_collisions, is_bases=True)
                 merged_field = base_field_type.override_init(field_key, merged_parameters, unused_params={})
                 monkey_cls.struct[NamespacesConsts.FIELDS][field_key][FieldConsts.FIELD] = merged_field
 
