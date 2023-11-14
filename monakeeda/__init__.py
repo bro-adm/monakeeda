@@ -6,3 +6,5 @@ print("----------------------------")
 
 for component in all_components:
     print(component)
+
+print("----------------------------")

@@ -28,9 +28,15 @@ class AliasGenerator(ConfigParameter):
             alias_val = self.param_val(field_key)
             alias_parameter = alias_parameter_type(alias_val, field_key)
 
-            field._parameters.append(alias_parameter)  # only to be nice -
-            monkey_cls.__organized_components__[alias_parameter_type].insert(0, alias_parameter)  # adds to the currently running for loop
-            monkey_attrs[NamespacesConsts.COMPONENTS].append(alias_parameter)  # added it only to be nice - not required
+            append = True
+            for field_parameter in field._parameters:
+                if alias_parameter == field_parameter:
+                    append = False
+
+            if append:
+                field._parameters.append(alias_parameter)  # only to be nice -
+                monkey_cls.__organized_components__[alias_parameter_type].insert(0, alias_parameter)  # adds to the currently running for loop
+                monkey_attrs[NamespacesConsts.COMPONENTS].append(alias_parameter)  # added it only to be nice - not required
 
     def accept_operator(self, operator_visitor: ImplementationsOperatorVisitor, context: Any):
         operator_visitor.operate_alias_generator_config_parameter(self, context)

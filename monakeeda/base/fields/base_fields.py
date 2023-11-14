@@ -12,6 +12,11 @@ class FieldParameter(Parameter, ABC):
         self._field_key = field_key
         super().__init__(param_val)
 
+    def __eq__(self, other):
+        if not isinstance(other, FieldParameter):
+            return NotImplemented
+        return self._field_key == other._field_key and self.param_val == other.param_val
+
     def build(self, monkey_cls, bases, monkey_attrs):
         monkey_attrs[NamespacesConsts.STRUCT][NamespacesConsts.FIELDS][self._field_key][FieldConsts.COMPONENTS].append(self)
 
@@ -25,10 +30,6 @@ class Field(ConfigurableComponent[FieldParameter]):
         instance._field_key = field_key
 
         return instance
-
-    # def __init__(self, field_key, parameters: List[FieldParameter], unused_params: Dict[str, Any]):
-    #     self._field_key = field_key
-    #     super().__init__(parameters, unused_params)
 
     def build(self, monkey_cls, bases, monkey_attrs):
         monkey_attrs[NamespacesConsts.STRUCT][NamespacesConsts.FIELDS][self._field_key][FieldConsts.REQUIRED] = True
