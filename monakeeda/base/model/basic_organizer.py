@@ -94,7 +94,6 @@ class BaseComponentOrganizer(ComponentOrganizer):
                     organized.extend(_organized)
                     processed_attrs.extend(_processed_attrs)
 
-        # print(processed_attrs)
         return organized
 
     def order_for_instance_operation(self, monkey_cls, monkey_type_organized_components: Dict[Type[Component], List[Component]]) -> List[Component]:
@@ -113,9 +112,6 @@ class BaseComponentOrganizer(ComponentOrganizer):
         after each section, we compute the next components yet to be processed and run recursively.
         """
 
-        # print("############")
-        # print(monkey_cls.__name__)
-        # print(monkey_type_organized_components.keys())
         organized_components = []
 
         next_global_component_type, next_index = self._find_next_global_scoped_component_type(monkey_type_organized_components)
@@ -123,7 +119,6 @@ class BaseComponentOrganizer(ComponentOrganizer):
             next_index = len(monkey_type_organized_components)
 
         attrs_scoped_organized_components = OrderedDict(islice(monkey_type_organized_components.items(), 0, next_index))
-        # print(attrs_scoped_organized_components.keys(), next_global_component_type)
         # does not include the global scoped component that exists (or in the last batch does not exist) at the next_index parameter
 
         sub_organized_components = self._order_attr_scoped_components_for_instance_operation(monkey_cls, attrs_scoped_organized_components)

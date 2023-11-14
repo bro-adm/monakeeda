@@ -43,7 +43,6 @@ class BaseModel(metaclass=MonkeyMeta, component_managers=component_managers, com
 
         for component in self.__organized_components__:
             component.handle_values(self, values, stage)
-            # print(component, exceptions)
 
         if exceptions:
             raise MonkeyValuesHandlingException(self.__class__.__name__, values, exceptions)

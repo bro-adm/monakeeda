@@ -25,10 +25,8 @@ class ConfigManager(ConfigurableComponentManager[ConfigParameter]):
         return components
 
     def _set_by_base(self, monkey_cls, base, attrs, collisions):
-        print("set base ", base.__name__)
         for config_name, config_type in self._config_mapper.items():
             config_collisions = collisions.setdefault(config_name, [])
-            print(config_name, config_type)
 
             current_config = monkey_cls.struct[NamespacesConsts.CONFIGS][config_name].setdefault(ConfigConsts.OBJECT, None)
             current_parameters = current_config._parameters if current_config else []
@@ -36,33 +34,24 @@ class ConfigManager(ConfigurableComponentManager[ConfigParameter]):
             base_config = base.struct[NamespacesConsts.CONFIGS][config_name].setdefault(ConfigConsts.OBJECT, None)
             base_parameters = base_config._parameters if base_config else []
 
-            print(current_parameters, base_parameters)
-
             merged_parameters = self._manage_parameters_inheritance(base_parameters, current_parameters, config_collisions, is_bases=True)
-            print(merged_parameters)
 
             initialized_config = config_type.override_init(merged_parameters, unused_params={})
-            print(merged_parameters)
             monkey_cls.struct[NamespacesConsts.CONFIGS][config_name][ConfigConsts.OBJECT] = initialized_config
 
     def _set_curr_cls(self, monkey_cls, bases, monkey_attrs):
-        print("set main cls ", monkey_cls.__name__)
         for config_name, config_type in self._config_mapper.items():
-            print(config_name, config_type)
             config_cls = getattr(monkey_cls, config_name, None)
 
             if config_cls:
                 bases_initialized_config = monkey_attrs[NamespacesConsts.STRUCT][NamespacesConsts.CONFIGS][config_name].setdefault(ConfigConsts.OBJECT, None)
                 bases_parameters = bases_initialized_config._parameters if bases_initialized_config else []
-                print(bases_parameters)
 
                 config_attrs = get_cls_attrs(config_cls)
                 new_parameters, unused_params = config_type.initiate_params(config_attrs, config_cls_name=config_name)
-                print(new_parameters)
 
                 merged_parameters = self._manage_parameters_inheritance(bases_parameters, new_parameters)
                 initialized_config = config_type.override_init(merged_parameters, unused_params)
-                print(merged_parameters)
 
                 monkey_attrs[NamespacesConsts.STRUCT][NamespacesConsts.CONFIGS][config_name][ConfigConsts.OBJECT] = initialized_config
 
