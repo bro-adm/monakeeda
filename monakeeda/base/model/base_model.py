@@ -50,19 +50,16 @@ class BaseModel(metaclass=MonkeyMeta, component_managers=component_managers, com
 
         for key in values:
             super(BaseModel, self).__setattr__(key, values[key])
-        # The super setter because the setter logic can be changed and in teh init we have data as we want it already
 
     def __init__(self, **kwargs):
         self._handle_values(kwargs, Stages.INIT)
-        # not set in actual init because python typing shit happens there ALWAYS after custom init logic.
-        # that shit is needed to run the actual init logic for generics :(
 
     def update(self, **kwargs):
         kwargs = deep_update(self.__dict__.copy(), kwargs)
         self._handle_values(kwargs, Stages.UPDATE)
 
     def __setattr__(self, key, value):
-        if key in _TYPING_INTERNALS:  # F Python and its weird usage of inheritence with generics and their initalization
+        if key in _TYPING_INTERNALS:  # Python's weird usage of inheritance with generics and their initialization
             super().__setattr__(key, value)
         else:
             self.update(**{key: value})
