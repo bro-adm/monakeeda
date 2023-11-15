@@ -1,9 +1,9 @@
-from typing import Generic, T, Any, Union
+from typing import Generic, T, Any
 
 from monakeeda.base import GenericAnnotation, Config
+from monakeeda.consts import NamespacesConsts
 from .exceptions import AbstractFieldFoundError
 from ..implemenations_base_operator_visitor import ImplementationsOperatorVisitor
-from monakeeda.consts import NamespacesConsts
 
 
 class Abstract(GenericAnnotation, Generic[T]):

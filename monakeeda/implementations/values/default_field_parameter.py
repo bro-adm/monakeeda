@@ -1,9 +1,9 @@
-from typing import Any, Union
+from typing import Any
 
 from monakeeda.base import Field, Stages
-from ..implemenations_base_operator_visitor import ImplementationsOperatorVisitor
 from .base import BaseValueFieldParameter
 from .value_field_parameter import ValueFieldParameter
+from ..implemenations_base_operator_visitor import ImplementationsOperatorVisitor
 
 
 @Field.parameter

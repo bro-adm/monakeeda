@@ -1,5 +1,5 @@
 from abc import ABC
-from typing import Any, Union, Type, List, Dict
+from typing import Any, List, Dict
 
 from monakeeda.consts import FieldConsts, NamespacesConsts
 from ..component import Parameter, ConfigurableComponent

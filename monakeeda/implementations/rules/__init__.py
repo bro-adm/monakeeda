@@ -1,4 +1,4 @@
 from .all_attributes_fields_acknolegdes_parameter_key import AllModelFieldsAcknowledgeParameterRule
+from .allowed_values_rule import AllowedValuesRule
 from .callable_rules import CallableParameterSignatureValidationRule
 from .type_value_rules import BasicParameterValueTypeValidationRule
-from .allowed_values_rule import AllowedValuesRule

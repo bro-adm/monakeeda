@@ -1,8 +1,6 @@
 from abc import ABC, abstractmethod
 from functools import reduce
-from typing import Union, List, Set
-
-from monakeeda.consts import NamespacesConsts
+from typing import Union, List
 
 
 class RuleException(Exception):

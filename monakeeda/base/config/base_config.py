@@ -1,7 +1,6 @@
 from abc import ABC
-from typing import Any, Type
+from typing import Any
 
-from monakeeda.consts import NamespacesConsts, ConfigConsts
 from ..component import ConfigurableComponent, Parameter
 from ..fields import NoField
 from ..operator import OperatorVisitor
@@ -18,8 +17,6 @@ class ConfigParameter(Parameter, ABC):
 
     def build(self, monkey_cls, bases, monkey_attrs):
         pass
-        # monkey_attrs[NamespacesConsts.STRUCT][NamespacesConsts.CONFIGS][self._config_cls_name][ConfigConsts.COMPONENTS].append(self)
-        # monkey_attrs[NamespacesConsts.STRUCT][NamespacesConsts.CONFIGS][self._config_cls_name][self.__key__] = self.param_val
 
 
 all_configs = {}
@@ -40,7 +37,6 @@ class Config(ConfigurableComponent[ConfigParameter]):
 
     def build(self, monkey_cls, bases, monkey_attrs):
         pass
-        # monkey_attrs[NamespacesConsts.STRUCT][NamespacesConsts.CONFIGS][self.__class__.__name__][ConfigConsts.COMPONENTS] = self._parameters
 
     def _handle_values(self, model_instance, values, stage):
         pass

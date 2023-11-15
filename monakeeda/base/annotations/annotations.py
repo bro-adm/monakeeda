@@ -1,11 +1,11 @@
 import inspect
 from typing import Any, get_args
 
+from monakeeda.consts import NamespacesConsts, TmpConsts
 from .base_annotations import Annotation
 from .helpers import type_validation
-from ..operator import OperatorVisitor
 from ..interfaces import Stages
-from monakeeda.consts import NamespacesConsts, TmpConsts
+from ..operator import OperatorVisitor
 
 
 class ModelAnnotation(Annotation):

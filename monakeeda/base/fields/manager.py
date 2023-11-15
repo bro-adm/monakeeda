@@ -3,7 +3,6 @@ from collections import OrderedDict
 from typing import List
 
 from monakeeda.consts import FieldConsts, NamespacesConsts, PythonNamingConsts
-from monakeeda.utils import deep_update
 from .base_fields import Field, NoField, FieldParameter
 from ..meta import ConfigurableComponentManager
 
@@ -44,7 +43,7 @@ class FieldManager(ConfigurableComponentManager[FieldParameter]):
             base_parameters = base_field._parameters if base_field else []
             base_field_type = type(base_field) if base_field else None
 
-            if current_field_type and base_field_type and current_field_type!=base_field_type:
+            if current_field_type and base_field_type and current_field_type != base_field_type:
                 if current_field_type == NoField:
                     monkey_cls.struct[NamespacesConsts.FIELDS][field_key][FieldConsts.FIELD] = base_field
                 else:
@@ -81,7 +80,7 @@ class FieldManager(ConfigurableComponentManager[FieldParameter]):
             field_type = type(value)
             initialized_params, unused_params = value.initiate_params(value._init_params, field_key=field_key)
 
-            if bases_field_type and field_type!=NoField and field_type==bases_field_type:
+            if bases_field_type and field_type != NoField and field_type == bases_field_type:
                 merged_parameters = self._manage_parameters_inheritance(bases_parameters, initialized_params)
                 merged_field = Field.override_init(field_key, merged_parameters, unused_params)
             else:

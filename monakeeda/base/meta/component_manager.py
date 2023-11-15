@@ -32,9 +32,8 @@ class ComponentManager(MonkeyBuilder, ABC):
         monkey_attrs[NamespacesConsts.COMPONENTS].extend(components)
 
 
-class ConfigurableComponentManager(ComponentManager, Generic[TParameter]):
-    def _manage_parameters_inheritance(self, current_parameters: List[TParameter], new_parameters: List[TParameter],
-                                       collisions: list = None, is_bases=False) -> List[TParameter]:
+class ConfigurableComponentManager(ComponentManager, ABC, Generic[TParameter]):
+    def _manage_parameters_inheritance(self, current_parameters: List[TParameter], new_parameters: List[TParameter], collisions: list = None, is_bases=False) -> List[TParameter]:
         """
         Meant for use with the ComponentManagers, in which we have the set by base and set curr cls.
         Each method has the responsibility to manage inheritance itself on the relevant components under its jurisdiction.

@@ -1,10 +1,10 @@
-from typing import Any, Union
+from typing import Any
 
 from monakeeda.base import FieldParameter, Rules, Field, ArbitraryAnnotation
-from ..rules import BasicParameterValueTypeValidationRule
-from ..implemenations_base_operator_visitor import ImplementationsOperatorVisitor
 from monakeeda.consts import NamespacesConsts
+from ..implemenations_base_operator_visitor import ImplementationsOperatorVisitor
 from ..missing.errors import MissingFieldValuesException
+from ..rules import BasicParameterValueTypeValidationRule
 
 
 class NotAValidValue(ValueError):

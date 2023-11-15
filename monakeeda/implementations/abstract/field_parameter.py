@@ -1,11 +1,11 @@
-from typing import Any, Union
+from typing import Any
 
 from monakeeda.base import FieldParameter, Rules, Field
-from .exceptions import AbstractFieldFoundError
-from .annotation import Abstract
-from ..rules import BasicParameterValueTypeValidationRule
-from ..implemenations_base_operator_visitor import ImplementationsOperatorVisitor
 from monakeeda.consts import NamespacesConsts
+from .annotation import Abstract
+from .exceptions import AbstractFieldFoundError
+from ..implemenations_base_operator_visitor import ImplementationsOperatorVisitor
+from ..rules import BasicParameterValueTypeValidationRule
 
 
 @Field.parameter

@@ -1,4 +1,5 @@
 from typing import _GenericAlias as TypingGenericAlias
+
 from monakeeda.consts import NamespacesConsts, TmpConsts
 
 

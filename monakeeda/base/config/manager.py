@@ -1,10 +1,10 @@
-from typing import List, Tuple
+from typing import List
 
 from monakeeda.consts import NamespacesConsts, ConfigConsts
 from monakeeda.helpers import get_cls_attrs
 from .base_config import all_configs, ConfigParameter
-from ..meta import ConfigurableComponentManager
 from ..component import Component
+from ..meta import ConfigurableComponentManager
 
 
 class ConfigManager(ConfigurableComponentManager[ConfigParameter]):
@@ -29,7 +29,8 @@ class ConfigManager(ConfigurableComponentManager[ConfigParameter]):
         for config_name, config_type in self._config_mapper.items():
             config_collisions = collisions.setdefault(config_name, [])
 
-            current_config = monkey_cls.struct[NamespacesConsts.CONFIGS][config_name].setdefault(ConfigConsts.OBJECT, None)
+            current_config = monkey_cls.struct[NamespacesConsts.CONFIGS][config_name].setdefault(ConfigConsts.OBJECT,
+                                                                                                 None)
             current_parameters = current_config._parameters if current_config else []
 
             base_config = base.struct[NamespacesConsts.CONFIGS][config_name].setdefault(ConfigConsts.OBJECT, None)

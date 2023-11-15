@@ -1,4 +1,4 @@
-from typing import Optional, Union, Any
+from typing import Optional, Any
 
 from monakeeda.base import annotation_mapper, GenericAnnotation, get_generics_annotations
 from monakeeda.consts import NamespacesConsts, FieldConsts

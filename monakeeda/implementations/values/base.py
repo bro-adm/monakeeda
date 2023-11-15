@@ -1,7 +1,7 @@
 from abc import ABC
 
-from monakeeda.consts import NamespacesConsts, FieldConsts
 from monakeeda.base import FieldParameter
+from monakeeda.consts import NamespacesConsts, FieldConsts
 
 
 class BaseValueFieldParameter(FieldParameter, ABC):

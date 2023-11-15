@@ -1,11 +1,11 @@
-from typing import Union, Any
+from typing import Any
 
 from monakeeda.base import ConfigParameter, Config, Rules
 from monakeeda.consts import NamespacesConsts, FieldConsts
-from ..implemenations_base_operator_visitor import ImplementationsOperatorVisitor
-from ..rules import AllowedValuesRule
-from ..optional import OptionalAnnotation
 from .errors import MissingFieldValuesException
+from ..implemenations_base_operator_visitor import ImplementationsOperatorVisitor
+from ..optional import OptionalAnnotation
+from ..rules import AllowedValuesRule
 
 
 @Config.parameter

@@ -13,7 +13,6 @@ class Annotation(Component, ABC):
         self.base_type = base_type
 
     def build(self, monkey_cls, bases, monkey_attrs):
-        # monkey_attrs[NamespacesConsts.STRUCT][NamespacesConsts.FIELDS][self._field_key][FieldConsts.TYPE] = self.base_type
         monkey_attrs[NamespacesConsts.STRUCT][NamespacesConsts.FIELDS][self._field_key][FieldConsts.ANNOTATION] = self
         monkey_attrs[NamespacesConsts.STRUCT][NamespacesConsts.FIELDS][self._field_key][FieldConsts.COMPONENTS].append(self)
 

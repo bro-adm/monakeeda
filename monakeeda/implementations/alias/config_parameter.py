@@ -1,10 +1,10 @@
-from typing import Any, Union
+from typing import Any
 
 from monakeeda.base import ConfigParameter, Config, Rules, get_parameter_component_by_label
 from monakeeda.consts import NamespacesConsts, FieldConsts
 from ..abstract import AbstractParameter
-from ..rules import CallableParameterSignatureValidationRule, AllModelFieldsAcknowledgeParameterRule
 from ..implemenations_base_operator_visitor import ImplementationsOperatorVisitor
+from ..rules import CallableParameterSignatureValidationRule, AllModelFieldsAcknowledgeParameterRule
 
 
 @Config.parameter
@@ -18,7 +18,6 @@ class AliasGenerator(ConfigParameter):
         pass
 
     def build(self, monkey_cls, bases, monkey_attrs):
-        from .field_parameter import Alias
         super().build(monkey_cls, bases, monkey_attrs)
 
         for field_key, field_info in monkey_attrs[NamespacesConsts.STRUCT][NamespacesConsts.FIELDS].items():

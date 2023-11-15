@@ -3,10 +3,9 @@ from collections import OrderedDict
 from itertools import islice
 from typing import List, Dict, Type, Optional, Tuple
 
-from ..meta import ComponentsOrganizer
-from ..component import Component, all_components
 from monakeeda.consts import NamespacesConsts, FieldConsts, ComponentConsts
-from monakeeda.utils import insert_if_does_not_exists
+from ..component import Component, all_components
+from ..meta import ComponentsOrganizer
 
 
 class BaseComponentsOrganizer(ComponentsOrganizer):

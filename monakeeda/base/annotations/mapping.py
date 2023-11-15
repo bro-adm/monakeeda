@@ -1,9 +1,8 @@
 from typing import Type, TypeVar
 
 from monakeeda.helpers import defaultdictvalue
-from .base_annotations import Annotation, GenericAnnotation
 from .annotations import TypeVarAnnotation, ArbitraryAnnotation
-# from .errors import NotAnAnnotationException
+from .base_annotations import Annotation, GenericAnnotation
 from .helpers import get_type_cls
 
 
@@ -20,7 +19,6 @@ class AnnotationDefaultDict(defaultdictvalue):
             super(AnnotationDefaultDict, self).__setitem__(key, item)
         else:
             super(AnnotationDefaultDict, self).__setitem__(key, ArbitraryAnnotation)
-            # raise NotAnAnnotationException(key)
 
 
 annotation_mapping = {}
@@ -45,4 +43,3 @@ def get_generics_annotations(annotation: GenericAnnotation):
             annotations.append(annotation_mapping[t](annotation._field_key, t))
 
     return annotations
-

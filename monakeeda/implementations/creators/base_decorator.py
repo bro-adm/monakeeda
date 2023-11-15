@@ -1,7 +1,7 @@
 from abc import ABC
 
-from monakeeda.consts import NamespacesConsts, FieldConsts
 from monakeeda.base import BaseDecorator
+from monakeeda.consts import NamespacesConsts, FieldConsts
 from ..missing.errors import MissingFieldValuesException
 
 

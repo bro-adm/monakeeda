@@ -1,11 +1,11 @@
 from enum import Enum
-from typing import Any, Union
+from typing import Any
 
 from monakeeda.base import ConfigParameter, Config, Rules
 from monakeeda.consts import NamespacesConsts, FieldConsts
-from ..rules import BasicParameterValueTypeValidationRule
 from ..const import AllowMutation
 from ..implemenations_base_operator_visitor import ImplementationsOperatorVisitor
+from ..rules import BasicParameterValueTypeValidationRule
 
 
 class Extras(Enum):

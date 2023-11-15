@@ -1,10 +1,10 @@
 import inspect
-from typing import Any, Union
+from typing import Any
 
 from monakeeda.base import FieldParameter, Rules, Field
 from .config_parameter import AliasGenerator
-from ..rules import BasicParameterValueTypeValidationRule
 from ..implemenations_base_operator_visitor import ImplementationsOperatorVisitor
+from ..rules import BasicParameterValueTypeValidationRule
 
 
 @Field.parameter
