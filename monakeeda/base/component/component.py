@@ -32,6 +32,7 @@ class Component(RulesValidator, MonkeyBuilder, ValuesHandler, ABC):
         if not existing_dependent_errors:
             self._handle_values(model_instance, values, stage)
 
+    @abstractmethod
     def _handle_values(self, model_instance, values, stage):
         pass
 
