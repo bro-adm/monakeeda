@@ -2,9 +2,8 @@ from abc import ABC, abstractmethod
 from typing import List, Generic
 
 from monakeeda.consts import NamespacesConsts
-from monakeeda.base.component.component import Component
-from monakeeda.base.component.parameter_component import TParameter
-from monakeeda.base.component.monkey_builder import MonkeyBuilder
+from ..component import Component, TParameter
+from ..interfaces import MonkeyBuilder
 
 
 class ComponentManager(MonkeyBuilder, ABC):
@@ -34,7 +33,8 @@ class ComponentManager(MonkeyBuilder, ABC):
 
 
 class ConfigurableComponentManager(ComponentManager, Generic[TParameter]):
-    def _manage_parameters_inheritance(self, current_parameters: List[TParameter], new_parameters: List[TParameter], collisions: list=None, is_bases=False) -> List[TParameter]:
+    def _manage_parameters_inheritance(self, current_parameters: List[TParameter], new_parameters: List[TParameter],
+                                       collisions: list = None, is_bases=False) -> List[TParameter]:
         """
         Meant for use with the ComponentManagers, in which we have the set by base and set curr cls.
         Each method has the responsibility to manage inheritance itself on the relevant components under its jurisdiction.

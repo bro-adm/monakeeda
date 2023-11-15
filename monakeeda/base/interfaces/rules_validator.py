@@ -2,7 +2,7 @@ from abc import ABC
 from typing import ClassVar
 
 from .rules import Rules
-from ...consts import NamespacesConsts
+from monakeeda.consts import NamespacesConsts
 
 
 class RulesValidator(ABC):

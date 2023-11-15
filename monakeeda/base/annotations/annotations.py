@@ -4,7 +4,7 @@ from typing import Any, get_args
 from .base_annotations import Annotation
 from .helpers import type_validation
 from ..operator import OperatorVisitor
-from ..component import Stages
+from ..interfaces import Stages
 from monakeeda.consts import NamespacesConsts, TmpConsts
 
 

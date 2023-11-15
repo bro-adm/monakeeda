@@ -2,7 +2,7 @@ from typing import Any, _TYPING_INTERNALS, _GenericAlias, Generic
 
 from monakeeda.consts import NamespacesConsts, TmpConsts
 from monakeeda.utils import deep_update
-from ..component import Stages
+from ..interfaces import Stages
 from ..fields import FieldManager
 from ..annotations import AnnotationManager, annotation_mapping, ModelAnnotation
 from ..decorators import DecoratorManager

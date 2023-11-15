@@ -1,9 +1,9 @@
-from abc import ABC, abstractmethod
+from abc import ABC
 from typing import Dict, List, Union, ClassVar, Type, Generic, Any, Tuple
 
 from .component import Component
-from .parameter_component import TParameter, Parameter
-from .rules import RuleException, Rule, Rules
+from .parameter_component import TParameter
+from ..interfaces import RuleException, Rule, Rules
 
 
 class OneComponentPerLabelAllowedRuleException(RuleException):

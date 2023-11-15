@@ -2,7 +2,7 @@ from abc import abstractmethod, ABC
 from typing import ClassVar, Union, TypeVar, Type
 
 from .component import Component
-from .rules import RuleException, Rule
+from ..interfaces import RuleException, Rule
 
 
 class Parameter(Component, ABC):

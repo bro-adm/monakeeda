@@ -1,8 +1,8 @@
 from abc import ABCMeta
 
 from monakeeda.consts import NamespacesConsts
-from ..component import RulesException
 from .helpers import handle_class_inputs
+from ..interfaces import RulesException
 
 
 class MonkeyMeta(ABCMeta):
