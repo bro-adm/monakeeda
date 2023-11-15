@@ -3,13 +3,13 @@ from collections import OrderedDict
 from itertools import islice
 from typing import List, Dict, Type, Optional, Tuple
 
-from ..meta import ComponentOrganizer
+from ..meta import ComponentsOrganizer
 from ..component import Component, all_components
 from monakeeda.consts import NamespacesConsts, FieldConsts, ComponentConsts
 from monakeeda.utils import insert_if_does_not_exists
 
 
-class BaseComponentOrganizer(ComponentOrganizer):
+class BaseComponentsOrganizer(ComponentsOrganizer):
     def order_by_chain_of_responsibility(self, monkey_components: List[Component]) -> Dict[Type[Component], List[Component]]:
         ordered_dict = OrderedDict()
 

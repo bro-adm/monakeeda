@@ -10,13 +10,13 @@ from ..config import ConfigManager, Config
 from ..meta import MonkeyMeta
 from ..operator import all_operators
 from .errors import MonkeyValuesHandlingException
-from .basic_organizer import BaseComponentOrganizer
+from .base_components_organizer import BaseComponentsOrganizer
 from .generic_alias import MonkeyGenericAlias
 
 component_managers = [ConfigManager(), FieldManager(), DecoratorManager(), AnnotationManager(annotation_mapping)]
 
 
-class BaseModel(metaclass=MonkeyMeta, component_managers=component_managers, component_organizer=BaseComponentOrganizer(), annotation_mapping=annotation_mapping, operators_visitors=all_operators):
+class BaseModel(metaclass=MonkeyMeta, component_managers=component_managers, component_organizer=BaseComponentsOrganizer(), annotation_mapping=annotation_mapping, operators_visitors=all_operators):
 
     def __init_subclass__(cls):
         super().__init_subclass__()
@@ -28,8 +28,7 @@ class BaseModel(metaclass=MonkeyMeta, component_managers=component_managers, com
 
         getattr(cls, NamespacesConsts.TMP)[TmpConsts.GENERICS] = generic.__args__
 
-        mok = MonkeyGenericAlias.init_from_typing_generic_alias(generic)
-        return mok
+        return MonkeyGenericAlias.init_from_typing_generic_alias(generic)
 
     @classmethod
     @property

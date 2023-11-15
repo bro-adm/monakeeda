@@ -4,7 +4,7 @@ from typing import List, Dict, Type
 from ..component import Component
 
 
-class ComponentOrganizer(ABC):
+class ComponentsOrganizer(ABC):
     @abstractmethod
     def order_by_chain_of_responsibility(self, monkey_components: List[Component]) -> Dict[Type[Component], List[Component]]:
         pass
