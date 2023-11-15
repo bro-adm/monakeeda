@@ -66,6 +66,5 @@ class BaseModel(metaclass=MonkeyMeta, component_managers=component_managers, com
     def _operate(model, operator_type: str, context: Any):
         operator_visitor = model.__operators_visitors__[operator_type]
 
-        for component_type, components in model.__organized_components__.items():
-            for component in components:
-                component.accept_operator(operator_visitor, context)
+        for component in model.__organized_components__:
+            component.accept_operator(operator_visitor, context)
