@@ -3,7 +3,7 @@ from typing import List
 
 from monakeeda.consts import NamespacesConsts, DecoratorConsts
 from .base_decorator import BaseDecorator
-from ..component import ComponentManager
+from ..meta import ComponentManager
 
 
 class DecoratorManager(ComponentManager):

@@ -5,7 +5,7 @@ from typing import List
 from monakeeda.consts import FieldConsts, NamespacesConsts, PythonNamingConsts
 from monakeeda.utils import deep_update
 from .base_fields import Field, NoField, FieldParameter
-from ..component import ConfigurableComponentManager
+from ..meta import ConfigurableComponentManager
 
 
 class FieldManager(ConfigurableComponentManager[FieldParameter]):

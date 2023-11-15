@@ -3,7 +3,8 @@ from typing import List, Tuple
 from monakeeda.consts import NamespacesConsts, ConfigConsts
 from monakeeda.helpers import get_cls_attrs
 from .base_config import all_configs, ConfigParameter
-from ..component import ConfigurableComponentManager, Component
+from ..meta import ConfigurableComponentManager
+from ..component import Component
 
 
 class ConfigManager(ConfigurableComponentManager[ConfigParameter]):

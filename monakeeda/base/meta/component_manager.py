@@ -2,9 +2,9 @@ from abc import ABC, abstractmethod
 from typing import List, Generic
 
 from monakeeda.consts import NamespacesConsts
-from .component import Component
-from .parameter_component import TParameter
-from .monkey_builder import MonkeyBuilder
+from monakeeda.base.component.component import Component
+from monakeeda.base.component.parameter_component import TParameter
+from monakeeda.base.component.monkey_builder import MonkeyBuilder
 
 
 class ComponentManager(MonkeyBuilder, ABC):

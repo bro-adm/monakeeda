@@ -4,7 +4,7 @@ from typing import List, TypeVar
 from monakeeda.consts import NamespacesConsts, PythonNamingConsts, TmpConsts, FieldConsts
 from .base_annotations import Annotation
 from .annotations import ArbitraryAnnotation
-from ..component import ComponentManager
+from ..meta import ComponentManager
 
 
 class AnnotationManager(ComponentManager):

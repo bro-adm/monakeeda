@@ -35,5 +35,6 @@ creating a meta class:
 * __new__, __init__ and __call__ are funcs that all classes I think have (not sure about the __new__ func)
 """
 
+from .component_manager import ComponentManager, ConfigurableComponentManager
 from .mokey_meta import MonkeyMeta
 from .organizers import ComponentOrganizer
