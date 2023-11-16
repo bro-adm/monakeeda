@@ -2,6 +2,7 @@ from abc import ABC, abstractmethod
 from typing import List, Generic
 
 from monakeeda.consts import NamespacesConsts
+from monakeeda.logger import logger, STAGE, MONKEY
 from ..component import Component, TParameter
 from ..interfaces import MonkeyBuilder
 
@@ -24,12 +25,16 @@ class ComponentManager(MonkeyBuilder, ABC):
         collisions = {}
 
         for base in bases:
+            logger.info(f"Build By Base {base.__name__}", extra={STAGE: f"{self.__class__.__name__} BUILD", MONKEY: monkey_cls.__name__})
+            logger.info(f"\tPrior Collisions = {collisions}", extra={STAGE: f"{self.__class__.__name__} BUILD", MONKEY: monkey_cls.__name__})
             self._set_by_base(monkey_cls, base, monkey_attrs, collisions)
 
+        logger.info(f"Build Current Cls {monkey_cls.__name__}", extra={STAGE: f"{self.__class__.__name__} BUILD", MONKEY: monkey_cls.__name__})
         self._set_curr_cls(monkey_cls, bases, monkey_attrs)
 
         components = self._components(monkey_cls)
         monkey_attrs[NamespacesConsts.COMPONENTS].extend(components)
+        logger.info(f"Final Merged Components = {components}", extra={STAGE: f"{self.__class__.__name__} BUILD", MONKEY: monkey_cls.__name__})
 
 
 class ConfigurableComponentManager(ComponentManager, ABC, Generic[TParameter]):

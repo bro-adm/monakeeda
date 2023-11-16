@@ -4,6 +4,7 @@ class PythonNamingConsts:
 
 class ComponentConsts:
     FIELD_KEY = '_field_key'
+    GLOBAL = 'global'
 
 
 class NamespacesConsts:

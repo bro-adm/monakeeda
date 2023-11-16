@@ -73,3 +73,13 @@ def exclude_keys(the_dict: dict, keys: List[str]):
 
 def is_subset(the_list: list, sub_list: list) -> bool:
     return all(x in the_list for x in sub_list)
+
+
+def capitalize_words(input: str) -> str:
+    # Split the input string by underscore
+    parts = input.split('_')
+
+    # Capitalize the first letter of each part and join them with a space
+    transformed_string = ' '.join(part.capitalize() for part in parts)
+
+    return transformed_string
