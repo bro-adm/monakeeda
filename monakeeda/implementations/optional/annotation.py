@@ -8,7 +8,6 @@ from ..values import DefaultFactoryFieldParameter
 
 @annotation_mapper(Optional)
 class OptionalAnnotation(GenericAnnotation):
-    __label__ = 'optional'
     __prior_handler__ = DefaultFactoryFieldParameter
 
     def _handle_values(self, model_instance, values, stage):

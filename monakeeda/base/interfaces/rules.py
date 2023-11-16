@@ -32,8 +32,6 @@ class RulesException(RuleException):
 
         return str(self.exceptions)
 
-    __repr__ = __str__
-
 
 class Rules(Rule):
     def __init__(self, rules: List[Rule]):

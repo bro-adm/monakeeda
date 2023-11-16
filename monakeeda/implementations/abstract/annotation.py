@@ -7,7 +7,6 @@ from ..implemenations_base_operator_visitor import ImplementationsOperatorVisito
 
 
 class Abstract(GenericAnnotation, Generic[T]):
-    __label__ = 'abstract'
     __prior_handler__ = Config
 
     def _handle_values(self, model_instance, values, stage):

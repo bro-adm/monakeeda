@@ -21,8 +21,6 @@ class ModelAnnotation(Annotation):
     The type of lol (Lol) is wrapped under the ModelAnnotation implementation
     """
 
-    __label__ = 'model'
-
     def _handle_values(self, model_instance, values, stage):
         value = values.get(self._field_key, inspect._empty)
 
@@ -49,7 +47,6 @@ class ModelAnnotation(Annotation):
 
 class TypeVarAnnotation(Annotation):
     __prior_handler__ = ModelAnnotation
-    __label__ = 'type vars'
 
     def _get_actual_type(self, model_instance, stage):
         model_tmp = getattr(model_instance, NamespacesConsts.TMP)
@@ -78,7 +75,6 @@ class TypeVarAnnotation(Annotation):
 
 
 class ArbitraryAnnotation(Annotation):
-    __label__ = 'basic'
     __prior_handler__ = TypeVarAnnotation
     # __pass_on_errors__ = [MissingFieldValuesException]
 

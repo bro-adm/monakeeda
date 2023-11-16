@@ -8,7 +8,6 @@ from ..validators import Validator
 
 
 class Const(GenericAnnotation, Generic[T]):
-    __label__ = 'const'
     __prior_handler__ = Validator
 
     def _handle_values(self, model_instance, values, stage):

@@ -6,7 +6,6 @@ from ..missing.errors import MissingFieldValuesException
 
 
 class BaseCreatorDecorator(BaseDecorator, ABC):
-    __label__ = 'creator'
     __pass_on_errors__ = [MissingFieldValuesException, TypeError]
 
     def __init__(self, field_key: str):

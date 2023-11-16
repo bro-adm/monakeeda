@@ -27,7 +27,6 @@ class Config(ConfigurableComponent[ConfigParameter]):
     Just a class for simple differentiating between configurable component implementations
     """
 
-    __label__ = 'config'
     __prior_handler__ = NoField
 
     def __init_subclass__(cls, **kwargs):

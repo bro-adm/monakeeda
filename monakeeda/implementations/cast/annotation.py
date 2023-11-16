@@ -14,7 +14,6 @@ class CastingError(ValueError):
 
 
 class Cast(GenericAnnotation, Generic[T]):
-    __label__ = 'cast'
     __prior_handler__ = CreateFrom
     __pass_on_errors__ = [MissingFieldValuesException]
 

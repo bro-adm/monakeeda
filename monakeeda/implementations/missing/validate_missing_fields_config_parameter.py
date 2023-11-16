@@ -11,7 +11,7 @@ from ..rules import AllowedValuesRule
 @Config.parameter
 class ValidateMissingFieldsConfigParameter(ConfigParameter):
     __key__ = 'validate_missing_fields'
-    __label__ = 'values_manager'
+    __label__ = 'missing_values_manager'
     __rules__ = Rules([AllowedValuesRule([True])])
     __prior_handler__ = OptionalAnnotation
 

@@ -22,8 +22,6 @@ class FieldParameter(Parameter, ABC):
 
 
 class Field(ConfigurableComponent[FieldParameter]):
-    __label__ = 'field'
-
     @classmethod
     def override_init(cls, field_key: str, parameters: List[FieldParameter], unused_params: Dict[str, Any]):
         instance = super().override_init(parameters, unused_params)

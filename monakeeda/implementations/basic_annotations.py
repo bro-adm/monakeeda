@@ -9,7 +9,6 @@ from .missing.errors import MissingFieldValuesException
 
 @annotation_mapper(object, Any)
 class ObjectAnnotation(Annotation):
-    __label__ = 'object'
     __prior_handler__ = Cast
     __pass_on_errors__ = [MissingFieldValuesException]
 
@@ -22,7 +21,6 @@ class ObjectAnnotation(Annotation):
 
 @annotation_mapper(int, str, list, dict)
 class BasicTypeAnnotation(Annotation):
-    __label__ = 'basic'
     __prior_handler__ = ObjectAnnotation
     __pass_on_errors__ = [MissingFieldValuesException]
 
@@ -38,7 +36,6 @@ class BasicTypeAnnotation(Annotation):
 
 @annotation_mapper(Union)
 class UnionAnnotation(GenericAnnotation):
-    __label__ = 'union'
     __prior_handler__ = BasicTypeAnnotation
     __pass_on_errors__ = [MissingFieldValuesException]
 
@@ -56,7 +53,6 @@ class UnionAnnotation(GenericAnnotation):
 
 @annotation_mapper(List)
 class ListAnnotation(GenericAnnotation):
-    __label__ = 'list'
     __prior_handler__ = UnionAnnotation
     __pass_on_errors__ = [MissingFieldValuesException]
 
@@ -79,7 +75,6 @@ class ListAnnotation(GenericAnnotation):
 
 @annotation_mapper(Dict)
 class DictAnnotation(GenericAnnotation):
-    __label__ = 'dict'
     __prior_handler__ = ListAnnotation
     __pass_on_errors__ = [MissingFieldValuesException]
 

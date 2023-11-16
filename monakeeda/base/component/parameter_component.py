@@ -7,6 +7,7 @@ from ..interfaces import RuleException, Rule
 
 class Parameter(Component, ABC):
     __key__: ClassVar[str]
+    __label__: ClassVar[str]
 
     def __init__(self, param_val):
         self.param_val = param_val

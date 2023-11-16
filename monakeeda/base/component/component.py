@@ -11,7 +11,6 @@ all_components = []
 
 
 class Component(RulesValidator, MonkeyBuilder, ValuesHandler, ABC):
-    __label__: ClassVar[str]
     __prior_handler__: ClassVar[Type['Component']] = None
     __pass_on_errors__: ClassVar[List[Type[Exception]]] = []
 
