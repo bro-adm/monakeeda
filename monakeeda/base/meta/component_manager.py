@@ -66,6 +66,7 @@ class ConfigurableComponentManager(ComponentManager, ABC, Generic[TParameter]):
                         merged_parameters.remove(parameter)
                         break
 
+        # simple check for collisions/overrides on cls merges or need for "inheritance" into merged_params
         for current_parameter in current_parameters:
             add_current = True
 

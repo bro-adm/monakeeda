@@ -2,6 +2,7 @@ from typing import Any, _TYPING_INTERNALS
 
 from monakeeda.consts import NamespacesConsts, TmpConsts
 from monakeeda.utils import deep_update
+from monakeeda.logger import logger, STAGE, MONKEY
 from .base_components_organizer import BaseComponentsOrganizer
 from .errors import MonkeyValuesHandlingException
 from .generic_alias import MonkeyGenericAlias
@@ -25,8 +26,9 @@ class BaseModel(metaclass=MonkeyMeta, component_managers=component_managers, com
 
     def __class_getitem__(cls, item):
         generic = super().__class_getitem__(item)  # probably will only be called when actually Generic
-
         getattr(cls, NamespacesConsts.TMP)[TmpConsts.GENERICS] = generic.__args__
+
+        logger.info(f"Class Scope Generics = {generic.__args__}", extra={STAGE: "Monkey Generics", MONKEY: cls.__name__})
 
         return MonkeyGenericAlias.init_from_typing_generic_alias(generic)
 
@@ -53,6 +55,8 @@ class BaseModel(metaclass=MonkeyMeta, component_managers=component_managers, com
         self._handle_values(kwargs, Stages.INIT)
 
     def update(self, **kwargs):
+        logger.info(f"Update Scope Generics = {self.__orig_class__.__args__}", extra={STAGE: "Monkey Generics", MONKEY: self.__class__.__name__})
+
         kwargs = deep_update(self.__dict__.copy(), kwargs)
         self._handle_values(kwargs, Stages.UPDATE)
 

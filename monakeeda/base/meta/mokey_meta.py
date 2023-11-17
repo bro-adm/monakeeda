@@ -54,6 +54,6 @@ class MonkeyMeta(ABCMeta):
 
         for component in cls.__organized_components__:
             scope = getattr(component, ComponentConsts.FIELD_KEY, ComponentConsts.GLOBAL)
-            logger.info(f"{component} -> {scope}", extra={STAGE: "Component Info", MONKEY: name})
+            logger.info(f"\t{component} -> {scope}", extra={STAGE: "Component Info", MONKEY: name})
 
 
