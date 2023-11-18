@@ -1,4 +1,4 @@
-from monakeeda.base import Field, Config, ModelAnnotation
+from monakeeda.base import Field, Config
 from ..abstract import Abstract, AbstractParameter
 from ..alias import Alias, AliasGenerator
 from ..basic_annotations import ObjectAnnotation, BasicTypeAnnotation, UnionAnnotation, ListAnnotation, DictAnnotation
@@ -42,7 +42,7 @@ class OpenAPIOperatorVisitor(ImplementationsOperatorVisitor[dict]):
     def operate_config(self, config: Config, context: dict):
         pass
 
-    def operate_model_annotation(self, annotation: ModelAnnotation, context: dict):
+    def operate_model_annotation(self, annotation: "ModelAnnotation", context: dict):
         pass
 
     def operate_abstract_annotation(self, annotation: Abstract, context: dict):

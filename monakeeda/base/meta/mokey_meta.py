@@ -32,8 +32,8 @@ class MonkeyMeta(ABCMeta):
         cls = super(MonkeyMeta, mcs).__new__(mcs, name, bases, attrs)
         return cls
 
-    def __init__(cls, name, bases, attrs, component_managers=None, component_organizer=None, annotation_mapping=None, operators_visitors=None):
-        handle_class_inputs(cls, bases, component_managers=component_managers, component_organizer=component_organizer, annotation_mapping=annotation_mapping, operators_visitors=operators_visitors)
+    def __init__(cls, name, bases, attrs, component_managers=None, component_organizer=None, operators_visitors=None):
+        handle_class_inputs(cls, bases, component_managers=component_managers, component_organizer=component_organizer, operators_visitors=operators_visitors)
 
         super(MonkeyMeta, cls).__init__(name, bases, attrs)
 

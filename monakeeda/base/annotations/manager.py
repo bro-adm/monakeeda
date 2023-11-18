@@ -2,7 +2,6 @@ from collections import OrderedDict
 from typing import List, TypeVar
 
 from monakeeda.consts import NamespacesConsts, PythonNamingConsts, TmpConsts
-from .annotations import ArbitraryAnnotation
 from .base_annotations import Annotation
 from ..meta import ComponentManager
 
@@ -35,6 +34,8 @@ class AnnotationManager(ComponentManager):
                 return field_key
 
     def _set_by_base(self, monkey_cls, base, attrs, collisions):
+        _ObjectAnnotation = self._annotation_mapping[object]
+
         current_annotations_keys = set(attrs[NamespacesConsts.STRUCT][NamespacesConsts.ANNOTATIONS].keys())  # prior bases merged set of fields
         base_annotations_keys = set(base.struct[NamespacesConsts.ANNOTATIONS].keys())  # current base set of fields
 
@@ -43,7 +44,7 @@ class AnnotationManager(ComponentManager):
             # No valdiations needs to happen -> if there are collision at all -> the annotation will be set as Arbitrary Object
             # Note that this means that we dont need to update or check the collisions parameter because collisions will keep on happening on next bases without it
 
-            object_annotations = ArbitraryAnnotation(field_key, object)
+            object_annotations = _ObjectAnnotation(field_key, object)
 
             attrs[NamespacesConsts.STRUCT][NamespacesConsts.ANNOTATIONS][field_key] = object_annotations
 

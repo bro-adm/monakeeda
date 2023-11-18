@@ -6,7 +6,7 @@ from monakeeda.logger import logger, STAGE, MONKEY
 from .base_components_organizer import BaseComponentsOrganizer
 from .errors import MonkeyValuesHandlingException
 from .generic_alias import MonkeyGenericAlias
-from ..annotations import AnnotationManager, annotation_mapping, ModelAnnotation
+from ..annotations import AnnotationManager, annotation_mapping
 from ..config import ConfigManager
 from ..decorators import DecoratorManager
 from ..fields import FieldManager
@@ -17,7 +17,7 @@ from ..operator import all_operators
 component_managers = [ConfigManager(), FieldManager(), DecoratorManager(), AnnotationManager(annotation_mapping)]
 
 
-class BaseModel(metaclass=MonkeyMeta, component_managers=component_managers, component_organizer=BaseComponentsOrganizer(), annotation_mapping=annotation_mapping, operators_visitors=all_operators):
+class BaseModel(metaclass=MonkeyMeta, component_managers=component_managers, component_organizer=BaseComponentsOrganizer(), operators_visitors=all_operators):
     """
     Responsible for holding the PURE run of all the logics combined without being dependent on any specific compartment.
 
@@ -25,11 +25,6 @@ class BaseModel(metaclass=MonkeyMeta, component_managers=component_managers, com
 
     Also Responsible for managing python's weird shticks (e.g. generics -> __class_getitem__)
     """
-
-    def __init_subclass__(cls):
-        super().__init_subclass__()
-        # can't put the start of __map__ here because the set_cls_namespace happens before in the meta cls
-        cls.__annotation_mapping__[cls] = ModelAnnotation
 
     def __class_getitem__(cls, item):
         generic = super().__class_getitem__(item)  # probably will only be called when actually Generic

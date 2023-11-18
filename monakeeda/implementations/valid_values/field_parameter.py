@@ -1,7 +1,8 @@
 from typing import Any
 
-from monakeeda.base import FieldParameter, Rules, Field, ArbitraryAnnotation
+from monakeeda.base import FieldParameter, Rules, Field
 from monakeeda.consts import NamespacesConsts
+from ..known_annotations import ArbitraryAnnotation
 from ..implemenations_base_operator_visitor import ImplementationsOperatorVisitor
 from ..missing.errors import MissingFieldValuesException
 from ..rules import BasicParameterValueTypeValidationRule
