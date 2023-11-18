@@ -12,7 +12,7 @@ class ConfigManager(ConfigurableComponentManager[ConfigParameter]):
     The Configs concept allows for multiple Config classes (one is natively implemented).
     The Config classes types are overrideable via the class name.
 
-    The Config Manager responsibility, just like any other Component Manager is to find the relevant components, build them
+    The Config Manager responsibility, just like most other Component Manager is to find the relevant components, build them
     and manage inheritance collisions.
 
     By default, all model inheritances will automatically build the current Config classes by:

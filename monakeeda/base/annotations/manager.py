@@ -8,6 +8,21 @@ from ..meta import ComponentManager
 
 
 class AnnotationManager(ComponentManager):
+    """
+    The Annotations concept allows for multiple Annotations implementations, BUT one per type.
+    The type to annotation mapping is overrideable via an annotations mapper or directly on the passed annotation mapping.
+
+    The Annotations Manager responsibility, just like most other Component Manager is to find the relevant components, build them
+    and manage inheritance collisions.
+
+    Here collisions arent hard at all due to not having sub components - on collision make arbitrary type.
+
+    attrs must be configured with an annotation directly - but not always a Monakeeda Annotation.
+    attrs are provided either a Monakeeda Annotation or a python native annotation (e.g. str)
+
+    Either way, this Manager needs to get the mapped Monakeeda Annotation from the given one and initialize it.
+    """
+
     def __init__(self, annotation_mapping):
         self._annotation_mapping = annotation_mapping
 

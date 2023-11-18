@@ -12,14 +12,18 @@ class FieldManager(ConfigurableComponentManager[FieldParameter]):
     The Fields concept allows for multiple Field classes (one is natively implemented).
     The Field classes types are overrideable via the class name.
 
-    The Fields Manager responsibility, just like any other Component Manager is to find the relevant components, build them
+    The Fields Manager responsibility, just like most other Component Manager is to find the relevant components, build them
     and manage inheritance collisions.
+
+    attrs might not be configured with a Field directly ot at all.
+    At these cases, the Manage is responsible to create one for the attr in order for further compartments to have sane APIs.
+    This means having access to a default NoField and Field implementations (can be overriden) with some available sub Parameters.
 
     By default, all model inheritances will automatically build the current Field classes by:
         - merging the bases parameters with collision management
         - overriding merges via current cls parameters
 
-    An important namespace is the per field_ket components namespace -> The manage has the repsonsability to reset it.
+    An important namespace is the per field_ket components namespace -> The manage has the responsibility to reset it.
     The Field and Parameter components themselves add themselves to it.
     """
 
