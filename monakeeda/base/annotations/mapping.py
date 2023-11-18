@@ -26,11 +26,29 @@ class AnnotationDefaultDict(defaultdictvalue):
 
     def __setitem__(self, key, item):
         """
-        As seen above and in the helper funcs, this method gets:
-            - key = python native type / typing annotation / Monakeeda annotation cls / any cls
-            - item = Monakeeda Annotation / TypeVar / any cls
+        This method is either called on by an asked for setitem or by a missing getitem.
+
+        The key is the client set annotation.
+        The item is default_factory result (missing getitem) or a directly provided Annotation (setitem) - if configured as intended.
+
+        Examples on the case default_factory = lambda x: x (key, item):
+            - str, StrAnnotation (setitem)
+            - Cast, Cast (missing getitem)
+            - CustomModel, CustomModel (missing getitem)
+            - ~TypeVar, ~TypeVar (missing getitem)
+            - CustomCls, CustomCls (missing getitem)
 
         Maps them together accordingly to custom Monakeeda Annotations.
+
+        The goal is to map the given key to the implemented Annotation for the received item.
+            - CustomModel -> ModelAnnotation
+            - StrAnnotation -> StrAnnotation
+            - ~TypeVar -> TypeVarAnnotation
+
+        The known scopes of this mapping is the Annotation Cls.
+        All other mappings are provided via KnownAnnotations that we do not want to use directly for the following reasons:
+            - Allow overrides
+            - Implement them in the Implementations dir to keep consistency of __prior_handler__ usage and not be bugged down by python import logic (that we so nicelly use to our advantage)
 
         """
 
@@ -44,16 +62,6 @@ class AnnotationDefaultDict(defaultdictvalue):
                 if is_type_func(item, base_type):
                     super(AnnotationDefaultDict, self).__setitem__(key, annotation_cls)
                     break
-
-
-        # if isinstance(item, TypeVar):  # item and key will be the same on TypeVars
-        #     _TypeVarAnnotation = self._known_annotations[KnownAnnotations.TypeVarAnnotation]
-        #     super(AnnotationDefaultDict, self).__setitem__(key, _TypeVarAnnotation)
-        # elif issubclass(item, Annotation):
-        #     super(AnnotationDefaultDict, self).__setitem__(key, item)
-        # else:
-        #     _ArbitraryAnnotation = self._known_annotations[KnownAnnotations.ArbitraryAnnotation]
-        #     super(AnnotationDefaultDict, self).__setitem__(key, _ArbitraryAnnotation)
 
 
 annotation_mapping = {}
