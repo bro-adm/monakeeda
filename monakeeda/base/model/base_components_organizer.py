@@ -9,6 +9,14 @@ from ..meta import ComponentsOrganizer
 
 
 class BaseComponentsOrganizer(ComponentsOrganizer):
+    """
+    The Main organizer logic.
+
+    Manages global and field scoped ordering and includes dependencies as a factor in the organization process.
+
+    The per method docs are great :)
+    """
+
     def order_by_chain_of_responsibility(self, monkey_components: List[Component]) -> Dict[Type[Component], List[Component]]:
         ordered_dict = OrderedDict()
 
@@ -43,7 +51,7 @@ class BaseComponentsOrganizer(ComponentsOrganizer):
     def _order_attr_scoped_components_for_instance_operation_per_field(self, field_key, monkey_cls, attrs_scoped_organized_components: Dict[Type[Component], List[Component]]) -> Tuple[List[Component], List[str]]:
         """
         Each field has in the struct namespace all the components that run logic on it.
-        These components already apper in the chain of responsibility order due to them being set up in the build logic which works according to it
+        These components already appear in the chain of responsibility order due to them being set up in the build logic which works according to it
 
         Continuing with the sectioning logic explained in the main method, we take only the field's ordered components the current section (the current section is passed via attrs_scoped_organized_components).
 

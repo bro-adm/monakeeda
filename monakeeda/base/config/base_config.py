@@ -8,7 +8,7 @@ from ..operator import OperatorVisitor
 
 class ConfigParameter(Parameter, ABC):
     """
-    Just a class for simple differentiating between parameters implementations
+    Conceptually just like the base Parameter Component, this one just get passed the Config Class name it gets initialized by.
     """
 
     def __init__(self, param_val, config_cls_name: str):
@@ -24,7 +24,10 @@ all_configs = {}
 
 class Config(ConfigurableComponent[ConfigParameter]):
     """
-    Just a class for simple differentiating between configurable component implementations
+    A sub class of the Configurable Component for allowing different managed Parameter Components list.
+
+    Initialized via the Configs Manager, which itself acknowledges a set of Configs by default via the all_configs dictionary.
+    Allows override of a Config class "type" by class name.
     """
 
     __prior_handler__ = NoField

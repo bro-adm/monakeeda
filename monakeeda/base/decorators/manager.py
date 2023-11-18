@@ -7,6 +7,15 @@ from ..meta import ComponentManager
 
 
 class DecoratorManager(ComponentManager):
+    """
+    The Decorator Manager does not need to be aware of the Decorator types because it does not have the responsability to initialzie them.
+    This manager only needs to find them and make sure that collisions are removed.
+
+    Finding the decorators happens via the known namespace set on each Monakeeda decorated method.
+    All Decorators use the same namespace, so this Manager does not need to acknowledge any specific type.
+
+    These overall concepts are the reason that decorators unlike other components do not have the overridability logic like Fields, Annotations and Configs.
+    """
 
     def _components(self, monkey_cls) -> List[BaseDecorator]:
         decorators_info = getattr(monkey_cls, NamespacesConsts.STRUCT)[NamespacesConsts.DECORATORS]

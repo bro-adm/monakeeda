@@ -1,6 +1,7 @@
 from monakeeda.logger import logger, STAGE, MONKEY
 from monakeeda.utils import capitalize_words
 
+
 def handle_class_inputs(cls, bases, **inputs):
     """
     class A(Model, a=9, ...):

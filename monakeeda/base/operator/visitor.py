@@ -8,6 +8,13 @@ TOperatorContext = TypeVar('TOperatorContext')
 
 
 class OperatorVisitor(ABC, Generic[TOperatorContext]):
+    """
+    Simple basic abstraction of the Visitor design pattern.
+
+    This one adds the responsibility to map all visitor types and allow overrides via __type__ attr.
+    Overrides occur when wanting to set custom logic on an existing visitor either on an existing component or on a custom added component.
+    """
+
     __type__: ClassVar[str]
 
     def __init_subclass__(cls):

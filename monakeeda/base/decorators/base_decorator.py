@@ -6,6 +6,15 @@ from ..component import Component
 
 
 class BaseDecorator(Component, ABC):
+    """
+    The Decorators concept is that they are fully initialized by the user and like the responsibility of an actual decorator,
+    they only wrap the actual client set logic whilst restricting responsibility like extracting relevant information and managing results.
+
+    The wrapper method is the _handle_values method.
+    The init method is saved for each Decorator implementation to implement.
+    The __call__ method is pre implemented to set the known namespace that the Decorator Manager looks for on Monakeeda decorated methods.
+    """
+
     @abstractmethod
     def wrapper(self, monkey_cls, values, config, fields_info):
         """

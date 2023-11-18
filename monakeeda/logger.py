@@ -1,5 +1,8 @@
 import logging
-from colorama import init, Fore, Style
+
+from colorama import Fore, Style
+
+LOGGER = 'monkey_logger'
 
 STAGE = 'stage'
 MONKEY = 'monkey'
@@ -23,16 +26,7 @@ class MonkeyLogHandler(logging.Handler):
 
             header = f'---- {self.current_monkey} {self.current_stage} ----'
 
-            header_log_record = logging.LogRecord(
-                record.name,
-                record.levelno,
-                record.pathname,
-                record.lineno,
-                header,
-                (),
-                None,
-                record.funcName
-            )
+            header_log_record = logging.LogRecord(record.name, record.levelno, record.pathname, record.lineno, header, (), None, record.funcName)
 
             log = self.format(header_log_record)
             log = f"{Fore.CYAN}{Style.BRIGHT}{log}{Style.RESET_ALL}"
@@ -46,7 +40,7 @@ class MonkeyLogHandler(logging.Handler):
             print(log)
 
 
-logger = logging.getLogger('monkey_logger')
+logger = logging.getLogger(LOGGER)
 
-handler = MonkeyLogHandler(log=False)
-logger.addHandler(handler)
+non_handler = MonkeyLogHandler(log=False)
+logger.addHandler(non_handler)

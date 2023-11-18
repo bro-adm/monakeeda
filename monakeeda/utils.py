@@ -18,11 +18,6 @@ def set_default_attr_if_does_not_exist(obj, name, default_val):
     setattr(obj, name, getattr(obj, name, default_val))
 
 
-def insert_if_does_not_exists(key, new_val, the_dict):
-    if key not in the_dict:
-        the_dict[key] = new_val
-
-
 def deep_update(source, overrides):
     """
     Update a nested dictionary or similar mapping.
@@ -39,24 +34,6 @@ def deep_update(source, overrides):
     return source
 
 
-def more_than_one_key_in_dict(the_dict: dict, keys: list):
-    one_key_in_dict = False
-
-    for key in keys:
-        if key in the_dict:
-            if one_key_in_dict:
-                return True
-            one_key_in_dict = True
-
-    return False
-
-
-def get_ordered_set_list(seq) -> list:
-    seen = set()
-    seen_add = seen.add
-    return [x for x in seq if not (x in seen or seen_add(x))]
-
-
 def get_items_from_list(items: list, main_list: list) -> list:
     existing_items = []
 
@@ -67,19 +44,9 @@ def get_items_from_list(items: list, main_list: list) -> list:
     return existing_items
 
 
-def exclude_keys(the_dict: dict, keys: List[str]):
-    return {key: val for key, val in the_dict.items() if key not in keys}
-
-
-def is_subset(the_list: list, sub_list: list) -> bool:
-    return all(x in the_list for x in sub_list)
-
-
 def capitalize_words(input: str) -> str:
-    # Split the input string by underscore
     parts = input.split('_')
 
-    # Capitalize the first letter of each part and join them with a space
     transformed_string = ' '.join(part.capitalize() for part in parts)
 
     return transformed_string

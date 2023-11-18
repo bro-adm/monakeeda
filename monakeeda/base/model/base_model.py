@@ -18,6 +18,13 @@ component_managers = [ConfigManager(), FieldManager(), DecoratorManager(), Annot
 
 
 class BaseModel(metaclass=MonkeyMeta, component_managers=component_managers, component_organizer=BaseComponentsOrganizer(), annotation_mapping=annotation_mapping, operators_visitors=all_operators):
+    """
+    Responsible for holding the PURE run of all the logics combined without being dependent on any specific compartment.
+
+    Supplies the API for further extensions (e.g. _operate)
+
+    Also Responsible for managing python's weird shticks (e.g. generics -> __class_getitem__)
+    """
 
     def __init_subclass__(cls):
         super().__init_subclass__()

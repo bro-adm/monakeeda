@@ -7,6 +7,19 @@ from ..interfaces import RulesException
 
 
 class MonkeyMeta(ABCMeta):
+    """
+    __new__ sets initial monkey landscapes.
+
+    __init__ sets the configurators of this class (via override or inheritance) and then runs them:
+        - ComponentManagers
+        - ComponentsOrganizer
+        - Components Validations & Builds
+        - ComponentsOrganizer
+
+    After these logics run (can be a little heavy) your monkey cls is available to use.
+    These are one time logics that happen in load/import time.
+    """
+
     def __new__(mcs, name, bases, attrs, **_):
         attrs[NamespacesConsts.STRUCT] = {}
         attrs[NamespacesConsts.COMPONENTS] = []

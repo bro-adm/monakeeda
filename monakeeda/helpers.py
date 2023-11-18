@@ -3,19 +3,19 @@ from collections import defaultdict
 
 
 class defaultdictvalue(defaultdict):
+    """
+    A regular defaultdict gets a non input lambda to generate the default value.
+
+    This one get the key as an input to generate a custom output for each key
+    """
 
     def __missing__(self, key):
+        """
+        __missing__(key) # Called by __getitem__ for missing key
+        """
+
         self[key] = value = self.default_factory(key)
         return value
-
-
-def get_param_default_from_signature(cls, key: str):
-    params = inspect.signature(cls).parameters
-    param = params.get(key, None)
-    if param:
-        return param._default
-
-    return
 
 
 def get_cls_attrs(cls) -> dict:

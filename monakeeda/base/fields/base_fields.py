@@ -7,6 +7,12 @@ from ..operator import OperatorVisitor
 
 
 class FieldParameter(Parameter, ABC):
+    """
+    Just like any other field scoped component, this one holds a _field_key attr as well.
+
+    This component is known for the ability to be dynamically generated (e.g. Alias Generator generates Alias Parameters)
+    To ensure no duplications of components, the __eq__ methodology is implemented.
+    """
 
     def __init__(self, param_val, field_key):
         self._field_key = field_key
@@ -22,6 +28,15 @@ class FieldParameter(Parameter, ABC):
 
 
 class Field(ConfigurableComponent[FieldParameter]):
+    """
+    Just like any other field scoped component, this one holds a _field_key attr as well.
+
+    A sub class of the Configurable Component for allowing different managed Parameter Components list.
+
+    Initialized via the Fields Manager, which itself acknowledges a set of Fields by default via the all_fields dictionary.
+    Allows override of a Field class "type" by class name.
+    """
+
     @classmethod
     def override_init(cls, field_key: str, parameters: List[FieldParameter], unused_params: Dict[str, Any]):
         instance = super().override_init(parameters, unused_params)
@@ -42,10 +57,14 @@ class Field(ConfigurableComponent[FieldParameter]):
 
 class NoField(Field, copy_parameter_components=False):
     """
+    Not really special other then to represent via the name the fact that there is no Field for a specific attr.
+    Allows the model run logics to run without any special if/else because the API stays the same.
+
     copy_parameter_components=False -> will keep the same list memory context as the Field Component itself ->
     meaning all the parameters available to it will be available here which is important for cases parameter
     initializations are added by code and not user like alias in AliasGenerator.
     """
+
     __prior_handler__ = Field
 
     def __init__(self):

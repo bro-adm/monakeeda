@@ -8,6 +8,20 @@ from ..meta import ConfigurableComponentManager
 
 
 class FieldManager(ConfigurableComponentManager[FieldParameter]):
+    """
+    The Fields concept allows for multiple Field classes (one is natively implemented).
+    The Field classes types are overrideable via the class name.
+
+    The Fields Manager responsibility, just like any other Component Manager is to find the relevant components, build them
+    and manage inheritance collisions.
+
+    By default, all model inheritances will automatically build the current Field classes by:
+        - merging the bases parameters with collision management
+        - overriding merges via current cls parameters
+
+    An important namespace is the per field_ket components namespace -> The manage has the repsonsability to reset it.
+    The Field and Parameter components themselves add themselves to it.
+    """
 
     def _components(self, monkey_cls) -> List[Field]:
         field_components = \

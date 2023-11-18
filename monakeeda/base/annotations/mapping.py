@@ -9,10 +9,26 @@ from .helpers import get_type_cls
 class AnnotationDefaultDict(defaultdictvalue):
 
     def __getitem__(self, type_):
+        """
+        Gets the uses set annotations -> calls get_type_cls to get the "native" typing/cls annotation.
+        Calls super getitem which has the defaultdict logic of missing keys which itself calls the setitem logic.
+
+        The final output will be a Monakeeda Annotation Cls.
+        """
+
         gotten = super(AnnotationDefaultDict, self).__getitem__(get_type_cls(type_))
         return gotten
 
     def __setitem__(self, key, item):
+        """
+        As seen above and in the helper funcs, this method gets:
+            - key = python native type / typing annotation / Monakeeda annotation cls / any cls
+            - item = Monakeeda Annotation / TypeVar / any cls
+
+        Maps them together accordingly to custom Monakeeda Annotations.
+
+        """
+
         if isinstance(item, TypeVar):  # item and key will be the same on TypeVars
             super(AnnotationDefaultDict, self).__setitem__(key, TypeVarAnnotation)
         elif issubclass(item.mro()[0], Annotation):
@@ -36,6 +52,12 @@ def annotation_mapper(*key_annotations: Type, annotation_mapping=annotation_mapp
 
 
 def get_generics_annotations(annotation: GenericAnnotation):
+    """
+    Returns the Monakeeda Annotations of each of the generics set in the GenericAnnotation.
+
+    Used to usually run them as next handlers in handle_values
+    """
+
     annotations = []
 
     for t in annotation._types:

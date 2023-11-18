@@ -39,8 +39,7 @@ class AnnotationManager(ComponentManager):
 
         base_tmp = getattr(base, NamespacesConsts.TMP)
         if TmpConsts.GENERICS in base_tmp:
-            updated_wanted_generics = base_tmp[
-                TmpConsts.GENERICS]  # provided generics for model - either new TypeVar or an actual type
+            updated_wanted_generics = base_tmp[TmpConsts.GENERICS]  # provided generics for model - either new TypeVar or an actual type
             model_generics = base.__parameters__  # saved attr for Generics -> saved in tuple which preserves order -> instantiated TypeVars
 
             updated_generics_amount = len(updated_wanted_generics)
@@ -52,8 +51,7 @@ class AnnotationManager(ComponentManager):
 
                 field_key = self._find_field_by_type_var(monkey_cls, model_generic)
                 self._annotation_mapping[updated_wanted_generic]
-                annotation_cls_instance = self._annotation_mapping[updated_wanted_generic](field_key,
-                                                                                           updated_wanted_generic)
+                annotation_cls_instance = self._annotation_mapping[updated_wanted_generic](field_key, updated_wanted_generic)
                 attrs[NamespacesConsts.STRUCT][NamespacesConsts.ANNOTATIONS][field_key] = annotation_cls_instance
 
     def _set_curr_cls(self, monkey_cls, bases, monkey_attrs):

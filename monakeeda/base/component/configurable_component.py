@@ -54,6 +54,18 @@ class UnmatchedParameterKeyRule(Rule):
 
 
 class ConfigurableComponent(Component, Generic[TParameter], ABC):
+    """
+    A component that is built from sub components -> the Parameter Components.
+    The Configurable Component allows for a set of parameter components which each has a unique key.
+
+    Support for dynamic addition of Parameters is done via the parameter classmethod decorator.
+
+    Usually if not always will Parameter Components be client configurable and accessible objects.
+    Initialization of such a class includes validations no responsibility collisions and no unsupported parameter.
+    Initialization can look different for each type of a Configurable Component so the main "hidden" API is the override_init method.
+    The Component Managers are the ones to actually use this hidden API and actually start the class.
+    """
+
     __rules__: ClassVar[Rules] = Rules([OneComponentPerLabelAllowedRule(), UnmatchedParameterKeyRule()])
     __parameter_components__: List[Type[TParameter]] = []
 

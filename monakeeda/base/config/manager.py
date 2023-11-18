@@ -8,9 +8,20 @@ from ..meta import ConfigurableComponentManager
 
 
 class ConfigManager(ConfigurableComponentManager[ConfigParameter]):
+    """
+    The Configs concept allows for multiple Config classes (one is natively implemented).
+    The Config classes types are overrideable via the class name.
 
-    def __init__(self):
-        self._config_mapper = all_configs
+    The Config Manager responsibility, just like any other Component Manager is to find the relevant components, build them
+    and manage inheritance collisions.
+
+    By default, all model inheritances will automatically build the current Config classes by:
+        - merging the bases parameters with collision management
+        - overriding merges via current cls parameters
+    """
+
+    def __init__(self, configs_map=all_configs):
+        self._configs_map = configs_map
 
     def _components(self, monkey_cls) -> List[Component]:
         configs = monkey_cls.struct[NamespacesConsts.CONFIGS]
@@ -26,11 +37,10 @@ class ConfigManager(ConfigurableComponentManager[ConfigParameter]):
         return components
 
     def _set_by_base(self, monkey_cls, base, attrs, collisions):
-        for config_name, config_type in self._config_mapper.items():
+        for config_name, config_type in self._configs_map.items():
             config_collisions = collisions.setdefault(config_name, [])
 
-            current_config = monkey_cls.struct[NamespacesConsts.CONFIGS][config_name].setdefault(ConfigConsts.OBJECT,
-                                                                                                 None)
+            current_config = monkey_cls.struct[NamespacesConsts.CONFIGS][config_name].setdefault(ConfigConsts.OBJECT, None)
             current_parameters = current_config._parameters if current_config else []
 
             base_config = base.struct[NamespacesConsts.CONFIGS][config_name].setdefault(ConfigConsts.OBJECT, None)
@@ -42,7 +52,7 @@ class ConfigManager(ConfigurableComponentManager[ConfigParameter]):
             monkey_cls.struct[NamespacesConsts.CONFIGS][config_name][ConfigConsts.OBJECT] = initialized_config
 
     def _set_curr_cls(self, monkey_cls, bases, monkey_attrs):
-        for config_name, config_type in self._config_mapper.items():
+        for config_name, config_type in self._configs_map.items():
             config_cls = getattr(monkey_cls, config_name, None)
 
             if config_cls:
@@ -60,7 +70,7 @@ class ConfigManager(ConfigurableComponentManager[ConfigParameter]):
     def build(self, monkey_cls, bases, monkey_attrs):
         monkey_attrs[NamespacesConsts.STRUCT].setdefault(NamespacesConsts.CONFIGS, {})
 
-        for config_name, config_type in self._config_mapper.items():
+        for config_name, config_type in self._configs_map.items():
             monkey_cls.struct[NamespacesConsts.CONFIGS].setdefault(config_name, {})
 
         super().build(monkey_cls, bases, monkey_attrs)

@@ -8,6 +8,12 @@ from ..interfaces import MonkeyBuilder
 
 
 class ComponentManager(MonkeyBuilder, ABC):
+    """
+    Responsible for inheritance logics for each type of main component and then returning all components under its jurisdiction.
+    Inheritance can be tricky at points, so it also manages collisions with it.
+
+    As expected due to its responsibility of finding all components, it also sets up the monkey landscape for them (via build)
+    """
 
     @abstractmethod
     def _components(self, monkey_cls) -> List[Component]:
@@ -40,20 +46,20 @@ class ComponentManager(MonkeyBuilder, ABC):
 class ConfigurableComponentManager(ComponentManager, ABC, Generic[TParameter]):
     def _manage_parameters_inheritance(self, current_parameters: List[TParameter], new_parameters: List[TParameter], collisions: list = None, is_bases=False) -> List[TParameter]:
         """
-        Meant for use with the ComponentManagers, in which we have the set by base and set curr cls.
-        Each method has the responsibility to manage inheritance itself on the relevant components under its jurisdiction.
+        ConfigurableComponents have sub Parameter Components that "build" them.
+        When inheriting from another monkey, you dont want to always copy all priorly set parameters.
 
         This is a helper method to do just that whilst acknowledging the fact that the merge order is from the bases up to the current main cls.
 
         What can happen with inheritance is either bases collision parameters or main cls overrideable parameters - THERE ARE NO APPEND PARAMETERS.
         What we dont want to happen is to change the configurations of the fields from the inherited classes
 
-        to keep context of previous collision on bases merges you pass the previous_collisions value.
-        the value for it is provided via this method on return
+        to keep context of previous collision on bases merges you pass the collisions value.
+        the value is kept by reference
 
         each parameter lists will not hold in themselves more than one of the same __key__.
 
-        :returns: Merged Parameters, Collision Parameters Keys
+        :returns: Merged Parameters
         """
 
         merged_parameters = new_parameters.copy()
