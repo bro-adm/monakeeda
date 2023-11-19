@@ -2,7 +2,7 @@ from enum import Enum
 from typing import Any
 
 from monakeeda.base import ConfigParameter, Config, Rules
-from monakeeda.consts import NamespacesConsts, FieldConsts
+from monakeeda.consts import NamespacesConsts, FieldConsts, PythonNamingConsts
 from ..const import AllowMutation
 from ..implemenations_base_operator_visitor import ImplementationsOperatorVisitor
 from ..rules import BasicParameterValueTypeValidationRule
@@ -23,11 +23,11 @@ class ExtrasParameter(ConfigParameter):
 
     def _handle_values(self, model_instance, values, stage):
         if self.param_val != Extras.ALLOW:
-            fields = getattr(model_instance, NamespacesConsts.STRUCT)[NamespacesConsts.FIELDS]
+            fields = list(getattr(model_instance, NamespacesConsts.STRUCT)[NamespacesConsts.FIELDS].keys())
 
             if self.param_val == Extras.IGNORE:
-                # fields with no Field attr are not schema fields and in this if they are ignored
-                fields = dict(filter(lambda tup: tup[1].get(FieldConsts.FIELD, False), fields.items()))
+                fields = list(model_instance.struct[NamespacesConsts.ANNOTATIONS].keys())
+                # struct annotations is the compartment which lists all the fields directly set without any dependency setup...
 
             unacknowledged = []
 
