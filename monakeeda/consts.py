@@ -22,13 +22,11 @@ class NamespacesConsts:
 class FieldConsts:
     FIELD = 'field'
     REQUIRED = 'required'
-    TYPE = 'type'
     ANNOTATION = 'annotation_cls'
     VALIDATORS = 'validators'
     CREATOR = 'creator'
     DEPENDENTS = 'dependents'
     DEPENDENCIES = 'dependencies'
-    VALUE = 'value'
     COMPONENTS = 'components'
 
 

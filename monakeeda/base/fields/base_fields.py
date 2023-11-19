@@ -44,6 +44,10 @@ class Field(ConfigurableComponent[FieldParameter]):
 
         return instance
 
+    @classmethod
+    def init_from_arbitrary_value(cls, value: Any):
+        return cls(default=value)
+
     def build(self, monkey_cls, bases, monkey_attrs):
         monkey_attrs[NamespacesConsts.STRUCT][NamespacesConsts.FIELDS][self._field_key][FieldConsts.REQUIRED] = True
         monkey_attrs[NamespacesConsts.STRUCT][NamespacesConsts.FIELDS][self._field_key][FieldConsts.COMPONENTS].append(self)

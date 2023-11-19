@@ -2,7 +2,7 @@ from typing import List
 
 from monakeeda.consts import NamespacesConsts, ConfigConsts
 from monakeeda.helpers import get_cls_attrs
-from .base_config import all_configs, ConfigParameter
+from .base_config import ConfigParameter
 from ..component import Component
 from ..meta import ConfigurableComponentManager
 
@@ -20,7 +20,7 @@ class ConfigManager(ConfigurableComponentManager[ConfigParameter]):
         - overriding merges via current cls parameters
     """
 
-    def __init__(self, configs_map=all_configs):
+    def __init__(self, configs_map):
         self._configs_map = configs_map
 
     def _components(self, monkey_cls) -> List[Component]:

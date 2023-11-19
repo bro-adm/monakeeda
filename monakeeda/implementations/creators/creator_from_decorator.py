@@ -1,6 +1,5 @@
 from typing import Union, Any
 
-from monakeeda.base import NoField
 from monakeeda.consts import NamespacesConsts, FieldConsts
 from monakeeda.utils import get_wanted_params, wrap_in_list
 from .base_decorator import BaseCreatorDecorator
@@ -24,16 +23,10 @@ class CreateFrom(BaseCreatorDecorator):
         if self.from_keys[0] == '*':
             for key in monkey_attrs[NamespacesConsts.STRUCT][NamespacesConsts.FIELDS]:
                 if key != self._field_key:
-                    monkey_attrs[NamespacesConsts.STRUCT][NamespacesConsts.FIELDS].setdefault(key, {}).setdefault(FieldConsts.DEPENDENTS, []).append(self._field_key)
-                    monkey_attrs[NamespacesConsts.STRUCT][NamespacesConsts.FIELDS].setdefault(key, {}).setdefault(FieldConsts.COMPONENTS, [])
+                    monkey_attrs[NamespacesConsts.STRUCT][NamespacesConsts.FIELDS][key][FieldConsts.DEPENDENTS].append(self._field_key)
         else:
             for key in self.from_keys:
-                monkey_attrs[NamespacesConsts.STRUCT][NamespacesConsts.FIELDS].setdefault(key, {})
-                monkey_attrs[NamespacesConsts.STRUCT][NamespacesConsts.FIELDS][key].setdefault(FieldConsts.DEPENDENTS, []).append(self._field_key)
-                monkey_attrs[NamespacesConsts.STRUCT][NamespacesConsts.FIELDS][key].setdefault(FieldConsts.COMPONENTS, [])
                 monkey_attrs[NamespacesConsts.STRUCT][NamespacesConsts.FIELDS][key][FieldConsts.REQUIRED] = True
-                no_field = NoField.override_init(key, [], {})
-                monkey_attrs[NamespacesConsts.STRUCT][NamespacesConsts.FIELDS][key].setdefault(FieldConsts.FIELD, no_field)
 
     def _handle_values(self, model_instance, values, stage):
         fields_info = getattr(model_instance, NamespacesConsts.STRUCT)[NamespacesConsts.FIELDS]

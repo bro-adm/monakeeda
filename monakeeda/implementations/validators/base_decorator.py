@@ -13,6 +13,6 @@ class BaseValidatorDecorator(BaseDecorator, ABC):
 
     def build(self, monkey_cls, bases, monkey_attrs):
         # setdefault is in use because this can be set on a none schema parameter
-        monkey_attrs[NamespacesConsts.STRUCT][NamespacesConsts.FIELDS].setdefault(self._field_key, {}).setdefault(FieldConsts.VALIDATORS, []).append(self)
+        monkey_attrs[NamespacesConsts.STRUCT][NamespacesConsts.FIELDS][self._field_key].setdefault(FieldConsts.VALIDATORS, []).append(self)
         monkey_attrs[NamespacesConsts.STRUCT][NamespacesConsts.FIELDS][self._field_key][FieldConsts.COMPONENTS].append(self)
 

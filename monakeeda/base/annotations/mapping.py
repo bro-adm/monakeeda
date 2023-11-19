@@ -4,14 +4,14 @@ from typing import Type, TypeVar
 from monakeeda.helpers import defaultdictvalue
 from .base_annotations import Annotation, GenericAnnotation
 from .helpers import get_type_cls
-from .known_annotations import known_annotations, KnownAnnotations
+from .known_annotations import known_annotations
 
 
 class AnnotationDefaultDict(defaultdictvalue):
 
-    def __init__(self, default_factory, init_value, known_annotations=known_annotations):
+    def __init__(self, default_factory, init_value, known_annotations_mapping):
         super().__init__(default_factory, init_value)
-        self._known_annotations = known_annotations
+        self._known_annotations = known_annotations_mapping
 
     def __getitem__(self, type_):
         """
@@ -65,7 +65,7 @@ class AnnotationDefaultDict(defaultdictvalue):
 
 
 annotation_mapping = {}
-annotation_mapping = AnnotationDefaultDict(lambda annotation: annotation, annotation_mapping)
+annotation_mapping = AnnotationDefaultDict(lambda annotation: annotation, annotation_mapping, known_annotations)
 
 
 def annotation_mapper(*key_annotations: Type, annotation_mapping=annotation_mapping):

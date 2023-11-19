@@ -64,7 +64,7 @@ class BaseComponentsOrganizer(ComponentsOrganizer):
         organized = []
         processed_fields = []
 
-        dependencies = monkey_cls.struct[NamespacesConsts.FIELDS][field_key].setdefault(FieldConsts.DEPENDENCIES, [])
+        dependencies = monkey_cls.struct[NamespacesConsts.FIELDS][field_key][FieldConsts.DEPENDENCIES]
         if dependencies:
             for dependency_key in dependencies:
                 organized_dependencies, processed_dependencies = self._order_attr_scoped_components_for_instance_operation_per_field(dependency_key, monkey_cls, attrs_scoped_organized_components)

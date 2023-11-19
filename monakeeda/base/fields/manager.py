@@ -1,9 +1,10 @@
 import inspect
 from collections import OrderedDict
-from typing import List
+from typing import List, Type
 
 from monakeeda.consts import FieldConsts, NamespacesConsts, PythonNamingConsts
-from .base_fields import Field, NoField, FieldParameter
+from monakeeda.helpers import defaultdictvalue
+from .base_fields import Field, FieldParameter
 from ..meta import ConfigurableComponentManager
 
 
@@ -23,19 +24,17 @@ class FieldManager(ConfigurableComponentManager[FieldParameter]):
         - merging the bases parameters with collision management
         - overriding merges via current cls parameters
 
-    An important namespace is the per field_ket components namespace -> The manage has the responsibility to reset it.
-    The Field and Parameter components themselves add themselves to it.
+    There are pre-known namespaces that are set by default by the manager to decrease if-exists logic from other compartments.
+    Not all known namespaces are set, because there is no need for such an overload of logic and responsibility.
     """
 
+    def __init__(self, default_field_type: Type[Field], default_no_field_type: Type[Field]):
+        self._default_field_type = default_field_type
+        self._default_no_field_type = default_no_field_type
+
     def _components(self, monkey_cls) -> List[Field]:
-        field_components = \
-            list(
-                filter(
-                    lambda x: True if x else False,
-                    [field_info.get(FieldConsts.FIELD, None) for field_info in
-                     getattr(monkey_cls, NamespacesConsts.STRUCT)[NamespacesConsts.FIELDS].values()]
-                )
-            )
+        fields_info = getattr(monkey_cls, NamespacesConsts.STRUCT)[NamespacesConsts.FIELDS]
+        field_components = [field_info[FieldConsts.FIELD] for field_info in fields_info.values()]
 
         components = []
         for field in field_components:
@@ -53,20 +52,24 @@ class FieldManager(ConfigurableComponentManager[FieldParameter]):
         for field_key in collided_fields:
             field_collisions = collisions.setdefault(field_key, [])
 
-            current_field = monkey_cls.struct[NamespacesConsts.FIELDS][field_key].setdefault(FieldConsts.FIELD, None)
-            current_parameters = current_field._parameters if current_field else []
-            current_field_type = type(current_field) if current_field else None
+            current_field = monkey_cls.struct[NamespacesConsts.FIELDS][field_key][FieldConsts.FIELD]
+            current_parameters = current_field._parameters
+            current_field_type = type(current_field)
 
-            base_field = base.struct[NamespacesConsts.FIELDS][field_key].setdefault(FieldConsts.FIELD, None)
-            base_parameters = base_field._parameters if base_field else []
-            base_field_type = type(base_field) if base_field else None
+            base_field = base.struct[NamespacesConsts.FIELDS][field_key][FieldConsts.FIELD]
+            base_parameters = base_field._parameters
+            base_field_type = type(base_field)
 
-            if current_field_type and base_field_type and current_field_type != base_field_type:
-                if current_field_type == NoField:
+            if field_collisions is True:
+                pass  # field already set to no_field
+
+            elif current_field_type != base_field_type:
+                if current_field_type == self._default_no_field_type:
                     monkey_cls.struct[NamespacesConsts.FIELDS][field_key][FieldConsts.FIELD] = base_field
                 else:
-                    no_field = NoField.override_init(field_key, [], {})
+                    no_field = self._default_no_field_type.override_init(field_key, [], {})
                     monkey_cls.struct[NamespacesConsts.FIELDS][field_key][FieldConsts.FIELD] = no_field
+                    collisions[field_key] = True
 
             else:
                 merged_parameters = self._manage_parameters_inheritance(base_parameters, current_parameters, field_collisions, is_bases=True)
@@ -76,38 +79,39 @@ class FieldManager(ConfigurableComponentManager[FieldParameter]):
         new_fields_keys = base_annotations_keys - current_annotations_keys
         for new_field_key in new_fields_keys:
             new_field = base.struct[NamespacesConsts.FIELDS][new_field_key][FieldConsts.FIELD]
-            monkey_cls.struct[NamespacesConsts.FIELDS].setdefault(new_field_key, {FieldConsts.FIELD: new_field, FieldConsts.COMPONENTS: []})
+            monkey_cls.struct[NamespacesConsts.FIELDS][new_field_key][FieldConsts.FIELD] = new_field
 
     def _set_curr_cls(self, monkey_cls, bases, monkey_attrs):
         annotations: dict = monkey_attrs.get(PythonNamingConsts.annotations, {})  # new or updated fields
 
         for field_key in annotations:
-            monkey_attrs[NamespacesConsts.STRUCT][NamespacesConsts.FIELDS].setdefault(field_key, {})
-            bases_field = monkey_attrs[NamespacesConsts.STRUCT][NamespacesConsts.FIELDS][field_key].setdefault(FieldConsts.FIELD, None)
-            bases_parameters = bases_field._parameters if bases_field else []
-            bases_field_type = type(bases_field) if bases_field else None
+            bases_field = monkey_attrs[NamespacesConsts.STRUCT][NamespacesConsts.FIELDS][field_key][FieldConsts.FIELD]
+            bases_parameters = bases_field._parameters
+            bases_field_type = type(bases_field)
 
             value = monkey_attrs.get(field_key, inspect._empty)
 
             if not isinstance(value, Field):
                 if value is inspect._empty:
-                    value = NoField()
+                    value = self._default_no_field_type()
                 else:
-                    value = Field(default=value)
+                    value = self._default_field_type.init_from_arbitrary_value(value)
 
             field_type = type(value)
             initialized_params, unused_params = value.initiate_params(value._init_params, field_key=field_key)
 
-            if bases_field_type and field_type != NoField and field_type == bases_field_type:
+            if field_type == self._default_no_field_type or field_type == bases_field_type:
                 merged_parameters = self._manage_parameters_inheritance(bases_parameters, initialized_params)
-                merged_field = Field.override_init(field_key, merged_parameters, unused_params)
+                merged_field = field_type.override_init(field_key, merged_parameters, unused_params)
             else:
                 merged_field = field_type.override_init(field_key, initialized_params, unused_params)
 
             monkey_attrs[field_key] = merged_field
             monkey_attrs[NamespacesConsts.STRUCT][NamespacesConsts.FIELDS][field_key][FieldConsts.FIELD] = merged_field
-            monkey_attrs[NamespacesConsts.STRUCT][NamespacesConsts.FIELDS][field_key][FieldConsts.COMPONENTS] = []
 
     def build(self, monkey_cls, bases, monkey_attrs):
-        monkey_attrs[NamespacesConsts.STRUCT].setdefault(NamespacesConsts.FIELDS, OrderedDict())
+        default_fields_dict = defaultdictvalue(lambda key: {FieldConsts.DEPENDENCIES: [], FieldConsts.DEPENDENTS: [], FieldConsts.COMPONENTS: [], FieldConsts.FIELD: self._default_no_field_type.override_init(key, [], {})}, OrderedDict())
+        # Do note that this defaultdict does not hurt priorly set bases becasue we never directly ask for a field_info of a base field without knowing it exists there
+
+        monkey_attrs[NamespacesConsts.STRUCT][NamespacesConsts.FIELDS] = default_fields_dict
         super(FieldManager, self).build(monkey_cls, bases, monkey_attrs)

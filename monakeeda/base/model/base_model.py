@@ -7,14 +7,14 @@ from .base_components_organizer import BaseComponentsOrganizer
 from .errors import MonkeyValuesHandlingException
 from .generic_alias import MonkeyGenericAlias
 from ..annotations import AnnotationManager, annotation_mapping
-from ..config import ConfigManager
+from ..config import ConfigManager, all_configs
 from ..decorators import DecoratorManager
-from ..fields import FieldManager
+from ..fields import FieldManager, Field, NoField
 from ..interfaces import Stages
 from ..meta import MonkeyMeta
 from ..operator import all_operators
 
-component_managers = [ConfigManager(), FieldManager(), DecoratorManager(), AnnotationManager(annotation_mapping)]
+component_managers = [ConfigManager(all_configs), FieldManager(Field, NoField), DecoratorManager(), AnnotationManager(annotation_mapping)]
 
 
 class BaseModel(metaclass=MonkeyMeta, component_managers=component_managers, component_organizer=BaseComponentsOrganizer(), operators_visitors=all_operators):
