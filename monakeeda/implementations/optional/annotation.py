@@ -1,6 +1,6 @@
 from typing import Optional, Any
 
-from monakeeda.base import annotation_mapper, GenericAnnotation, get_generics_annotations
+from monakeeda.base import annotation_mapper, GenericAnnotation
 from monakeeda.consts import NamespacesConsts, FieldConsts
 from ..implemenations_base_operator_visitor import ImplementationsOperatorVisitor
 from ..values import DefaultFactoryFieldParameter
@@ -12,7 +12,7 @@ class OptionalAnnotation(GenericAnnotation):
 
     def _handle_values(self, model_instance, values, stage):
         if self._field_key in values:
-            get_generics_annotations(self)[0].handle_values(model_instance, values, stage)
+            self._annotations[0].handle_values(model_instance, values, stage)
 
     def build(self, monkey_cls, bases, monkey_attrs):
         super().build(monkey_cls, bases, monkey_attrs)

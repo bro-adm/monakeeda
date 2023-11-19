@@ -1,6 +1,6 @@
 from typing import Generic, T, Any
 
-from monakeeda.base import GenericAnnotation, Stages, get_generics_annotations
+from monakeeda.base import GenericAnnotation, Stages
 from monakeeda.consts import NamespacesConsts
 from .exceptions import ConstError
 from ..implemenations_base_operator_visitor import ImplementationsOperatorVisitor
@@ -14,7 +14,7 @@ class Const(GenericAnnotation, Generic[T]):
         value = values[self._field_key]
 
         if stage == Stages.INIT:
-            get_generics_annotations(self)[0].handle_values(model_instance, values, stage)
+            self._annotations[0].handle_values(model_instance, values, stage)
 
         elif stage == Stages.UPDATE:
             curr_val = getattr(model_instance, self._field_key)
