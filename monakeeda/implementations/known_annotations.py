@@ -26,10 +26,8 @@ class TypeVarAnnotation(Annotation):
         return instance_types[index]
 
     def _handle_values(self, model_instance, values, stage):
-        from monakeeda.base import annotation_mapping
-
         instance_type = self._get_actual_type(model_instance, stage)
-        annotation = annotation_mapping[instance_type](self._field_key, instance_type)
+        annotation = self._annotations_mapping[instance_type](self._field_key, instance_type, self._annotations_mapping)
 
         annotation.handle_values(model_instance, values, stage)
 
