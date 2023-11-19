@@ -4,7 +4,7 @@ from itertools import islice
 from typing import List, Dict, Type, Optional, Tuple
 
 from monakeeda.consts import NamespacesConsts, FieldConsts, ComponentConsts
-from ..component import Component, all_components
+from ..component import Component
 from ..meta import ComponentsOrganizer
 
 
@@ -17,10 +17,13 @@ class BaseComponentsOrganizer(ComponentsOrganizer):
     The per method docs are great :)
     """
 
+    def __init__(self, ordered_component_types: List[Component]):
+        self._ordered_component_types = ordered_component_types
+
     def order_by_chain_of_responsibility(self, monkey_components: List[Component]) -> Dict[Type[Component], List[Component]]:
         ordered_dict = OrderedDict()
 
-        for component_type in all_components:
+        for component_type in self._ordered_component_types:
             tmp = []
 
             for component in monkey_components:

@@ -13,11 +13,12 @@ from ..fields import FieldManager, Field, NoField
 from ..interfaces import Stages
 from ..meta import MonkeyMeta
 from ..operator import all_operators
+from ..component import all_components
 
 component_managers = [ConfigManager(all_configs), FieldManager(Field, NoField), DecoratorManager(), AnnotationManager(annotation_mapping)]
 
 
-class BaseModel(metaclass=MonkeyMeta, component_managers=component_managers, component_organizer=BaseComponentsOrganizer(), operators_visitors=all_operators):
+class BaseModel(metaclass=MonkeyMeta, component_managers=component_managers, component_organizer=BaseComponentsOrganizer(all_components), operators_visitors=all_operators):
     """
     Responsible for holding the PURE run of all the logics combined without being dependent on any specific compartment.
 
