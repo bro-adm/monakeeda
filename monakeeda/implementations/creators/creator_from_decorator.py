@@ -32,14 +32,12 @@ class CreateFrom(BaseCreatorDecorator):
         fields_info = getattr(model_instance, NamespacesConsts.STRUCT)[NamespacesConsts.FIELDS]
         configs = getattr(model_instance, NamespacesConsts.STRUCT)[NamespacesConsts.CONFIGS]
 
-        wanted_val = self.wrapper(model_instance, values, configs, fields_info)
-        values[self._field_key] = wanted_val
-
-    def wrapper(self, monkey_cls, values, configs, fields_info):
         if self.from_keys[0] == '*':
-            return self.func(monkey_cls, values, configs, fields_info)
+            wanted_val = self.func(model_instance, values, configs, fields_info)
+        else:
+            wanted_val = self.func(model_instance, configs, get_wanted_params(fields_info, self.from_keys), get_wanted_params(values, self.from_keys))
 
-        return self.func(monkey_cls, configs, get_wanted_params(fields_info, self.from_keys), get_wanted_params(values, self.from_keys))
+        values[self._field_key] = wanted_val
 
     def accept_operator(self, operator_visitor: ImplementationsOperatorVisitor, context: Any):
         operator_visitor.operate_create_from_decorator(self, context)
