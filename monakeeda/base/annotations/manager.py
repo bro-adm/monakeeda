@@ -44,14 +44,14 @@ class AnnotationManager(ComponentManager):
             # No valdiations needs to happen -> if there are collision at all -> the annotation will be set as Arbitrary Object
             # Note that this means that we dont need to update or check the collisions parameter because collisions will keep on happening on next bases without it
 
-            object_annotations = _ObjectAnnotation(field_key, object)
+            object_annotations = _ObjectAnnotation(field_key, object, self._annotation_mapping)
 
             attrs[NamespacesConsts.STRUCT][NamespacesConsts.ANNOTATIONS][field_key] = object_annotations
 
         new_fields_keys = base_annotations_keys - current_annotations_keys
         for new_field_key in new_fields_keys:
-            new_field = base.struct[NamespacesConsts.ANNOTATIONS][new_field_key]
-            monkey_cls.struct[NamespacesConsts.ANNOTATIONS][new_field_key] = new_field
+            new_annotation = base.struct[NamespacesConsts.ANNOTATIONS][new_field_key]
+            monkey_cls.struct[NamespacesConsts.ANNOTATIONS][new_field_key] = new_annotation
 
         base_tmp = getattr(base, NamespacesConsts.TMP)
         if TmpConsts.GENERICS in base_tmp:
@@ -67,7 +67,7 @@ class AnnotationManager(ComponentManager):
 
                 field_key = self._find_field_by_type_var(monkey_cls, model_generic)
                 self._annotation_mapping[updated_wanted_generic]
-                annotation_cls_instance = self._annotation_mapping[updated_wanted_generic](field_key, updated_wanted_generic)
+                annotation_cls_instance = self._annotation_mapping[updated_wanted_generic](field_key, updated_wanted_generic, self._annotation_mapping)
                 attrs[NamespacesConsts.STRUCT][NamespacesConsts.ANNOTATIONS][field_key] = annotation_cls_instance
 
     def _set_curr_cls(self, monkey_cls, bases, monkey_attrs):
@@ -76,7 +76,7 @@ class AnnotationManager(ComponentManager):
         for key, annotation in annotations.items():
             self._annotation_mapping[annotation]
 
-            annotation_cls_instance = self._annotation_mapping[annotation](key, annotation)
+            annotation_cls_instance = self._annotation_mapping[annotation](key, annotation, self._annotation_mapping)
             monkey_attrs[NamespacesConsts.STRUCT][NamespacesConsts.ANNOTATIONS][key] = annotation_cls_instance
 
     def build(self, monkey_cls, bases, monkey_attrs):

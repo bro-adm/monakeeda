@@ -76,19 +76,3 @@ def annotation_mapper(*key_annotations: Type, annotation_mapping=annotation_mapp
         return annotation_cls
 
     return inner_get_annotation_cls
-
-
-def get_generics_annotations(annotation: GenericAnnotation):
-    """
-    Returns the Monakeeda Annotations of each of the generics set in the GenericAnnotation.
-
-    Used to usually run them as next handlers in handle_values
-    """
-
-    annotations = []
-
-    for t in annotation._types:
-        if t != type(None):
-            annotations.append(annotation_mapping[t](annotation._field_key, t))
-
-    return annotations

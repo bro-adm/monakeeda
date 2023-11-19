@@ -16,9 +16,10 @@ class Annotation(Component, ABC):
     Additionally because it is a mirror of any python type, typing type, generic type or just any object it keeps the original annotation in the base_type attr
     """
 
-    def __init__(self, field_key, base_type):
+    def __init__(self, field_key, base_type, annotations_mapping):
         self._field_key = field_key
         self.base_type = base_type
+        self._annotations_mapping = annotations_mapping
 
     def build(self, monkey_cls, bases, monkey_attrs):
         monkey_attrs[NamespacesConsts.STRUCT][NamespacesConsts.FIELDS][self._field_key][FieldConsts.ANNOTATION] = self
@@ -40,6 +41,22 @@ class GenericAnnotation(Annotation, ABC):
     @property
     def _types(self):
         return get_args(self.base_type)
+
+    @property
+    def _annotations(self):
+        """
+            Returns the Monakeeda Annotations of each of the generics set in the GenericAnnotation.
+
+            Used to usually run them as next handlers in handle_values
+            """
+
+        annotations = []
+
+        for t in self._types:
+            if t != type(None):
+                annotations.append(self._annotations_mapping[t](self._field_key, t, self._annotations_mapping))
+
+        return annotations
 
     def __getitem__(self, item):
         return item
