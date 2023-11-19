@@ -1,6 +1,6 @@
 from typing import Any
 
-from monakeeda.base import ConfigParameter, Config, Rules, get_parameter_component_by_key
+from monakeeda.base import ConfigParameter, Config, Rules, get_parameter_component_type_by_key
 from monakeeda.consts import NamespacesConsts, FieldConsts
 from ..abstract import AbstractParameter
 from ..implemenations_base_operator_visitor import ImplementationsOperatorVisitor
@@ -22,7 +22,7 @@ class AliasGenerator(ConfigParameter):
 
         for field_key, field_info in monkey_attrs[NamespacesConsts.STRUCT][NamespacesConsts.FIELDS].items():
             field = field_info[FieldConsts.FIELD]
-            alias_parameter_type = get_parameter_component_by_key(field, 'alias')
+            alias_parameter_type = get_parameter_component_type_by_key(field, 'alias')
 
             alias_val = self.param_val(field_key)
             alias_parameter = alias_parameter_type(alias_val, field_key)

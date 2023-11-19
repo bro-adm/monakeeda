@@ -3,4 +3,4 @@ from .configurable_component import ConfigurableComponent, UnmatchedParameterKey
     OneComponentPerLabelAllowedRuleException
 from .parameter_component import Parameter, TParameter, BaseParameterValueTypeValidationFailedRule, \
     ParameterValueTypeValidationFailedRuleException
-from .reflections import get_parameter_component_by_key
+from .reflections import get_parameter_component_type_by_key, get_parameter_component_by_key
