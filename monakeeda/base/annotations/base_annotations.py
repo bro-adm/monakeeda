@@ -54,6 +54,7 @@ class GenericAnnotation(Annotation, ABC):
 
         for t in self._types:
             if t != type(None):
+                self._annotations_mapping[t]
                 annotations.append(self._annotations_mapping[t](self._field_key, t, self._annotations_mapping))
 
         return annotations
