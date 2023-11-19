@@ -45,10 +45,10 @@ class MonkeyMeta(ABCMeta):
 
         model_components = attrs[NamespacesConsts.COMPONENTS]
         logger.info(f"Post Component Managers All Model Components = {model_components}", extra={STAGE: "Component Info", MONKEY: name})
-        cls.__organized_components__ = cls.__component_organizer__.order_by_chain_of_responsibility(model_components)
-        logger.info(f"Post Component Managers Organized Model Components = {cls.__organized_components__}", extra={STAGE: "Component Info", MONKEY: name})
+        cls.__type_organized_components__ = cls.__component_organizer__.order_by_chain_of_responsibility(model_components)
+        logger.info(f"Post Component Managers Organized Model Components = {cls.__type_organized_components__}", extra={STAGE: "Component Info", MONKEY: name})
 
-        for component_type, components in cls.__organized_components__.items():
+        for component_type, components in cls.__type_organized_components__.items():
             for component in components:
                 component.validate(cls, bases, attrs)
 
@@ -56,16 +56,16 @@ class MonkeyMeta(ABCMeta):
         if not rules_exception.is_empty():
             raise rules_exception
 
-        for component_type, components in cls.__organized_components__.items():
+        for component_type, components in cls.__type_organized_components__.items():
             for component in components:
                 component.build(cls, bases, attrs)
 
-        logger.info(f"Post Components Build Organized Model Components = {cls.__organized_components__}", extra={STAGE: "Component Info", MONKEY: name})
+        logger.info(f"Post Components Build Organized Model Components = {cls.__type_organized_components__}", extra={STAGE: "Component Info", MONKEY: name})
 
-        cls.__organized_components__ = cls.__component_organizer__.order_for_instance_operation(cls, cls.__organized_components__)
+        cls.__run_organized_components__ = cls.__component_organizer__.order_for_instance_operation(cls, cls.__type_organized_components__)
         logger.info(f"Model Components Run Order:", extra={STAGE: "Component Info", MONKEY: name})
 
-        for component in cls.__organized_components__:
+        for component in cls.__run_organized_components__:
             scope = getattr(component, ComponentConsts.FIELD_KEY, ComponentConsts.GLOBAL)
             logger.info(f"\t{component} -> {scope}", extra={STAGE: "Component Info", MONKEY: name})
 

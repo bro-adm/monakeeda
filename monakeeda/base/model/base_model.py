@@ -45,7 +45,7 @@ class BaseModel(metaclass=MonkeyMeta, component_managers=component_managers, com
         super(BaseModel, self).__setattr__(NamespacesConsts.EXCEPTIONS, exceptions)
         # this is an instance level field as opposed to the class level exceptions list used in the build phase
 
-        for component in self.__organized_components__:
+        for component in self.__run_organized_components__:
             component.handle_values(self, values, stage)
 
         if exceptions:
