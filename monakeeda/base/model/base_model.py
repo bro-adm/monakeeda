@@ -1,4 +1,4 @@
-from typing import Any, _TYPING_INTERNALS
+from typing import Any, _TYPING_INTERNALS, Generic
 
 from monakeeda.consts import NamespacesConsts, TmpConsts
 from monakeeda.utils import deep_update
@@ -58,7 +58,8 @@ class BaseModel(metaclass=MonkeyMeta, component_managers=component_managers, com
         self._handle_values(kwargs, Stages.INIT)
 
     def update(self, **kwargs):
-        logger.info(f"Update Scope Generics = {self.__orig_class__.__args__}", extra={STAGE: "Monkey Generics", MONKEY: self.__class__.__name__})
+        if Generic in self.__class__.mro():
+            logger.info(f"Update Scope Generics = {self.__orig_class__.__args__}", extra={STAGE: "Monkey Generics", MONKEY: self.__class__.__name__})
 
         kwargs = deep_update(self.__dict__.copy(), kwargs)
         self._handle_values(kwargs, Stages.UPDATE)
