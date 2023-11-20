@@ -70,6 +70,9 @@ class BaseModel(metaclass=MonkeyMeta, component_managers=component_managers, com
         else:
             self.update(**{key: value})
 
+    def __eq__(self, other):
+        return self.__dict__ == other.__dict__
+
     @staticmethod
     def _operate(model, operator_type: str, context: Any):
         operator_visitor = model.__operators_visitors__[operator_type]
