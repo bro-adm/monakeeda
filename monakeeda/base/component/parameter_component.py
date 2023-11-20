@@ -1,8 +1,14 @@
 from abc import abstractmethod, ABC
+from enum import Enum
 from typing import ClassVar, Union, TypeVar, Type
 
 from .component import Component
 from ..interfaces import RuleException, Rule
+
+
+class ParameterIdentifier(Enum):
+    key = '__key__'
+    label = '__label__'
 
 
 class Parameter(Component, ABC):
