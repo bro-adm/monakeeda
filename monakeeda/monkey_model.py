@@ -1,5 +1,7 @@
-from monakeeda.base import BaseModel
-from monakeeda.consts import NamespacesConsts
+from typing import Dict, Any, Tuple, List, Union
+
+from monakeeda.base import BaseModel, Field
+from monakeeda.consts import NamespacesConsts, PythonNamingConsts
 from .implementations import OpenAPIOperatorVisitor
 
 
@@ -13,3 +15,15 @@ class MonkeyModel(BaseModel):
 
     class Config:
         validate_missing_fields = True
+
+
+def generate_model(name: str, fields: Dict[str, Union[Field, Any]]=None, annotations: Dict[str, Any]=None, configs: Dict[str, type]=None, decorators: List[callable]=None, bases: Tuple[BaseModel]=None) -> MonkeyModel:
+    bases = bases if bases else (MonkeyModel,)
+
+    attrs = {}
+    attrs.update(fields if fields else {})
+    attrs[PythonNamingConsts.annotations] = annotations if annotations else {}
+    attrs.update(configs if configs else {})
+    attrs.update({func.__name__: func for func in decorators} if decorators else {})
+
+    return type(name, bases, attrs)

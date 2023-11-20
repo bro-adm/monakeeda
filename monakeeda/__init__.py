@@ -1,6 +1,6 @@
 from .base import Field, Config
 from .implementations import *
-from .monkey_model import MonkeyModel
+from .monkey_model import MonkeyModel, generate_model
 
 
 def log_main_information():
