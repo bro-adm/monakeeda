@@ -3,7 +3,7 @@ from typing import Any, List
 
 
 def get_wanted_params(kwargs: dict, keys: list):
-    return {key: kwargs[key] for key in keys}
+    return {key: kwargs[key] for key in keys if key in kwargs}
 
 
 def wrap_in_list(x: Any):
