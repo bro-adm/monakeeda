@@ -46,10 +46,9 @@ class ModelAnnotation(Annotation):
         if isinstance(value, dict):
             try:
                 monkey = self.base_type(**value)
+                values[self._field_key] = monkey
             except Exception as e:
                 getattr(model_instance, NamespacesConsts.EXCEPTIONS).append(e)
-
-            values[self._field_key] = monkey
 
         else:
             result = type_validation(value, self.base_type)
