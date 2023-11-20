@@ -33,7 +33,7 @@ class AliasGenerator(ConfigParameter):
                     append = False
 
             if append:
-                monkey_cls.__organized_components__[alias_parameter_type].insert(0, alias_parameter)  # adds to the currently running for loop and for later value handlers run order
+                monkey_cls.__type_organized_components__[alias_parameter_type].insert(0, alias_parameter)  # adds to the currently running for loop and for later value handlers run order
                 field._parameters.append(alias_parameter)  # only to be nice for future use cases
                 monkey_attrs[NamespacesConsts.COMPONENTS].append(alias_parameter)  # added it only to be nice - not required - post usage of this list
 
