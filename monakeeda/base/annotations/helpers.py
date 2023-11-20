@@ -25,7 +25,7 @@ def get_type_cls(tp):
         if type(origin) == type:  # all simple generics (e.g. Dict, List -> origin=dict, list accordingly) will enter
             return __helper_mapping[origin]
 
-        elif len(args)==2 and type(None) in args:
+        elif len(args)>=2 and type(None) in args:
             return Optional  # Optional sadly is equivalent to Union[X, None] - so needs an extra if
 
         return origin
