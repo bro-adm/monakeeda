@@ -1,6 +1,7 @@
 from abc import ABC
+from typing import Any, Union
 
-from typing_extensions import get_args
+from typing_extensions import get_args, get_origin
 
 from monakeeda.consts import NamespacesConsts, FieldConsts
 from ..component import Component
@@ -24,6 +25,17 @@ class Annotation(Component, ABC):
     def build(self, monkey_cls, bases, monkey_attrs):
         monkey_attrs[NamespacesConsts.STRUCT][NamespacesConsts.FIELDS][self._field_key][FieldConsts.ANNOTATION] = self
         monkey_attrs[NamespacesConsts.STRUCT][NamespacesConsts.FIELDS][self._field_key][FieldConsts.COMPONENTS].append(self)
+
+    def is_same(self, other) -> Union[Any, bool]:
+        if isinstance(other, GenericAnnotation):
+            annotations = other._annotations
+            if len(annotations) > 1:
+                return False
+
+            return self.is_same(annotations[0])
+
+        if issubclass(other.base_type, self.base_type):
+            return other.base_type
 
 
 class GenericAnnotation(Annotation, ABC):
@@ -58,6 +70,37 @@ class GenericAnnotation(Annotation, ABC):
                 annotations.append(self._annotations_mapping[t](self._field_key, t, self._annotations_mapping))
 
         return annotations
+
+    def is_same(self, other) -> Union[Any, bool]:
+        scoped_annotation = get_origin(other.base_type)
+        scoped_sub_annotations = []
+
+        annotations = self._annotations
+
+        if isinstance(other, GenericAnnotation):
+            other_annotations = other._annotations
+
+            if len(other_annotations) == 1:
+                return self.is_same(other_annotations[0])
+
+            elif len(annotations) != len(other_annotations):
+                return False
+
+            annotations_zip = zip(annotations, other_annotations)
+
+            for annotation, other_annotation in annotations_zip:
+                result = annotation.is_same(other_annotation)
+                if not result:
+                    return False
+
+                scoped_sub_annotations.append(result)
+
+            return scoped_annotation[tuple(scoped_sub_annotations)]
+
+        if len(annotations) == 1:  # also means that other is of type Annotation
+            return annotations[0].is_same(other)
+
+        return False
 
     def __getitem__(self, item):
         return item
