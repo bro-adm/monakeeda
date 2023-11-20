@@ -1,5 +1,5 @@
 from abc import ABC
-from typing import Any, Union
+from typing import Any, Union, TypeVar
 
 from typing_extensions import get_args, get_origin
 
@@ -34,8 +34,10 @@ class Annotation(Component, ABC):
 
             return self.is_same(annotations[0])
 
-        if issubclass(other.base_type, self.base_type):
+        if not isinstance(other.base_type, TypeVar) and issubclass(other.base_type, self.base_type):
             return other.base_type
+
+        return False
 
 
 class GenericAnnotation(Annotation, ABC):
