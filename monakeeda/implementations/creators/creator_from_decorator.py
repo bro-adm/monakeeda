@@ -1,4 +1,4 @@
-from typing import Union, Any
+from typing import Union, Any, List
 
 from monakeeda.consts import NamespacesConsts, FieldConsts
 from monakeeda.utils import get_wanted_params, wrap_in_list
@@ -14,8 +14,8 @@ class CreateFrom(BaseCreatorDecorator):
         super(CreateFrom, self).__init__(field_key)
         self.from_keys = wrap_in_list(from_keys)
 
-    def build(self, monkey_cls, bases, monkey_attrs):
-        super(CreateFrom, self).build(monkey_cls, bases, monkey_attrs)
+    def _build(self, monkey_cls, bases, monkey_attrs, exceptions: List[Exception], main_builder):
+        super(CreateFrom, self)._build(monkey_cls, bases, monkey_attrs, exceptions, main_builder)
 
         monkey_attrs[NamespacesConsts.STRUCT][NamespacesConsts.FIELDS][self._field_key][FieldConsts.DEPENDENCIES].extend(self.from_keys)
 

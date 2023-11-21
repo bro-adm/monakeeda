@@ -79,6 +79,6 @@ class AnnotationManager(ComponentManager):
             annotation_cls_instance = self._annotation_mapping[annotation](key, annotation, self._annotation_mapping)
             monkey_attrs[NamespacesConsts.STRUCT][NamespacesConsts.ANNOTATIONS][key] = annotation_cls_instance
 
-    def build(self, monkey_cls, bases, monkey_attrs):
+    def _build(self, monkey_cls, bases, monkey_attrs, exceptions: List[Exception], main_builder):
         monkey_attrs[NamespacesConsts.STRUCT][NamespacesConsts.ANNOTATIONS] = OrderedDict()
-        super(AnnotationManager, self).build(monkey_cls, bases, monkey_attrs)
+        super(AnnotationManager, self)._build(monkey_cls, bases, monkey_attrs, exceptions, main_builder)

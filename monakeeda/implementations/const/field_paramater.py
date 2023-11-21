@@ -1,18 +1,18 @@
 from typing import Any
 
-from monakeeda.base import FieldParameter, Rules, Field, Stages
+from monakeeda.base import FieldParameter, Field, Stages
 from monakeeda.consts import NamespacesConsts
 from .annotation import Const
 from .exceptions import ConstError
 from ..implemenations_base_operator_visitor import ImplementationsOperatorVisitor
-from ..rules import BasicParameterValueTypeValidationRule
+from ..known_builders import BasicParameterValueTypeValidatorBuilder
 
 
 @Field.parameter
 class AllowMutation(FieldParameter):
     __key__ = 'const'
     __label__ = 'mutation'
-    __rules__ = Rules([BasicParameterValueTypeValidationRule(bool)])
+    __builders__ = [BasicParameterValueTypeValidatorBuilder(bool)]
     __prior_handler__ = Const
 
     def _handle_values(self, model_instance, values, stage):

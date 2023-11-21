@@ -1,4 +1,4 @@
-from typing import Optional, Any
+from typing import Optional, Any, List
 
 from monakeeda.base import annotation_mapper, GenericAnnotation
 from monakeeda.consts import NamespacesConsts, FieldConsts
@@ -14,8 +14,8 @@ class OptionalAnnotation(GenericAnnotation):
         if self._field_key in values:
             self._annotations[0].handle_values(model_instance, values, stage)
 
-    def build(self, monkey_cls, bases, monkey_attrs):
-        super().build(monkey_cls, bases, monkey_attrs)
+    def _build(self, monkey_cls, bases, monkey_attrs, exceptions: List[Exception], main_builder):
+        super()._build(monkey_cls, bases, monkey_attrs, exceptions, main_builder)
         monkey_attrs[NamespacesConsts.STRUCT][NamespacesConsts.FIELDS][self._field_key][FieldConsts.REQUIRED] = False
 
     def accept_operator(self, operator_visitor: ImplementationsOperatorVisitor, context: Any):

@@ -1,10 +1,10 @@
-from typing import Union, Dict
+from typing import Dict, List
 
-from monakeeda.base import Rule, ConfigParameter, RuleException, Field
+from monakeeda.base import Field, MonkeyBuilder, ConfigParameter
 from monakeeda.consts import NamespacesConsts, FieldConsts
 
 
-class AllClassAttrsFieldsDontAcknowledgeKeyRuleException(RuleException):
+class SomeFieldsDontAcknowledgeKeyException(Exception):
     def __init__(self, key: str, unacknowledged_fields: Dict[str, Field]):
         self.key = key
         self.unacknowledged_fields = unacknowledged_fields
@@ -14,11 +14,11 @@ class AllClassAttrsFieldsDontAcknowledgeKeyRuleException(RuleException):
                f"but not all fields acknowledge this key -> {self.unacknowledged_fields}"
 
 
-class AllModelFieldsAcknowledgeParameterRule(Rule):
+class AllModelFieldsAcknowledgeParameterValidatorBuilder(MonkeyBuilder):
     def __init__(self, key: str):
         self.key = key
 
-    def validate(self, component: ConfigParameter, monkey_cls) -> Union[RuleException, None]:
+    def _build(self, monkey_cls, bases, monkey_attrs, exceptions: List[Exception], main_builder: ConfigParameter):
         unacknowledged_fields = {}
 
         for field_key, field_info in getattr(monkey_cls, NamespacesConsts.STRUCT)[NamespacesConsts.FIELDS].items():
@@ -28,4 +28,4 @@ class AllModelFieldsAcknowledgeParameterRule(Rule):
                 unacknowledged_fields[field_key] = field.__class__
 
         if unacknowledged_fields:
-            return AllClassAttrsFieldsDontAcknowledgeKeyRuleException(self.key, unacknowledged_fields)
+            exceptions.append(SomeFieldsDontAcknowledgeKeyException(self.key, unacknowledged_fields))

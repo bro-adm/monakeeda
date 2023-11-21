@@ -27,7 +27,7 @@ class ComponentManager(MonkeyBuilder, ABC):
     def _set_curr_cls(self, monkey_cls, bases, monkey_attrs):
         pass
 
-    def build(self, monkey_cls, bases, monkey_attrs):
+    def _build(self, monkey_cls, bases, monkey_attrs, exceptions: List[Exception], main_builder):
         collisions = {}
 
         for base in bases:

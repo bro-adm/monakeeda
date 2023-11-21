@@ -1,11 +1,11 @@
 from typing import Any
 
-from monakeeda.base import FieldParameter, Rules, Field
+from monakeeda.base import FieldParameter, Field
 from monakeeda.consts import NamespacesConsts
 from ..general_annotations import ArbitraryAnnotation
 from ..implemenations_base_operator_visitor import ImplementationsOperatorVisitor
 from ..missing.errors import MissingFieldValuesException
-from ..rules import BasicParameterValueTypeValidationRule
+from ..known_builders import BasicParameterValueTypeValidatorBuilder
 
 
 class NotAValidValue(ValueError):
@@ -18,7 +18,7 @@ class NotAValidValue(ValueError):
 class ValidValues(FieldParameter):
     __key__ = 'valid_values'
     __label__ = 'specific_value'
-    __rules__ = Rules([BasicParameterValueTypeValidationRule((list, tuple, set))])
+    __builders__ = [BasicParameterValueTypeValidatorBuilder((list, tuple, set))]
     __prior_handler__ = ArbitraryAnnotation
     __pass_on_errors__ = [MissingFieldValuesException]
 

@@ -3,10 +3,10 @@ from typing import Dict, List, Union, ClassVar, Type, Generic, Any, Tuple
 
 from .component import Component
 from .parameter_component import TParameter
-from ..interfaces import RuleException, Rule, Rules
+from ..interfaces import MonkeyBuilder
 
 
-class OneComponentPerLabelAllowedRuleException(RuleException):
+class OneComponentPerLabelAllowedException(Exception):
     def __init__(self, duplicate_labels_components: Dict[str, List[Component]]):
         self.duplicate_labels_components: Dict[str, List[Component]] = duplicate_labels_components
 
@@ -20,13 +20,13 @@ class OneComponentPerLabelAllowedRuleException(RuleException):
         return duplication_description
 
 
-class OneComponentPerLabelAllowedRule(Rule):
+class OneComponentPerLabelValidatorBuilder(MonkeyBuilder):
 
-    def validate(self, component: "ConfigurableComponent", monkey_cls) -> Union[RuleException, None]:
+    def _build(self, monkey_cls, bases, monkey_attrs, exceptions: List[Exception], main_builder: "ConfigurableComponent"):
         existing_labels: Dict[str, Component] = {}
         duplicate_labels_components: Dict[str, List[Component]] = {}
 
-        for nested_component in component._parameters:
+        for nested_component in main_builder._parameters:
             label = nested_component.__label__
             if label in existing_labels:
                 duplicate_labels_components.setdefault(label, [existing_labels[label]])
@@ -35,10 +35,10 @@ class OneComponentPerLabelAllowedRule(Rule):
                 existing_labels[label] = nested_component
 
         if duplicate_labels_components:
-            return OneComponentPerLabelAllowedRuleException(duplicate_labels_components)
+            exceptions.append(OneComponentPerLabelAllowedException(duplicate_labels_components))
 
 
-class UnmatchedParameterKeyRuleException(RuleException):
+class UnmatchedParameterKeyException(Exception):
     def __init__(self, unmatched_params: dict):
         self.unmatched_params = unmatched_params
 
@@ -46,11 +46,11 @@ class UnmatchedParameterKeyRuleException(RuleException):
         return f"The following parameters do not have an implementation in the field they are trying to be initialized in  -> {self.unmatched_params}"
 
 
-class UnmatchedParameterKeyRule(Rule):
+class NoUnmatchedParameterKeyValidatorBuilder(MonkeyBuilder):
 
-    def validate(self, component: "ConfigurableComponent", monkey_cls) -> Union[RuleException, None]:
-        if component._unused_params:
-            return UnmatchedParameterKeyRuleException(component._unused_params)
+    def _build(self, monkey_cls, bases, monkey_attrs, exceptions: List[Exception], main_builder: "ConfigurableComponent"):
+        if main_builder._unused_params:
+            exceptions.append(UnmatchedParameterKeyException(main_builder._unused_params))
 
 
 class ConfigurableComponent(Component, Generic[TParameter], ABC):
@@ -66,7 +66,7 @@ class ConfigurableComponent(Component, Generic[TParameter], ABC):
     The Component Managers are the ones to actually use this hidden API and actually start the class.
     """
 
-    __rules__: ClassVar[Rules] = Rules([OneComponentPerLabelAllowedRule(), UnmatchedParameterKeyRule()])
+    __builders__: List[MonkeyBuilder] = [OneComponentPerLabelValidatorBuilder(), NoUnmatchedParameterKeyValidatorBuilder()]
     __parameter_components__: List[Type[TParameter]] = []
 
     @classmethod

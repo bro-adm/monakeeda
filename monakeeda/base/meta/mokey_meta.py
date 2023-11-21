@@ -3,7 +3,7 @@ from abc import ABCMeta
 from monakeeda.consts import NamespacesConsts, ComponentConsts
 from monakeeda.logger import logger, STAGE, MONKEY
 from .helpers import handle_class_inputs
-from ..interfaces import RulesException
+from .errors import MonkeyBuildException
 
 
 class MonkeyMeta(ABCMeta):
@@ -23,7 +23,6 @@ class MonkeyMeta(ABCMeta):
     def __new__(mcs, name, bases, attrs, **_):
         attrs[NamespacesConsts.STRUCT] = {}
         attrs[NamespacesConsts.COMPONENTS] = []
-        attrs[NamespacesConsts.EXCEPTIONS] = RulesException(name, [])
         attrs[NamespacesConsts.TMP] = {}
 
         logger.info(f"Bases = {bases}", extra={STAGE: "META SETUP", MONKEY: name})
@@ -41,24 +40,20 @@ class MonkeyMeta(ABCMeta):
         logger.info(f"Monkey Bases = {monkey_bases}", extra={STAGE: "META SETUP", MONKEY: name})
 
         for component_manager in cls.__component_managers__:
-            component_manager.build(cls, monkey_bases, attrs)
+            component_manager.build(cls, monkey_bases, attrs, [])
 
         model_components = attrs[NamespacesConsts.COMPONENTS]
         logger.info(f"Post Component Managers All Model Components = {model_components}", extra={STAGE: "Component Info", MONKEY: name})
         cls.__type_organized_components__ = cls.__component_organizer__.order_by_chain_of_responsibility(model_components)
         logger.info(f"Post Component Managers Organized Model Components = {cls.__type_organized_components__}", extra={STAGE: "Component Info", MONKEY: name})
 
+        build_exceptions = []
         for component_type, components in cls.__type_organized_components__.items():
             for component in components:
-                component.validate(cls, bases, attrs)
+                component.build(cls, bases, attrs, build_exceptions)
 
-        rules_exception: RulesException = attrs[NamespacesConsts.EXCEPTIONS]
-        if not rules_exception.is_empty():
-            raise rules_exception
-
-        for component_type, components in cls.__type_organized_components__.items():
-            for component in components:
-                component.build(cls, bases, attrs)
+        if build_exceptions:
+            raise MonkeyBuildException(name, build_exceptions)
 
         logger.info(f"Post Components Build Organized Model Components = {cls.__type_organized_components__}", extra={STAGE: "Component Info", MONKEY: name})
 

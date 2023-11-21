@@ -67,10 +67,10 @@ class ConfigManager(ConfigurableComponentManager[ConfigParameter]):
 
                 monkey_attrs[NamespacesConsts.STRUCT][NamespacesConsts.CONFIGS][config_name][ConfigConsts.OBJECT] = initialized_config
 
-    def build(self, monkey_cls, bases, monkey_attrs):
+    def _build(self, monkey_cls, bases, monkey_attrs, exceptions: List[Exception], main_builder):
         monkey_attrs[NamespacesConsts.STRUCT].setdefault(NamespacesConsts.CONFIGS, {})
 
         for config_name, config_type in self._configs_map.items():
             monkey_cls.struct[NamespacesConsts.CONFIGS].setdefault(config_name, {})
 
-        super().build(monkey_cls, bases, monkey_attrs)
+        super()._build(monkey_cls, bases, monkey_attrs, exceptions, main_builder)

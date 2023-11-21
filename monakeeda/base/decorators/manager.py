@@ -47,6 +47,6 @@ class DecoratorManager(ComponentManager):
                 # attr_val in here is a decorated method
                 monkey_attrs[NamespacesConsts.STRUCT][NamespacesConsts.DECORATORS][attr] = decorated_with
 
-    def build(self, monkey_cls, bases, monkey_attrs):
+    def _build(self, monkey_cls, bases, monkey_attrs, exceptions: List[Exception], main_builder):
         monkey_attrs[NamespacesConsts.STRUCT].setdefault(NamespacesConsts.DECORATORS, {})
-        super(DecoratorManager, self).build(monkey_cls, bases, monkey_attrs)
+        super(DecoratorManager, self)._build(monkey_cls, bases, monkey_attrs, exceptions, main_builder)

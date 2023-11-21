@@ -1,5 +1,5 @@
 from abc import ABC
-from typing import Any, Union, TypeVar
+from typing import Any, Union, TypeVar, List
 
 from typing_extensions import get_args, get_origin
 
@@ -22,7 +22,7 @@ class Annotation(Component, ABC):
         self.base_type = base_type
         self._annotations_mapping = annotations_mapping
 
-    def build(self, monkey_cls, bases, monkey_attrs):
+    def _build(self, monkey_cls, bases, monkey_attrs, exceptions: List[Exception], main_builder):
         monkey_attrs[NamespacesConsts.STRUCT][NamespacesConsts.FIELDS][self._field_key][FieldConsts.ANNOTATION] = self
         monkey_attrs[NamespacesConsts.STRUCT][NamespacesConsts.FIELDS][self._field_key][FieldConsts.COMPONENTS].append(self)
 

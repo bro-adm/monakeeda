@@ -23,7 +23,7 @@ class FieldParameter(Parameter, ABC):
             return NotImplemented
         return self._field_key == other._field_key and self.param_val == other.param_val
 
-    def build(self, monkey_cls, bases, monkey_attrs):
+    def _build(self, monkey_cls, bases, monkey_attrs, exceptions: List[Exception], main_builder):
         monkey_attrs[NamespacesConsts.STRUCT][NamespacesConsts.FIELDS][self._field_key][FieldConsts.COMPONENTS].append(self)
 
 
@@ -48,7 +48,7 @@ class Field(ConfigurableComponent[FieldParameter]):
     def init_from_arbitrary_value(cls, value: Any):
         return cls(default=value)
 
-    def build(self, monkey_cls, bases, monkey_attrs):
+    def _build(self, monkey_cls, bases, monkey_attrs, exceptions: List[Exception], main_builder):
         monkey_attrs[NamespacesConsts.STRUCT][NamespacesConsts.FIELDS][self._field_key][FieldConsts.REQUIRED] = True
         monkey_attrs[NamespacesConsts.STRUCT][NamespacesConsts.FIELDS][self._field_key][FieldConsts.COMPONENTS].append(self)
 

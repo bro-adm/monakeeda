@@ -1,11 +1,11 @@
 from enum import Enum
 from typing import Any
 
-from monakeeda.base import ConfigParameter, Config, Rules
-from monakeeda.consts import NamespacesConsts, FieldConsts, PythonNamingConsts
+from monakeeda.base import ConfigParameter, Config
+from monakeeda.consts import NamespacesConsts
 from ..const import AllowMutation
 from ..implemenations_base_operator_visitor import ImplementationsOperatorVisitor
-from ..rules import BasicParameterValueTypeValidationRule
+from ..known_builders import BasicParameterValueTypeValidatorBuilder
 
 
 class Extras(Enum):
@@ -18,7 +18,7 @@ class Extras(Enum):
 class ExtrasParameter(ConfigParameter):
     __key__ = 'extra'
     __label__ = 'extras'
-    __rules__ = Rules([BasicParameterValueTypeValidationRule(Extras)])
+    __builders__ = [BasicParameterValueTypeValidatorBuilder(Extras)]
     __prior_handler__ = AllowMutation
 
     def _handle_values(self, model_instance, values, stage):

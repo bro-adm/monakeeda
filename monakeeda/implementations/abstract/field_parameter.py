@@ -1,18 +1,18 @@
 from typing import Any
 
-from monakeeda.base import FieldParameter, Rules, Field
+from monakeeda.base import FieldParameter, Field
 from monakeeda.consts import NamespacesConsts
 from .annotation import Abstract
 from .exceptions import AbstractFieldFoundError
 from ..implemenations_base_operator_visitor import ImplementationsOperatorVisitor
-from ..rules import BasicParameterValueTypeValidationRule
+from ..known_builders import BasicParameterValueTypeValidatorBuilder
 
 
 @Field.parameter
 class AbstractParameter(FieldParameter):
     __key__ = 'abstract'
     __label__ = 'abstract'
-    __rules__ = Rules([BasicParameterValueTypeValidationRule(bool)])
+    __builders__ = [BasicParameterValueTypeValidatorBuilder(bool)]
     __prior_handler__ = Abstract
 
     def _handle_values(self, model_instance, values, stage):

@@ -1,5 +1,5 @@
 from abc import ABC
-from typing import Any
+from typing import Any, List
 
 from ..component import ConfigurableComponent, Parameter
 from ..fields import NoField
@@ -15,7 +15,7 @@ class ConfigParameter(Parameter, ABC):
         super().__init__(param_val)
         self._config_cls_name = config_cls_name
 
-    def build(self, monkey_cls, bases, monkey_attrs):
+    def _build(self, monkey_cls, bases, monkey_attrs, exceptions: List[Exception], main_builder):
         pass
 
 
@@ -37,7 +37,7 @@ class Config(ConfigurableComponent[ConfigParameter]):
 
         all_configs[cls.__name__] = cls
 
-    def build(self, monkey_cls, bases, monkey_attrs):
+    def _build(self, monkey_cls, bases, monkey_attrs, exceptions: List[Exception], main_builder):
         pass
 
     def _handle_values(self, model_instance, values, stage):

@@ -1,10 +1,10 @@
-from typing import Union, Any
+from typing import Any, List
 
-from monakeeda.base import Rule, Parameter, RuleException
+from monakeeda.base import Parameter, MonkeyBuilder
 from monakeeda.consts import NamespacesConsts
 
 
-class FieldAnnotationNotAllowedRuleException(RuleException):
+class FieldAnnotationNotAllowedException(Exception):
     def __init__(self, parameter: Parameter, base_annotation, allowed_annotation: type):
         self.parameter = parameter
         self.base_annotation = base_annotation
@@ -14,12 +14,12 @@ class FieldAnnotationNotAllowedRuleException(RuleException):
         return f"Component {self.parameter} was set on field {self.parameter._field_key} but only supports core annotation of {self.allowed_annotation}. Was provided with {self.base_annotation}"
 
 
-class FieldAllowedAnnotationsRule(Rule):
+class FieldAllowedAnnotationsBuilder(MonkeyBuilder):
     def __init__(self, allowed_base_annotation: Any):
         self.allowed_base_annotation = allowed_base_annotation
 
-    def validate(self, component: Parameter, monkey_cls) -> Union[RuleException, None]:
-        field_annotation = monkey_cls.struct[NamespacesConsts.ANNOTATIONS][component._field_key]
+    def _build(self, monkey_cls, bases, monkey_attrs, exceptions: List[Exception], main_builder):
+        field_annotation = monkey_cls.struct[NamespacesConsts.ANNOTATIONS][main_builder._field_key]
         annotations_mapping = field_annotation._annotations_mapping
 
         annotations_mapping[self.allowed_base_annotation]
@@ -27,6 +27,6 @@ class FieldAllowedAnnotationsRule(Rule):
 
         result = supported_annotation.is_same(field_annotation)
         if not result:
-            return FieldAnnotationNotAllowedRuleException(component, field_annotation.base_type, self.allowed_base_annotation)
+            exceptions.append(FieldAnnotationNotAllowedException(main_builder, field_annotation.base_type, self.allowed_base_annotation))
 
-        component._core_type = result
+        main_builder._core_type = result

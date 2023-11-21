@@ -4,13 +4,13 @@ from typing import ClassVar, TypeVar, Type, List, Any
 
 from monakeeda.consts import NamespacesConsts
 from monakeeda.utils import get_items_from_list
-from ..interfaces import ValuesHandler, RulesValidator, MonkeyBuilder
+from ..interfaces import ValuesHandler, MonkeyBuilder
 from ..operator import OperatorVisitor
 
 all_components = []
 
 
-class Component(RulesValidator, MonkeyBuilder, ValuesHandler, ABC):
+class Component(MonkeyBuilder, ValuesHandler, ABC):
     """
     This is the core logic of Monakeeda, this is what actually runs on every operation you want (from init to openapi spec)
 

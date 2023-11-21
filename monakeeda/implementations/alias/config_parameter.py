@@ -1,10 +1,10 @@
-from typing import Any
+from typing import Any, List
 
-from monakeeda.base import ConfigParameter, Config, Rules, get_parameter_component_type_by_key
+from monakeeda.base import ConfigParameter, Config, get_parameter_component_type_by_key
 from monakeeda.consts import NamespacesConsts, FieldConsts
 from ..abstract import AbstractParameter
 from ..implemenations_base_operator_visitor import ImplementationsOperatorVisitor
-from ..rules import CallableParameterSignatureValidationRule, AllModelFieldsAcknowledgeParameterRule
+from ..known_builders import CallableParameterSignatureValidatorBuilder, AllModelFieldsAcknowledgeParameterValidatorBuilder
 
 
 @Config.parameter
@@ -12,13 +12,13 @@ class AliasGenerator(ConfigParameter):
     __key__ = 'alias_generator'
     __label__ = 'alias_generator'
     __prior_handler__ = AbstractParameter
-    __rules__ = Rules([CallableParameterSignatureValidationRule(1), AllModelFieldsAcknowledgeParameterRule('alias')])
+    __builders__ = [CallableParameterSignatureValidatorBuilder(1), AllModelFieldsAcknowledgeParameterValidatorBuilder('alias')]
 
     def _handle_values(self, model_instance, values, stage):
         pass
 
-    def build(self, monkey_cls, bases, monkey_attrs):
-        super().build(monkey_cls, bases, monkey_attrs)
+    def _build(self, monkey_cls, bases, monkey_attrs, exceptions: List[Exception], main_builder):
+        super()._build(monkey_cls, bases, monkey_attrs, exceptions, main_builder)
 
         for field_key, field_info in monkey_attrs[NamespacesConsts.STRUCT][NamespacesConsts.FIELDS].items():
             field = field_info[FieldConsts.FIELD]
