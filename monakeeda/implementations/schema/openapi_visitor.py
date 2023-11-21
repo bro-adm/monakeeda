@@ -1,11 +1,11 @@
 from monakeeda.base import Field, Config
 from ..abstract import Abstract, AbstractParameter
 from ..alias import Alias, AliasGenerator
-from ..basic_annotations import ObjectAnnotation, BasicTypeAnnotation, UnionAnnotation, ListAnnotation, DictAnnotation
 from ..cast import Cast
 from ..const import Const, AllowMutation
 from ..creators import CreateFrom
 from ..extras import ExtrasParameter
+from ..general_annotations import ObjectAnnotation, BasicTypeAnnotation, UnionAnnotation, ListAnnotation, DictAnnotation
 from ..implemenations_base_operator_visitor import ImplementationsOperatorVisitor
 from ..valid_values import ValidValues
 from ..validators import Validator

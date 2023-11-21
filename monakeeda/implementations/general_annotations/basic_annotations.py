@@ -2,9 +2,9 @@ from typing import Union, List, Any, Dict
 
 from monakeeda.base import Annotation, annotation_mapper, GenericAnnotation, type_validation
 from monakeeda.consts import NamespacesConsts
-from .cast import Cast
-from .implemenations_base_operator_visitor import ImplementationsOperatorVisitor
-from .missing.errors import MissingFieldValuesException
+from monakeeda.implementations.cast import Cast
+from monakeeda.implementations.implemenations_base_operator_visitor import ImplementationsOperatorVisitor
+from monakeeda.implementations.missing.errors import MissingFieldValuesException
 
 
 @annotation_mapper(object, Any)
