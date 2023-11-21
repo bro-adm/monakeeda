@@ -1,4 +1,4 @@
-from typing import Dict, Any, Tuple, List, Union
+from typing import Dict, Any, Tuple, List, Union, Type
 
 from monakeeda.base import BaseModel, Field
 from monakeeda.consts import NamespacesConsts, PythonNamingConsts
@@ -17,7 +17,7 @@ class MonkeyModel(BaseModel):
         validate_missing_fields = True
 
 
-def generate_model(name: str, fields: Dict[str, Union[Field, Any]]=None, annotations: Dict[str, Any]=None, configs: Dict[str, type]=None, decorators: List[callable]=None, bases: Tuple[BaseModel]=None) -> MonkeyModel:
+def generate_model(name: str, fields: Dict[str, Union[Field, Any]]=None, annotations: Dict[str, Any]=None, configs: Dict[str, type]=None, decorators: List[callable]=None, bases: Tuple[BaseModel]=None) -> Type[MonkeyModel]:
     bases = bases if bases else (MonkeyModel,)
 
     attrs = {}
