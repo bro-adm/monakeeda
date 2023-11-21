@@ -1,5 +1,4 @@
-import collections
-from typing import Any, List
+from typing import Any
 
 
 def get_wanted_params(kwargs: dict, keys: list):
@@ -25,7 +24,7 @@ def deep_update(source, overrides):
     """
 
     for key, value in overrides.items():
-        if isinstance(value, collections.Mapping) and value:
+        if isinstance(value, dict) and value:
             returned = deep_update(source.get(key, {}), value)
             source[key] = returned
         else:
