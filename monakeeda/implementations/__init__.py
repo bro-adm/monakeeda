@@ -3,6 +3,7 @@ from .alias import *
 from .cast import *
 from .const import *
 from .creators import *
+from .discriminator import *
 from .explode import *
 from .extras import *
 from .general_annotations import *
