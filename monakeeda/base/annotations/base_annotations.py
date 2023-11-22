@@ -28,7 +28,18 @@ class Annotation(Component, ABC):
 
     def is_same(self, other) -> Union[Any, bool]:
         if isinstance(other, GenericAnnotation):
+            if other.__supports_infinite__:
+                demo_annotation = get_origin(other.base_type)[(self.base_type, )]
+                demo_annotation = self._annotations_mapping[demo_annotation](self._field_key, demo_annotation, self._annotations_mapping)
+                result = demo_annotation.is_same(other)
+
+                if result:
+                    return get_args(result)
+
+                return result
+
             annotations = other._annotations
+
             if len(annotations) > 1:
                 return False
 
@@ -51,6 +62,7 @@ class GenericAnnotation(Annotation, ABC):
     Both these objects are either _GenericAlias or _AnnotatedAlias via the logic of how python works with Generics.
     Therefore works with get_args typing helper
     """
+    __supports_infinite__ = False
 
     @property
     def _types(self):
@@ -82,24 +94,39 @@ class GenericAnnotation(Annotation, ABC):
         if isinstance(other, GenericAnnotation):
             other_annotations = other._annotations
 
-            if len(other_annotations) == 1:
+            if len(other_annotations) == 1 and not self.__supports_infinite__:
                 return self.is_same(other_annotations[0])
 
-            elif len(annotations) != len(other_annotations):
-                return False
-
-            annotations_zip = zip(annotations, other_annotations)
-
-            for annotation, other_annotation in annotations_zip:
-                result = annotation.is_same(other_annotation)
-                if not result:
+            elif not self.__supports_infinite__:
+                if len(annotations) != len(other_annotations):
                     return False
 
-                scoped_sub_annotations.append(result)
+                annotations_zip = zip(annotations, other_annotations)
+
+                for annotation, other_annotation in annotations_zip:
+                    result = annotation.is_same(other_annotation)
+                    if not result:
+                        return False
+
+                    scoped_sub_annotations.append(result)
+
+            else:
+                for other_annotation in other_annotations:
+                    matched = False
+                    for annotation in annotations:
+                        result = annotation.is_same(other_annotation)
+
+                        if result:
+                            scoped_sub_annotations.append(result)
+                            matched = True
+                            break
+
+                    if not matched:
+                        return False
 
             return scoped_annotation[tuple(scoped_sub_annotations)]
 
-        if len(annotations) == 1:  # also means that other is of type Annotation
+        if len(annotations) == 1 and not self.__supports_infinite__:  # also means that other is of type Annotation
             return annotations[0].is_same(other)
 
         return False
