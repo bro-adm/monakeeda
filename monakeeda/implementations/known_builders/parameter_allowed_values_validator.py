@@ -6,12 +6,12 @@ from monakeeda.helpers import ExceptionsDict
 
 class ParameterProvidedValueNotInAllowedValuesException(Exception):
     def __init__(self, parameter: Parameter, allowed_values: List[Any]):
-        self.parameter_key = parameter.__key__
+        self.parameter_representor = parameter.representor
         self.provided_value = parameter.param_val
         self.allowed_values = allowed_values
 
     def __str__(self):
-        return f"{self.parameter_key} parameter was provided with value {self.provided_value} which is not in the following allowed values {self.allowed_values}"
+        return f"{self.parameter_representor} parameter was provided with value {self.provided_value} which is not in the following allowed values {self.allowed_values}"
 
 
 class ParameterAllowedValuesValidator(MonkeyBuilder):

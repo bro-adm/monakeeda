@@ -1,18 +1,18 @@
 from typing import Any, get_origin, get_args, Union
 
-from monakeeda.base import Parameter, MonkeyBuilder, Annotation
+from monakeeda.base import Parameter, MonkeyBuilder, Annotation, Component
 from monakeeda.consts import NamespacesConsts
 from monakeeda.helpers import ExceptionsDict
 
 
 class CoreAnnotationNotAllowedException(Exception):
-    def __init__(self, component: str, core_annotation, provided_annotation):
-        self.component = component
+    def __init__(self, component: Component, core_annotation, provided_annotation):
+        self.component_representor = component.representor
         self.core_annotation = core_annotation
         self.provided_annotation = provided_annotation
 
     def __str__(self):
-        return f"{self.component} supports core annotation {self.core_annotation} but was provided with {self.provided_annotation}."
+        return f"{self.component_representor} supports core annotation {self.core_annotation} but was provided with {self.provided_annotation}."
 
 
 class CoreAnnotationsExtractor(MonkeyBuilder):
@@ -32,23 +32,20 @@ class CoreAnnotationsExtractor(MonkeyBuilder):
     def __init__(self, core_annotation: Any):
         self.core_annotation = core_annotation
 
-    def _build(self, monkey_cls, bases, monkey_attrs, exceptions: ExceptionsDict, main_builder: Union[Annotation, Parameter]):
+    def _build(self, monkey_cls, bases, monkey_attrs, exceptions: ExceptionsDict, main_builder: Component):
         set_annotation = monkey_cls.struct[NamespacesConsts.ANNOTATIONS][main_builder._field_key]
         annotations_mapping = set_annotation._annotations_mapping
 
         if isinstance(main_builder, Annotation):
             annotation_origin = get_origin(main_builder.base_type)
             self.core_annotation = annotation_origin[self.core_annotation]
-            component_identifier = main_builder.__class__.__name__
-        else:
-            component_identifier = main_builder.__key__
 
         annotations_mapping[self.core_annotation]
         supported_annotation = annotations_mapping[self.core_annotation](set_annotation._field_key, self.core_annotation, annotations_mapping)
 
         result = supported_annotation.is_same(set_annotation)
         if not result:
-            exception = CoreAnnotationNotAllowedException(component_identifier, self.core_annotation, set_annotation.base_type)
+            exception = CoreAnnotationNotAllowedException(main_builder, self.core_annotation, set_annotation.base_type)
             exceptions[main_builder._field_key].append(exception)
 
         if isinstance(main_builder, Annotation):

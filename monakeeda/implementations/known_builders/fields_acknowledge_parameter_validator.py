@@ -1,19 +1,19 @@
 from abc import ABC
 from typing import Dict
 
-from monakeeda.base import MonkeyBuilder, ConfigParameter
+from monakeeda.base import MonkeyBuilder, ConfigParameter, Component
 from monakeeda.consts import NamespacesConsts, FieldConsts
 from monakeeda.helpers import ExceptionsDict
 
 
 class FieldsDontAcknowledgeParameterKeyException(Exception):
-    def __init__(self, component: str, parameter_key: str, unacknowledged_fields: Dict[str, str]):
-        self.component = component
+    def __init__(self, component: Component, parameter_key: str, unacknowledged_fields: Dict[str, str]):
+        self.component_representor = component.representor
         self.parameter_key = parameter_key
         self.unacknowledged_fields = unacknowledged_fields
 
     def __str__(self):
-        return f"{self.component} dependent on fields to acknowledge key {self.parameter_key} but not all do :( -> {self.unacknowledged_fields}"
+        return f"{self.component_representor} dependent on fields to acknowledge key {self.parameter_key} but not all do :( -> {self.unacknowledged_fields}"
 
 
 class BaseFieldsAcknowledgeParameterValidator(MonkeyBuilder, ABC):
@@ -27,7 +27,7 @@ class BaseFieldsAcknowledgeParameterValidator(MonkeyBuilder, ABC):
             field = field_info[FieldConsts.FIELD]
 
             if self.parameter_key not in [field_parameter.__key__ for field_parameter in field.__parameter_components__]:
-                unacknowledged_fields[field_key] = field.__class__.__name__
+                unacknowledged_fields[field_key] = field.representor
 
         return unacknowledged_fields
 
@@ -37,5 +37,5 @@ class AllFieldsAcknowledgeParameterValidator(BaseFieldsAcknowledgeParameterValid
         unacknowledged_fields = self._map_unacknowledged_fields(monkey_cls, bases, monkey_attrs, main_builder)
 
         if unacknowledged_fields:
-            exception = FieldsDontAcknowledgeParameterKeyException(main_builder.__key__, self.parameter_key, unacknowledged_fields)
+            exception = FieldsDontAcknowledgeParameterKeyException(main_builder, self.parameter_key, unacknowledged_fields)
             exceptions[main_builder._config_cls_name].append(exception)

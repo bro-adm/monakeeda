@@ -8,13 +8,13 @@ from .parameter_value_type_validator import ParameterValueTypeValidator
 
 class ParameterCallableValueOverTheAllowedAmountOfArgsException(Exception):
     def __init__(self, parameter: Parameter, allowed_amount_of_args: int, received_amount_of_args: int):
-        self.parameter_key = parameter.__key__
+        self.parameter_representor = parameter.representor
         self.received_callable = parameter.param_val
         self.allowed_amount_of_args = allowed_amount_of_args
         self.received_amount_of_args = received_amount_of_args
 
     def __str__(self):
-        return f"{self.parameter_key} allows to receive a callable with {self.allowed_amount_of_args}, but received one with {self.received_amount_of_args} -> {self.received_callable}"
+        return f"{self.parameter_representor} allows to receive a callable with {self.allowed_amount_of_args}, but received one with {self.received_amount_of_args} -> {self.received_callable}"
 
 
 class ParameterCallableValueValidator(MonkeyBuilder):

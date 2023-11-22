@@ -4,12 +4,12 @@ from monakeeda.helpers import ExceptionsDict
 
 class ParameterValueTypeNotAllowedException(Exception):
     def __init__(self, parameter: Parameter, wanted_type):
-        self.parameter_key = parameter.__key__
-        self.value = parameter.param_val
+        self.parameter_representor = parameter.representor
+        self.parameter_value = parameter.param_val
         self.wanted_type = wanted_type
 
     def __str__(self):
-        return f"{self.parameter_key} accepts value of type {self.wanted_type}, but was provided with {self.value}"
+        return f"{self.parameter_representor} accepts value of type {self.wanted_type}, but was provided with {self.parameter_value}"
 
 
 class ParameterValueTypeValidator(MonkeyBuilder):
