@@ -1,9 +1,7 @@
 import inspect
 from abc import ABC, abstractmethod
-from typing import ClassVar, TypeVar, Type, List, Any
+from typing import ClassVar, TypeVar, Type, Any
 
-from monakeeda.consts import NamespacesConsts
-from monakeeda.utils import get_items_from_list
 from ..interfaces import ValuesHandler, MonkeyBuilder
 from ..operator import OperatorVisitor
 
@@ -26,7 +24,6 @@ class Component(MonkeyBuilder, ValuesHandler, ABC):
     """
 
     __prior_handler__: ClassVar[Type['Component']] = None
-    __pass_on_errors__: ClassVar[List[Type[Exception]]] = []  # for know provides simplistic logic for passing on handle_values logic according to prior exceptions of dependent components
 
     def __init_subclass__(cls):
         """
@@ -54,17 +51,6 @@ class Component(MonkeyBuilder, ValuesHandler, ABC):
     @property
     @abstractmethod
     def scope(self) -> str:
-        pass
-
-    def handle_values(self, model_instance, values, stage):
-        exceptions = [type(e) for e in getattr(model_instance, NamespacesConsts.EXCEPTIONS)]
-        existing_dependent_errors = get_items_from_list(self.__pass_on_errors__, exceptions)
-
-        if not existing_dependent_errors:
-            self._handle_values(model_instance, values, stage)
-
-    @abstractmethod
-    def _handle_values(self, model_instance, values, stage):
         pass
 
     @abstractmethod
