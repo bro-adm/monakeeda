@@ -1,56 +1,65 @@
 from abc import ABC
-from typing import Dict, List, Union, ClassVar, Type, Generic, Any, Tuple
+from typing import Dict, List, Type, Generic, Any, Tuple
 
+from monakeeda.consts import ComponentConsts
+from monakeeda.helpers import ExceptionsDict
 from .component import Component
 from .parameter_component import TParameter
 from ..interfaces import MonkeyBuilder
 
 
 class OneComponentPerLabelAllowedException(Exception):
-    def __init__(self, duplicate_labels_components: Dict[str, List[Component]]):
-        self.duplicate_labels_components: Dict[str, List[Component]] = duplicate_labels_components
+    def __init__(self, component: str, duplicate_labels_components: Dict[str, List[str]]):
+        self.component = component
+        self.duplicate_labels_components = duplicate_labels_components  # list of component names per label
 
     def __str__(self):
-        duplication_description = f"Following components can not be set together -> "
+        duplication_description = f"{self.component} does not allow the following components to be set together -> "
 
         for label, components in self.duplicate_labels_components.items():
-            components_descriptions = [str(component) for component in components]
-            duplication_description = duplication_description + f"\n {components_descriptions} -> label: {label}"
+            duplication_description = duplication_description + f"\n\t\t Label: {label} -> {components}"
 
         return duplication_description
 
 
-class OneComponentPerLabelValidatorBuilder(MonkeyBuilder):
-
-    def _build(self, monkey_cls, bases, monkey_attrs, exceptions: List[Exception], main_builder: "ConfigurableComponent"):
-        existing_labels: Dict[str, Component] = {}
-        duplicate_labels_components: Dict[str, List[Component]] = {}
+class OneComponentPerLabelValidator(MonkeyBuilder):
+    def _build(self, monkey_cls, bases, monkey_attrs, exceptions: ExceptionsDict, main_builder: "ConfigurableComponent"):
+        existing_labels: Dict[str, str] = {}
+        duplicate_labels_components: Dict[str, List[str]] = {}
 
         for nested_component in main_builder._parameters:
             label = nested_component.__label__
             if label in existing_labels:
                 duplicate_labels_components.setdefault(label, [existing_labels[label]])
-                duplicate_labels_components[label].append(nested_component)
+                duplicate_labels_components[label].append(nested_component.__class__.__name__)
             else:
-                existing_labels[label] = nested_component
+                existing_labels[label] = nested_component.__class__.__name__
 
         if duplicate_labels_components:
-            exceptions.append(OneComponentPerLabelAllowedException(duplicate_labels_components))
+            key = getattr(main_builder, ComponentConsts.FIELD_KEY, None)
+            if not key:
+                key = main_builder.__class__.__name__
+
+            exceptions[key].append(OneComponentPerLabelAllowedException(main_builder.__class__.__name__, duplicate_labels_components))
 
 
-class UnmatchedParameterKeyException(Exception):
-    def __init__(self, unmatched_params: dict):
+class UnmatchedParameterKeysException(Exception):
+    def __init__(self, component: str, unmatched_params: dict):
+        self.component = component
         self.unmatched_params = unmatched_params
 
     def __str__(self):
-        return f"The following parameters do not have an implementation in the field they are trying to be initialized in  -> {self.unmatched_params}"
+        return f"{self.component} does not support the following given params -> {self.unmatched_params}"
 
 
-class NoUnmatchedParameterKeyValidatorBuilder(MonkeyBuilder):
-
-    def _build(self, monkey_cls, bases, monkey_attrs, exceptions: List[Exception], main_builder: "ConfigurableComponent"):
+class NoUnmatchedParameterKeyValidator(MonkeyBuilder):
+    def _build(self, monkey_cls, bases, monkey_attrs, exceptions: ExceptionsDict, main_builder: "ConfigurableComponent"):
         if main_builder._unused_params:
-            exceptions.append(UnmatchedParameterKeyException(main_builder._unused_params))
+            key = getattr(main_builder, ComponentConsts.FIELD_KEY, None)
+            if not key:
+                key = main_builder.__class__.__name__
+
+            exceptions[key].append(UnmatchedParameterKeysException(main_builder.__class__.__name__, main_builder._unused_params))
 
 
 class ConfigurableComponent(Component, Generic[TParameter], ABC):
@@ -66,7 +75,7 @@ class ConfigurableComponent(Component, Generic[TParameter], ABC):
     The Component Managers are the ones to actually use this hidden API and actually start the class.
     """
 
-    __builders__: List[MonkeyBuilder] = [OneComponentPerLabelValidatorBuilder(), NoUnmatchedParameterKeyValidatorBuilder()]
+    __builders__: List[MonkeyBuilder] = [OneComponentPerLabelValidator(), NoUnmatchedParameterKeyValidator()]
     __parameter_components__: List[Type[TParameter]] = []
 
     @classmethod
