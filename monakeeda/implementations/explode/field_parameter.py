@@ -17,7 +17,7 @@ class ExplodeFieldParameter(FieldParameter):
 
     def __init__(self, param_val, field_key):
         super().__init__(param_val, field_key)
-        self._core_type = None
+        self._core_types = None
         self._relevant_components = []
         self._relevant_field_keys = []
 
@@ -25,14 +25,15 @@ class ExplodeFieldParameter(FieldParameter):
         super()._build(monkey_cls, bases, monkey_attrs, exceptions, main_builder)
         monkey_attrs[NamespacesConsts.STRUCT][NamespacesConsts.FIELDS][self._field_key][FieldConsts.REQUIRED] = False
 
-        for sub_key, sub_field_info in self._core_type.struct[NamespacesConsts.FIELDS].items():
-            self._relevant_field_keys.append(sub_key)
+        for core_type in self._core_types:
+            for sub_key, sub_field_info in core_type.struct[NamespacesConsts.FIELDS].items():
+                self._relevant_field_keys.append(sub_key)
 
-            sub_field = sub_field_info[FieldConsts.FIELD]
-            alias_parameter = get_parameter_component_by_identifier(sub_field, 'alias', ParameterIdentifier.key)
+                sub_field = sub_field_info[FieldConsts.FIELD]
+                alias_parameter = get_parameter_component_by_identifier(sub_field, 'alias', ParameterIdentifier.key)
 
-            if alias_parameter:
-                self._relevant_components.append(alias_parameter)
+                if alias_parameter:
+                    self._relevant_components.append(alias_parameter)
 
     def _handle_values(self, model_instance, values, stage):
         for sub_component in self._relevant_components:
