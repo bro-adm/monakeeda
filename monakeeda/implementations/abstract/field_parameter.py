@@ -5,14 +5,14 @@ from monakeeda.consts import NamespacesConsts
 from .annotation import Abstract
 from .exceptions import AbstractFieldFoundError
 from ..implemenations_base_operator_visitor import ImplementationsOperatorVisitor
-from ..known_builders import BasicParameterValueTypeValidatorBuilder
+from ..known_builders import ParameterValueTypeValidator
 
 
 @Field.parameter
 class AbstractParameter(FieldParameter):
     __key__ = 'abstract'
     __label__ = 'abstract'
-    __builders__ = [BasicParameterValueTypeValidatorBuilder(bool)]
+    __builders__ = [ParameterValueTypeValidator(bool)]
     __prior_handler__ = Abstract
 
     def _handle_values(self, model_instance, values, stage):

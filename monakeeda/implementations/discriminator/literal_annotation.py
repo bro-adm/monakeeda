@@ -1,10 +1,10 @@
-from typing import Literal, Any, get_args, List
+from typing import Literal, Any, get_args
 
 from monakeeda.base import annotation_mapper, Annotation
 from monakeeda.consts import NamespacesConsts, FieldConsts, DiscriminationConsts
 from monakeeda.helpers import ExceptionsDict
-from ..optional import OptionalAnnotation
 from ..implemenations_base_operator_visitor import ImplementationsOperatorVisitor
+from ..optional import OptionalAnnotation
 
 
 @annotation_mapper(Literal)

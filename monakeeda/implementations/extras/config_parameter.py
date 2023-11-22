@@ -6,7 +6,7 @@ from monakeeda.consts import NamespacesConsts
 from monakeeda.helpers import ExceptionsDict
 from ..const import AllowMutation
 from ..implemenations_base_operator_visitor import ImplementationsOperatorVisitor
-from ..known_builders import BasicParameterValueTypeValidatorBuilder
+from ..known_builders import ParameterValueTypeValidator
 
 
 class Extras(Enum):
@@ -19,7 +19,7 @@ class Extras(Enum):
 class ExtrasParameter(ConfigParameter):
     __key__ = 'extra'
     __label__ = 'extras'
-    __builders__ = [BasicParameterValueTypeValidatorBuilder(Extras)]
+    __builders__ = [ParameterValueTypeValidator(Extras)]
     __prior_handler__ = AllowMutation
 
     def _handle_values(self, model_instance, values, stage):

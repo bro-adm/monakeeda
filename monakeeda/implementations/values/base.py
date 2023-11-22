@@ -1,5 +1,4 @@
 from abc import ABC
-from typing import List
 
 from monakeeda.base import FieldParameter
 from monakeeda.consts import NamespacesConsts, FieldConsts

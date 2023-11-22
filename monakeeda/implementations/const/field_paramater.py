@@ -5,14 +5,14 @@ from monakeeda.consts import NamespacesConsts
 from .annotation import Const
 from .exceptions import ConstError
 from ..implemenations_base_operator_visitor import ImplementationsOperatorVisitor
-from ..known_builders import BasicParameterValueTypeValidatorBuilder
+from ..known_builders import ParameterValueTypeValidator
 
 
 @Field.parameter
 class AllowMutation(FieldParameter):
     __key__ = 'const'
     __label__ = 'mutation'
-    __builders__ = [BasicParameterValueTypeValidatorBuilder(bool)]
+    __builders__ = [ParameterValueTypeValidator(bool)]
     __prior_handler__ = Const
 
     def _handle_values(self, model_instance, values, stage):

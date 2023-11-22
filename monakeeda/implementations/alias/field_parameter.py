@@ -4,7 +4,7 @@ from typing import Any
 from monakeeda.base import FieldParameter, Field
 from .config_parameter import AliasGenerator
 from ..implemenations_base_operator_visitor import ImplementationsOperatorVisitor
-from ..known_builders import BasicParameterValueTypeValidatorBuilder
+from ..known_builders import ParameterValueTypeValidator
 
 
 @Field.parameter
@@ -12,7 +12,7 @@ class Alias(FieldParameter):
     __key__ = 'alias'
     __label__ = 'alias'
     __prior_handler__ = AliasGenerator
-    __builders__ = [BasicParameterValueTypeValidatorBuilder(str)]
+    __builders__ = [ParameterValueTypeValidator(str)]
 
     def _handle_values(self, model_instance, values, stage):
         values.setdefault(self.param_val, inspect._empty)

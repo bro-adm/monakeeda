@@ -5,15 +5,15 @@ from monakeeda.consts import NamespacesConsts, FieldConsts
 from monakeeda.helpers import ExceptionsDict
 from .errors import MissingFieldValuesException
 from ..implemenations_base_operator_visitor import ImplementationsOperatorVisitor
+from ..known_builders import ParameterAllowedValuesValidator
 from ..optional import OptionalAnnotation
-from ..known_builders import ParameterAllowedValuesValidatorBuilder
 
 
 @Config.parameter
 class ValidateMissingFieldsConfigParameter(ConfigParameter):
     __key__ = 'validate_missing_fields'
     __label__ = 'missing_values_manager'
-    __builders__ = [ParameterAllowedValuesValidatorBuilder([True])]
+    __builders__ = [ParameterAllowedValuesValidator([True])]
     __prior_handler__ = OptionalAnnotation
 
     def _handle_values(self, model_instance, values, stage):

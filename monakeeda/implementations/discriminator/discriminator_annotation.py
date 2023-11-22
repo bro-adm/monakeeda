@@ -1,4 +1,3 @@
-import inspect
 from typing import Any, Generic, TypeVarTuple, List, Type
 
 from monakeeda.base import BaseModel, GenericAnnotation, get_parameter_component_by_identifier, ParameterIdentifier
@@ -6,8 +5,8 @@ from monakeeda.consts import NamespacesConsts, FieldConsts
 from monakeeda.helpers import ExceptionsDict
 from ..creators import CreateFrom
 from ..implemenations_base_operator_visitor import ImplementationsOperatorVisitor
+from ..known_builders import CoreAnnotationsExtractor
 from ..missing.errors import MissingFieldValuesException
-from ..known_builders import FieldAllowedAnnotationsBuilder
 from ...utils import get_wanted_params
 
 TModels = TypeVarTuple("TModels")
@@ -41,7 +40,7 @@ class DiscriminatorKeyNotProvidedInValues(Exception):
 class Discriminator(GenericAnnotation, Generic[*TModels]):
     __prior_handler__ = CreateFrom
     __pass_on_errors__ = [MissingFieldValuesException]
-    __builders__ = [FieldAllowedAnnotationsBuilder(BaseModel)]
+    __builders__ = [CoreAnnotationsExtractor(BaseModel)]
     __supports_infinite__ = True
 
     def __init__(self, field_key, base_type, annotations_mapping):

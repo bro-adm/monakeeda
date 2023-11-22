@@ -1,12 +1,12 @@
-from typing import Any, List
+from typing import Any
 
-from monakeeda.base import FieldParameter, Field, BaseModel, get_parameter_component_by_identifier, Config, ParameterIdentifier
+from monakeeda.base import FieldParameter, Field, BaseModel, get_parameter_component_by_identifier, ParameterIdentifier
 from monakeeda.consts import NamespacesConsts, FieldConsts
-from monakeeda.utils import get_wanted_params
 from monakeeda.helpers import ExceptionsDict
-from ..implemenations_base_operator_visitor import ImplementationsOperatorVisitor
-from ..known_builders import BasicParameterValueTypeValidatorBuilder, FieldAllowedAnnotationsBuilder
+from monakeeda.utils import get_wanted_params
 from ..abstract import AbstractParameter
+from ..implemenations_base_operator_visitor import ImplementationsOperatorVisitor
+from ..known_builders import ParameterValueTypeValidator, CoreAnnotationsExtractor
 
 
 @Field.parameter
@@ -14,7 +14,7 @@ class ExplodeFieldParameter(FieldParameter):
     __key__ = 'explode'
     __label__ = 'initialization'
     __prior_handler__ = AbstractParameter
-    __builders__ = [BasicParameterValueTypeValidatorBuilder(bool), FieldAllowedAnnotationsBuilder(BaseModel)]
+    __builders__ = [ParameterValueTypeValidator(bool), CoreAnnotationsExtractor(BaseModel)]
 
     def __init__(self, param_val, field_key):
         super().__init__(param_val, field_key)

@@ -1,11 +1,11 @@
-from typing import Any, List
+from typing import Any
 
 from monakeeda.base import ConfigParameter, Config, get_parameter_component_type_by_key
 from monakeeda.consts import NamespacesConsts, FieldConsts
 from monakeeda.helpers import ExceptionsDict
 from ..abstract import AbstractParameter
 from ..implemenations_base_operator_visitor import ImplementationsOperatorVisitor
-from ..known_builders import CallableParameterSignatureValidatorBuilder, AllModelFieldsAcknowledgeParameterValidatorBuilder
+from ..known_builders import ParameterCallableValueValidator, AllFieldsAcknowledgeParameterValidator
 
 
 @Config.parameter
@@ -13,7 +13,7 @@ class AliasGenerator(ConfigParameter):
     __key__ = 'alias_generator'
     __label__ = 'alias_generator'
     __prior_handler__ = AbstractParameter
-    __builders__ = [CallableParameterSignatureValidatorBuilder(1), AllModelFieldsAcknowledgeParameterValidatorBuilder('alias')]
+    __builders__ = [ParameterCallableValueValidator(1), AllFieldsAcknowledgeParameterValidator('alias')]
 
     def _handle_values(self, model_instance, values, stage):
         pass
