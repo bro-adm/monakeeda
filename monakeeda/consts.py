@@ -17,11 +17,13 @@ class NamespacesConsts:
     ANNOTATIONS = 'annotations'
     DECORATORS = 'decorators'
     CONFIGS = 'configs'
+    DISCRIMINATOR = 'discriminator'
 
 
 class FieldConsts:
     FIELD = 'field'
     REQUIRED = 'required'
+    PRIVATE = 'private'
     ANNOTATION = 'annotation_cls'
     VALIDATORS = 'validators'
     CREATOR = 'creator'
