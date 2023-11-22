@@ -19,6 +19,10 @@ class FieldParameter(Parameter, ABC):
         self._field_key = field_key
         super().__init__(param_val)
 
+    @property
+    def scope(self) -> str:
+        return self._field_key
+
     def __eq__(self, other):
         if not isinstance(other, FieldParameter):
             return NotImplemented
@@ -41,6 +45,10 @@ class Field(ConfigurableComponent[FieldParameter]):
     @property
     def representor(self) -> str:
         return self.__class__.__name__
+
+    @property
+    def scope(self) -> str:
+        return self._field_key
 
     @classmethod
     def override_init(cls, field_key: str, parameters: List[FieldParameter], unused_params: Dict[str, Any]):

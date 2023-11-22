@@ -2,6 +2,7 @@ from abc import ABC
 from typing import Any
 
 from monakeeda.helpers import ExceptionsDict
+from monakeeda.consts import ComponentConsts
 
 from ..component import ConfigurableComponent, Parameter
 from ..fields import NoField
@@ -16,6 +17,10 @@ class ConfigParameter(Parameter, ABC):
     def __init__(self, param_val, config_cls_name: str):
         super().__init__(param_val)
         self._config_cls_name = config_cls_name
+
+    @property
+    def scope(self) -> str:
+        return self._config_cls_name
 
 
 all_configs = {}
@@ -39,6 +44,10 @@ class Config(ConfigurableComponent[ConfigParameter]):
     @property
     def representor(self) -> str:
         return self.__class__.__name__
+
+    @property
+    def scope(self) -> str:
+        return ComponentConsts.GLOBAL
 
     def _build(self, monkey_cls, bases, monkey_attrs, exceptions: ExceptionsDict, main_builder):
         pass

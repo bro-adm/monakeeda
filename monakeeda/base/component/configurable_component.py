@@ -36,11 +36,8 @@ class OneComponentPerLabelValidator(MonkeyBuilder):
                 existing_labels[label] = nested_component.__key__
 
         if duplicate_labels_components:
-            key = getattr(main_builder, ComponentConsts.FIELD_KEY, None)
-            if not key:
-                key = main_builder.representor
-
-            exceptions[key].append(OneComponentPerLabelAllowedException(main_builder, duplicate_labels_components))
+            exception = OneComponentPerLabelAllowedException(main_builder, duplicate_labels_components)
+            exceptions[main_builder.scope].append(exception)
 
 
 class UnmatchedParameterKeysException(Exception):
@@ -55,11 +52,8 @@ class UnmatchedParameterKeysException(Exception):
 class NoUnmatchedParameterKeyValidator(MonkeyBuilder):
     def _build(self, monkey_cls, bases, monkey_attrs, exceptions: ExceptionsDict, main_builder: "ConfigurableComponent"):
         if main_builder._unused_params:
-            key = getattr(main_builder, ComponentConsts.FIELD_KEY, None)
-            if not key:
-                key = main_builder.representor
-
-            exceptions[key].append(UnmatchedParameterKeysException(main_builder, main_builder._unused_params))
+            exception = UnmatchedParameterKeysException(main_builder, main_builder._unused_params)
+            exceptions[main_builder.scope].append(exception)
 
 
 class ConfigurableComponent(Component, Generic[TParameter], ABC):

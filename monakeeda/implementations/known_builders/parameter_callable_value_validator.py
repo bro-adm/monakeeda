@@ -28,4 +28,4 @@ class ParameterCallableValueValidator(MonkeyBuilder):
 
         if len(callable_signature_parameters) != self.allowed_amount_of_args:
             exception = ParameterCallableValueOverTheAllowedAmountOfArgsException(main_builder, self.allowed_amount_of_args, len(callable_signature_parameters))
-            exceptions[main_builder._field_key].append(exception)
+            exceptions[main_builder.scope].append(exception)

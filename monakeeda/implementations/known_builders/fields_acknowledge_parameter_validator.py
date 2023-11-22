@@ -38,4 +38,4 @@ class AllFieldsAcknowledgeParameterValidator(BaseFieldsAcknowledgeParameterValid
 
         if unacknowledged_fields:
             exception = FieldsDontAcknowledgeParameterKeyException(main_builder, self.parameter_key, unacknowledged_fields)
-            exceptions[main_builder._config_cls_name].append(exception)
+            exceptions[main_builder.scope].append(exception)

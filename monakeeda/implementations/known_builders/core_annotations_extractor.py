@@ -1,6 +1,6 @@
 from typing import Any, get_origin, get_args, Union
 
-from monakeeda.base import Parameter, MonkeyBuilder, Annotation, Component
+from monakeeda.base import MonkeyBuilder, Annotation, Component
 from monakeeda.consts import NamespacesConsts
 from monakeeda.helpers import ExceptionsDict
 
@@ -33,7 +33,7 @@ class CoreAnnotationsExtractor(MonkeyBuilder):
         self.core_annotation = core_annotation
 
     def _build(self, monkey_cls, bases, monkey_attrs, exceptions: ExceptionsDict, main_builder: Component):
-        set_annotation = monkey_cls.struct[NamespacesConsts.ANNOTATIONS][main_builder._field_key]
+        set_annotation = monkey_cls.struct[NamespacesConsts.ANNOTATIONS][main_builder.scope]  # if not field key will raise error
         annotations_mapping = set_annotation._annotations_mapping
 
         if isinstance(main_builder, Annotation):
@@ -41,12 +41,12 @@ class CoreAnnotationsExtractor(MonkeyBuilder):
             self.core_annotation = annotation_origin[self.core_annotation]
 
         annotations_mapping[self.core_annotation]
-        supported_annotation = annotations_mapping[self.core_annotation](set_annotation._field_key, self.core_annotation, annotations_mapping)
+        supported_annotation = annotations_mapping[self.core_annotation](set_annotation.scope, self.core_annotation, annotations_mapping)
 
         result = supported_annotation.is_same(set_annotation)
         if not result:
             exception = CoreAnnotationNotAllowedException(main_builder, self.core_annotation, set_annotation.base_type)
-            exceptions[main_builder._field_key].append(exception)
+            exceptions[main_builder.scope].append(exception)
 
         if isinstance(main_builder, Annotation):
             main_builder._core_types = get_args(result)

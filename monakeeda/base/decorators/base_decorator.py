@@ -1,8 +1,9 @@
-from abc import ABC, abstractmethod
+from abc import ABC
 
-from monakeeda.consts import DecoratorConsts
+from monakeeda.consts import DecoratorConsts, FieldConsts, NamespacesConsts
 from monakeeda.utils import set_default_attr_if_does_not_exist
 from ..component import Component
+from ...helpers import ExceptionsDict
 
 
 class BaseDecorator(Component, ABC):
@@ -14,9 +15,19 @@ class BaseDecorator(Component, ABC):
     The __call__ method is pre implemented to set the known namespace that the Decorator Manager looks for on Monakeeda decorated methods.
     """
 
+    def __init__(self, field_key: str):
+        self._field_key = field_key
+
     @property
     def representor(self) -> str:
         return self.__class__.__name__
+
+    @property
+    def scope(self) -> str:
+        return self._field_key
+
+    def _build(self, monkey_cls, bases, monkey_attrs, exceptions: ExceptionsDict, main_builder):
+        monkey_attrs[NamespacesConsts.STRUCT][NamespacesConsts.FIELDS][self._field_key][FieldConsts.COMPONENTS].append(self)
 
     def _set_func_landscape(self):
         # Adds the decorator class instance to the function attributes for further usage in the DecoratorMainComponent

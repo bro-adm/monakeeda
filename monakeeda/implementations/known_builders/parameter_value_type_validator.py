@@ -19,5 +19,5 @@ class ParameterValueTypeValidator(MonkeyBuilder):
     def _build(self, monkey_cls, bases, monkey_attrs, exceptions: ExceptionsDict, main_builder: Parameter):
         if not isinstance(main_builder.param_val, self.wanted_type):
             exception = ParameterValueTypeNotAllowedException(main_builder, self.wanted_type)
-            exceptions[main_builder._field_key].append(exception)
+            exceptions[main_builder.scope].append(exception)
 

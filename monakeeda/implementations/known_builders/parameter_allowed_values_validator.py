@@ -21,4 +21,4 @@ class ParameterAllowedValuesValidator(MonkeyBuilder):
     def _build(self, monkey_cls, bases, monkey_attrs, exceptions: ExceptionsDict, main_builder: Parameter):
         if main_builder.param_val not in self.allowed_values:
             exception = ParameterProvidedValueNotInAllowedValuesException(main_builder, self.allowed_values)
-            exceptions[main_builder._field_key].append(exception)
+            exceptions[main_builder.scope].append(exception)
