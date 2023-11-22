@@ -62,7 +62,4 @@ class MonkeyMeta(ABCMeta):
         logger.info(f"Model Components Run Order:", extra={STAGE: "Component Info", MONKEY: name})
 
         for component in cls.__run_organized_components__:
-            scope = getattr(component, ComponentConsts.FIELD_KEY, ComponentConsts.GLOBAL)
-            logger.info(f"\t{component} -> {scope}", extra={STAGE: "Component Info", MONKEY: name})
-
-
+            logger.info(f"\t{component} -> {component.scope}", extra={STAGE: "Component Info", MONKEY: name})
