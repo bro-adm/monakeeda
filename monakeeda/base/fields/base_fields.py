@@ -38,6 +38,10 @@ class Field(ConfigurableComponent[FieldParameter]):
     Allows override of a Field class "type" by class name.
     """
 
+    @property
+    def representor(self) -> str:
+        return self.__class__.__name__
+
     @classmethod
     def override_init(cls, field_key: str, parameters: List[FieldParameter], unused_params: Dict[str, Any]):
         instance = super().override_init(parameters, unused_params)

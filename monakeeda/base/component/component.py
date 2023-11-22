@@ -46,6 +46,11 @@ class Component(MonkeyBuilder, ValuesHandler, ABC):
             else:
                 all_components.append(cls)
 
+    @property
+    @abstractmethod
+    def representor(self) -> str:
+        pass
+
     def handle_values(self, model_instance, values, stage):
         exceptions = [type(e) for e in getattr(model_instance, NamespacesConsts.EXCEPTIONS)]
         existing_dependent_errors = get_items_from_list(self.__pass_on_errors__, exceptions)

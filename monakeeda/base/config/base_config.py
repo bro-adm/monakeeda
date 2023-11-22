@@ -36,6 +36,10 @@ class Config(ConfigurableComponent[ConfigParameter]):
 
         all_configs[cls.__name__] = cls
 
+    @property
+    def representor(self) -> str:
+        return self.__class__.__name__
+
     def _build(self, monkey_cls, bases, monkey_attrs, exceptions: ExceptionsDict, main_builder):
         pass
 

@@ -3,6 +3,7 @@ from enum import Enum
 from typing import ClassVar, TypeVar, Type
 
 from .component import Component
+from ...utils import capitalize_words
 
 
 class ParameterIdentifier(Enum):
@@ -21,6 +22,10 @@ class Parameter(Component, ABC):
 
     def __init__(self, param_val):
         self.param_val = param_val
+
+    @property
+    def representor(self) -> str:
+        return capitalize_words(self.__key__)
 
 
 TParameter = TypeVar('TParameter', bound=Type[Parameter])
