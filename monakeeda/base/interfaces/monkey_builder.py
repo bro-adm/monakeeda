@@ -15,8 +15,7 @@ class MonkeyBuilder(ABC):
         new_exceptions = ExceptionsDict()
 
         for builder in self.__builders__:
-            if not new_exceptions:
-                builder.build(monkey_cls, bases, monkey_attrs, new_exceptions, main_builder=main_builder if main_builder else self)
+            builder.build(monkey_cls, bases, monkey_attrs, new_exceptions, main_builder=main_builder if main_builder else self)
 
         if not new_exceptions:
             self._build(monkey_cls, bases, monkey_attrs, exceptions, main_builder)
