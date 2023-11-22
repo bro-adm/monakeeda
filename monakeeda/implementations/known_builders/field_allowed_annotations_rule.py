@@ -1,6 +1,6 @@
-from typing import Any, List
+from typing import Any, List, get_origin, get_args
 
-from monakeeda.base import Parameter, MonkeyBuilder
+from monakeeda.base import Parameter, MonkeyBuilder, Annotation
 from monakeeda.consts import NamespacesConsts
 
 
@@ -22,6 +22,10 @@ class FieldAllowedAnnotationsBuilder(MonkeyBuilder):
         field_annotation = monkey_cls.struct[NamespacesConsts.ANNOTATIONS][main_builder._field_key]
         annotations_mapping = field_annotation._annotations_mapping
 
+        if isinstance(main_builder, Annotation):
+            main_builder_origin = get_origin(main_builder.base_type)
+            self.allowed_base_annotation = main_builder_origin[self.allowed_base_annotation]
+
         annotations_mapping[self.allowed_base_annotation]
         supported_annotation = annotations_mapping[self.allowed_base_annotation](field_annotation._field_key, self.allowed_base_annotation, annotations_mapping)
 
@@ -29,4 +33,7 @@ class FieldAllowedAnnotationsBuilder(MonkeyBuilder):
         if not result:
             exceptions.append(FieldAnnotationNotAllowedException(main_builder, field_annotation.base_type, self.allowed_base_annotation))
 
-        main_builder._core_type = result
+        if isinstance(main_builder, Annotation):
+            main_builder._core_types = get_args(result)
+        else:
+            main_builder._core_types = result
