@@ -3,6 +3,7 @@ from typing import List, Generic
 
 from monakeeda.consts import NamespacesConsts
 from monakeeda.logger import logger, STAGE, MONKEY
+from monakeeda.helpers import ExceptionsDict
 from ..component import Component, TParameter
 from ..interfaces import MonkeyBuilder
 
@@ -27,7 +28,7 @@ class ComponentManager(MonkeyBuilder, ABC):
     def _set_curr_cls(self, monkey_cls, bases, monkey_attrs):
         pass
 
-    def _build(self, monkey_cls, bases, monkey_attrs, exceptions: List[Exception], main_builder):
+    def _build(self, monkey_cls, bases, monkey_attrs, exceptions: ExceptionsDict, main_builder):
         collisions = {}
 
         for base in bases:

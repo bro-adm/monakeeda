@@ -1,7 +1,7 @@
 from typing import List
 
 from monakeeda.consts import NamespacesConsts, ConfigConsts
-from monakeeda.helpers import get_cls_attrs
+from monakeeda.helpers import get_cls_attrs, ExceptionsDict
 from .base_config import ConfigParameter
 from ..component import Component
 from ..meta import ConfigurableComponentManager
@@ -67,7 +67,7 @@ class ConfigManager(ConfigurableComponentManager[ConfigParameter]):
 
                 monkey_attrs[NamespacesConsts.STRUCT][NamespacesConsts.CONFIGS][config_name][ConfigConsts.OBJECT] = initialized_config
 
-    def _build(self, monkey_cls, bases, monkey_attrs, exceptions: List[Exception], main_builder):
+    def _build(self, monkey_cls, bases, monkey_attrs, exceptions: ExceptionsDict, main_builder):
         monkey_attrs[NamespacesConsts.STRUCT].setdefault(NamespacesConsts.CONFIGS, {})
 
         for config_name, config_type in self._configs_map.items():

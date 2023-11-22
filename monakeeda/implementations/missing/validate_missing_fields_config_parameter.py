@@ -2,6 +2,7 @@ from typing import Any
 
 from monakeeda.base import ConfigParameter, Config
 from monakeeda.consts import NamespacesConsts, FieldConsts
+from monakeeda.helpers import ExceptionsDict
 from .errors import MissingFieldValuesException
 from ..implemenations_base_operator_visitor import ImplementationsOperatorVisitor
 from ..optional import OptionalAnnotation
@@ -27,6 +28,9 @@ class ValidateMissingFieldsConfigParameter(ConfigParameter):
 
             if missing_fields:
                 getattr(model_instance, NamespacesConsts.EXCEPTIONS).append(MissingFieldValuesException(missing_fields))
+
+    def _build(self, monkey_cls, bases, monkey_attrs, exceptions: ExceptionsDict, main_builder):
+        pass
 
     def accept_operator(self, operator_visitor: ImplementationsOperatorVisitor, context: Any):
         operator_visitor.operate_validate_missing_fields_config_parameter(self, context)

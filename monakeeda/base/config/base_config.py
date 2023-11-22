@@ -1,5 +1,7 @@
 from abc import ABC
-from typing import Any, List
+from typing import Any
+
+from monakeeda.helpers import ExceptionsDict
 
 from ..component import ConfigurableComponent, Parameter
 from ..fields import NoField
@@ -14,9 +16,6 @@ class ConfigParameter(Parameter, ABC):
     def __init__(self, param_val, config_cls_name: str):
         super().__init__(param_val)
         self._config_cls_name = config_cls_name
-
-    def _build(self, monkey_cls, bases, monkey_attrs, exceptions: List[Exception], main_builder):
-        pass
 
 
 all_configs = {}
@@ -37,7 +36,7 @@ class Config(ConfigurableComponent[ConfigParameter]):
 
         all_configs[cls.__name__] = cls
 
-    def _build(self, monkey_cls, bases, monkey_attrs, exceptions: List[Exception], main_builder):
+    def _build(self, monkey_cls, bases, monkey_attrs, exceptions: ExceptionsDict, main_builder):
         pass
 
     def _handle_values(self, model_instance, values, stage):

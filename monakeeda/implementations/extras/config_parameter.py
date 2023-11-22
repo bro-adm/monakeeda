@@ -3,6 +3,7 @@ from typing import Any
 
 from monakeeda.base import ConfigParameter, Config
 from monakeeda.consts import NamespacesConsts
+from monakeeda.helpers import ExceptionsDict
 from ..const import AllowMutation
 from ..implemenations_base_operator_visitor import ImplementationsOperatorVisitor
 from ..known_builders import BasicParameterValueTypeValidatorBuilder
@@ -37,6 +38,9 @@ class ExtrasParameter(ConfigParameter):
 
             for key in unacknowledged:
                 values.pop(key)
+
+    def _build(self, monkey_cls, bases, monkey_attrs, exceptions: ExceptionsDict, main_builder):
+        pass
 
     def accept_operator(self, operator_visitor: ImplementationsOperatorVisitor, context: Any):
         operator_visitor.operate_extras_config_parameter(self, context)

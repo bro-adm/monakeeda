@@ -2,6 +2,7 @@ import inspect
 from typing import Callable, List
 
 from monakeeda.base import Parameter, MonkeyBuilder
+from monakeeda.helpers import ExceptionsDict
 from .type_value_rules import BasicParameterValueTypeValidatorBuilder
 
 
@@ -21,8 +22,8 @@ class CallableParameterSignatureValidatorBuilder(MonkeyBuilder):
     def __init__(self, amount_of_parameters_allowed: int):
         self.amount_of_parameters_allowed = amount_of_parameters_allowed
 
-    def _build(self, monkey_cls, bases, monkey_attrs, exceptions: List[Exception], main_builder: Parameter):
+    def _build(self, monkey_cls, bases, monkey_attrs, exceptions: ExceptionsDict, main_builder: Parameter):
         callable_signature_parameters = inspect.signature(main_builder.param_val).parameters
 
         if len(callable_signature_parameters) != self.amount_of_parameters_allowed:
-            exceptions.append(CallableOverTheAllowedAmountOfParametersException(main_builder.__key__, self.amount_of_parameters_allowed, len(callable_signature_parameters)))
+            exceptions[main_builder._field_key].append(CallableOverTheAllowedAmountOfParametersException(main_builder.__key__, self.amount_of_parameters_allowed, len(callable_signature_parameters)))

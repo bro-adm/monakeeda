@@ -12,8 +12,5 @@ class Abstract(GenericAnnotation, Generic[T]):
     def _handle_values(self, model_instance, values, stage):
         getattr(model_instance, NamespacesConsts.EXCEPTIONS).append(AbstractFieldFoundError(self._field_key))
 
-    def _act_with_value(self, value, cls, current_field_info, stage):
-        pass
-
     def accept_operator(self, operator_visitor: ImplementationsOperatorVisitor, context: Any):
         operator_visitor.operate_abstract_annotation(self, context)

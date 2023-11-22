@@ -1,9 +1,10 @@
 from abc import ABC
-from typing import Any, Union, TypeVar, List
+from typing import Any, Union, TypeVar
 
 from typing_extensions import get_args, get_origin
 
 from monakeeda.consts import NamespacesConsts, FieldConsts
+from monakeeda.helpers import ExceptionsDict
 from ..component import Component
 
 
@@ -22,7 +23,7 @@ class Annotation(Component, ABC):
         self.base_type = base_type
         self._annotations_mapping = annotations_mapping
 
-    def _build(self, monkey_cls, bases, monkey_attrs, exceptions: List[Exception], main_builder):
+    def _build(self, monkey_cls, bases, monkey_attrs, exceptions: ExceptionsDict, main_builder):
         monkey_attrs[NamespacesConsts.STRUCT][NamespacesConsts.FIELDS][self._field_key][FieldConsts.ANNOTATION] = self
         monkey_attrs[NamespacesConsts.STRUCT][NamespacesConsts.FIELDS][self._field_key][FieldConsts.COMPONENTS].append(self)
 

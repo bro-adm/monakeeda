@@ -2,6 +2,7 @@ from typing import Dict, List
 
 from monakeeda.base import Field, MonkeyBuilder, ConfigParameter
 from monakeeda.consts import NamespacesConsts, FieldConsts
+from monakeeda.helpers import ExceptionsDict
 
 
 class SomeFieldsDontAcknowledgeKeyException(Exception):
@@ -18,7 +19,7 @@ class AllModelFieldsAcknowledgeParameterValidatorBuilder(MonkeyBuilder):
     def __init__(self, key: str):
         self.key = key
 
-    def _build(self, monkey_cls, bases, monkey_attrs, exceptions: List[Exception], main_builder: ConfigParameter):
+    def _build(self, monkey_cls, bases, monkey_attrs, exceptions: ExceptionsDict, main_builder: ConfigParameter):
         unacknowledged_fields = {}
 
         for field_key, field_info in getattr(monkey_cls, NamespacesConsts.STRUCT)[NamespacesConsts.FIELDS].items():
@@ -28,4 +29,4 @@ class AllModelFieldsAcknowledgeParameterValidatorBuilder(MonkeyBuilder):
                 unacknowledged_fields[field_key] = field.__class__
 
         if unacknowledged_fields:
-            exceptions.append(SomeFieldsDontAcknowledgeKeyException(self.key, unacknowledged_fields))
+            exceptions[main_builder._field_key].append(SomeFieldsDontAcknowledgeKeyException(self.key, unacknowledged_fields))

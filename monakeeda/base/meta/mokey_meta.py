@@ -2,6 +2,7 @@ from abc import ABCMeta
 
 from monakeeda.consts import NamespacesConsts, ComponentConsts
 from monakeeda.logger import logger, STAGE, MONKEY
+from monakeeda.helpers import ExceptionsDict
 from .helpers import handle_class_inputs
 from .errors import MonkeyBuildException
 
@@ -40,14 +41,14 @@ class MonkeyMeta(ABCMeta):
         logger.info(f"Monkey Bases = {monkey_bases}", extra={STAGE: "META SETUP", MONKEY: name})
 
         for component_manager in cls.__component_managers__:
-            component_manager.build(cls, monkey_bases, attrs, [])
+            component_manager.build(cls, monkey_bases, attrs, {})
 
         model_components = attrs[NamespacesConsts.COMPONENTS]
         logger.info(f"Post Component Managers All Model Components = {model_components}", extra={STAGE: "Component Info", MONKEY: name})
         cls.__type_organized_components__ = cls.__component_organizer__.order_by_chain_of_responsibility(model_components)
         logger.info(f"Post Component Managers Organized Model Components = {cls.__type_organized_components__}", extra={STAGE: "Component Info", MONKEY: name})
 
-        build_exceptions = []
+        build_exceptions = ExceptionsDict()
         for component_type, components in cls.__type_organized_components__.items():
             for component in components:
                 component.build(cls, bases, attrs, build_exceptions)

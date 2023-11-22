@@ -3,6 +3,7 @@ from typing import Any, List
 from monakeeda.base import FieldParameter, Field, BaseModel, get_parameter_component_by_identifier, Config, ParameterIdentifier
 from monakeeda.consts import NamespacesConsts, FieldConsts
 from monakeeda.utils import get_wanted_params
+from monakeeda.helpers import ExceptionsDict
 from ..implemenations_base_operator_visitor import ImplementationsOperatorVisitor
 from ..known_builders import BasicParameterValueTypeValidatorBuilder, FieldAllowedAnnotationsBuilder
 from ..abstract import AbstractParameter
@@ -21,7 +22,7 @@ class ExplodeFieldParameter(FieldParameter):
         self._relevant_components = []
         self._relevant_field_keys = []
 
-    def _build(self, monkey_cls, bases, monkey_attrs, exceptions: List[Exception], main_builder):
+    def _build(self, monkey_cls, bases, monkey_attrs, exceptions: ExceptionsDict, main_builder):
         super()._build(monkey_cls, bases, monkey_attrs, exceptions, main_builder)
         monkey_attrs[NamespacesConsts.STRUCT][NamespacesConsts.FIELDS][self._field_key][FieldConsts.REQUIRED] = False
 

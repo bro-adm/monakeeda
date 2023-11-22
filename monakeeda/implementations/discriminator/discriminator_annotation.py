@@ -1,8 +1,9 @@
 import inspect
-from typing import Any, Generic, TypeVarTuple, List, get_args, Type
+from typing import Any, Generic, TypeVarTuple, List, Type
 
 from monakeeda.base import BaseModel, GenericAnnotation, get_parameter_component_by_identifier, ParameterIdentifier
 from monakeeda.consts import NamespacesConsts, FieldConsts
+from monakeeda.helpers import ExceptionsDict
 from ..creators import CreateFrom
 from ..implemenations_base_operator_visitor import ImplementationsOperatorVisitor
 from ..missing.errors import MissingFieldValuesException
@@ -26,7 +27,7 @@ class GivenModelsHaveMoreThanOneDiscriminationKey(Exception):
         self.keys = keys
 
     def __str__(self):
-        return f"Discriminator provided with models that have more then one discrimination key -> {zip(self.models, self.keys)}"
+        return f"Discriminator provided with models that have more then one discrimination key -> {list(zip(self.models, self.keys))}"
 
 
 class DiscriminatorKeyNotProvidedInValues(Exception):
@@ -50,14 +51,14 @@ class Discriminator(GenericAnnotation, Generic[*TModels]):
         self._discriminator_field_key = None
         self._monkey_mappings = {}
 
-    def _build(self, monkey_cls, bases, monkey_attrs, exceptions: List[Exception], main_builder):
+    def _build(self, monkey_cls, bases, monkey_attrs, exceptions: ExceptionsDict, main_builder):
         super()._build(monkey_cls, bases, monkey_attrs, exceptions, main_builder)
 
         unavailable_discriminator = []
         discriminators_keys = []
 
         for sub_type in self._core_types:
-            sub_type.struct.setdefault(NamespacesConsts.DISCRIMINATOR, inspect._empty)
+            sub_type.struct.setdefault(NamespacesConsts.DISCRIMINATOR, None)
             discriminator_info = sub_type.struct[NamespacesConsts.DISCRIMINATOR]
 
             if not discriminator_info:
@@ -74,9 +75,9 @@ class Discriminator(GenericAnnotation, Generic[*TModels]):
                     self._relevant_components.append(alias_parameter)
 
         if unavailable_discriminator:
-            exceptions.append(GivenModelsDoNotHaveADiscriminator(unavailable_discriminator))
+            exceptions[self._field_key].append(GivenModelsDoNotHaveADiscriminator(unavailable_discriminator))
         if len(set(discriminators_keys)) > 1:
-            exceptions.append(GivenModelsHaveMoreThanOneDiscriminationKey(self._core_types, discriminators_keys))
+            exceptions[self._field_key].append(GivenModelsHaveMoreThanOneDiscriminationKey(self._core_types, discriminators_keys))
 
         if not exceptions:
             self._discriminator_field_key = discriminators_keys[0]

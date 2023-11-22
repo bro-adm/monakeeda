@@ -2,6 +2,7 @@ from abc import ABC
 from typing import Any, List, Dict
 
 from monakeeda.consts import FieldConsts, NamespacesConsts
+from monakeeda.helpers import ExceptionsDict
 from ..component import Parameter, ConfigurableComponent
 from ..operator import OperatorVisitor
 
@@ -23,7 +24,7 @@ class FieldParameter(Parameter, ABC):
             return NotImplemented
         return self._field_key == other._field_key and self.param_val == other.param_val
 
-    def _build(self, monkey_cls, bases, monkey_attrs, exceptions: List[Exception], main_builder):
+    def _build(self, monkey_cls, bases, monkey_attrs, exceptions: ExceptionsDict, main_builder):
         monkey_attrs[NamespacesConsts.STRUCT][NamespacesConsts.FIELDS][self._field_key][FieldConsts.COMPONENTS].append(self)
 
 
@@ -48,7 +49,7 @@ class Field(ConfigurableComponent[FieldParameter]):
     def init_from_arbitrary_value(cls, value: Any):
         return cls(default=value)
 
-    def _build(self, monkey_cls, bases, monkey_attrs, exceptions: List[Exception], main_builder):
+    def _build(self, monkey_cls, bases, monkey_attrs, exceptions: ExceptionsDict, main_builder):
         monkey_attrs[NamespacesConsts.STRUCT][NamespacesConsts.FIELDS][self._field_key][FieldConsts.REQUIRED] = True
         monkey_attrs[NamespacesConsts.STRUCT][NamespacesConsts.FIELDS][self._field_key][FieldConsts.COMPONENTS].append(self)
 

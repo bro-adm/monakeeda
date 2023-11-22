@@ -2,6 +2,7 @@ from collections import OrderedDict
 from typing import List, TypeVar
 
 from monakeeda.consts import NamespacesConsts, PythonNamingConsts, TmpConsts
+from monakeeda.helpers import ExceptionsDict
 from .base_annotations import Annotation
 from ..meta import ComponentManager
 
@@ -79,6 +80,6 @@ class AnnotationManager(ComponentManager):
             annotation_cls_instance = self._annotation_mapping[annotation](key, annotation, self._annotation_mapping)
             monkey_attrs[NamespacesConsts.STRUCT][NamespacesConsts.ANNOTATIONS][key] = annotation_cls_instance
 
-    def _build(self, monkey_cls, bases, monkey_attrs, exceptions: List[Exception], main_builder):
+    def _build(self, monkey_cls, bases, monkey_attrs, exceptions: ExceptionsDict, main_builder):
         monkey_attrs[NamespacesConsts.STRUCT][NamespacesConsts.ANNOTATIONS] = OrderedDict()
         super(AnnotationManager, self)._build(monkey_cls, bases, monkey_attrs, exceptions, main_builder)

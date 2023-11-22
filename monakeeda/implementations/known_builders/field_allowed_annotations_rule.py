@@ -2,6 +2,7 @@ from typing import Any, List, get_origin, get_args
 
 from monakeeda.base import Parameter, MonkeyBuilder, Annotation
 from monakeeda.consts import NamespacesConsts
+from monakeeda.helpers import ExceptionsDict
 
 
 class FieldAnnotationNotAllowedException(Exception):
@@ -18,7 +19,7 @@ class FieldAllowedAnnotationsBuilder(MonkeyBuilder):
     def __init__(self, allowed_base_annotation: Any):
         self.allowed_base_annotation = allowed_base_annotation
 
-    def _build(self, monkey_cls, bases, monkey_attrs, exceptions: List[Exception], main_builder):
+    def _build(self, monkey_cls, bases, monkey_attrs, exceptions: ExceptionsDict, main_builder):
         field_annotation = monkey_cls.struct[NamespacesConsts.ANNOTATIONS][main_builder._field_key]
         annotations_mapping = field_annotation._annotations_mapping
 
@@ -31,7 +32,7 @@ class FieldAllowedAnnotationsBuilder(MonkeyBuilder):
 
         result = supported_annotation.is_same(field_annotation)
         if not result:
-            exceptions.append(FieldAnnotationNotAllowedException(main_builder, field_annotation.base_type, self.allowed_base_annotation))
+            exceptions[main_builder._field_key].append(FieldAnnotationNotAllowedException(main_builder, field_annotation.base_type, self.allowed_base_annotation))
 
         if isinstance(main_builder, Annotation):
             main_builder._core_types = get_args(result)

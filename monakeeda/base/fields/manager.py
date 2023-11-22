@@ -3,7 +3,7 @@ from collections import OrderedDict
 from typing import List, Type
 
 from monakeeda.consts import FieldConsts, NamespacesConsts, PythonNamingConsts
-from monakeeda.helpers import defaultdictvalue
+from monakeeda.helpers import defaultdictvalue, ExceptionsDict
 from .base_fields import Field, FieldParameter
 from ..meta import ConfigurableComponentManager
 
@@ -109,7 +109,7 @@ class FieldManager(ConfigurableComponentManager[FieldParameter]):
             monkey_attrs[field_key] = merged_field
             monkey_attrs[NamespacesConsts.STRUCT][NamespacesConsts.FIELDS][field_key][FieldConsts.FIELD] = merged_field
 
-    def _build(self, monkey_cls, bases, monkey_attrs, exceptions: List[Exception], main_builder):
+    def _build(self, monkey_cls, bases, monkey_attrs, exceptions: ExceptionsDict, main_builder):
         default_fields_dict = defaultdictvalue(lambda key: {FieldConsts.DEPENDENCIES: [], FieldConsts.DEPENDENTS: [], FieldConsts.COMPONENTS: [], FieldConsts.FIELD: self._default_no_field_type.override_init(key, [], {})}, OrderedDict())
         # Do note that this defaultdict does not hurt priorly set bases becasue we never directly ask for a field_info of a base field without knowing it exists there
 

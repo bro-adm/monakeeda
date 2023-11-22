@@ -2,6 +2,7 @@ from functools import reduce
 from typing import List
 
 from monakeeda.consts import NamespacesConsts, DecoratorConsts
+from monakeeda.helpers import ExceptionsDict
 from .base_decorator import BaseDecorator
 from ..meta import ComponentManager
 
@@ -47,6 +48,6 @@ class DecoratorManager(ComponentManager):
                 # attr_val in here is a decorated method
                 monkey_attrs[NamespacesConsts.STRUCT][NamespacesConsts.DECORATORS][attr] = decorated_with
 
-    def _build(self, monkey_cls, bases, monkey_attrs, exceptions: List[Exception], main_builder):
+    def _build(self, monkey_cls, bases, monkey_attrs, exceptions: ExceptionsDict, main_builder):
         monkey_attrs[NamespacesConsts.STRUCT].setdefault(NamespacesConsts.DECORATORS, {})
         super(DecoratorManager, self)._build(monkey_cls, bases, monkey_attrs, exceptions, main_builder)

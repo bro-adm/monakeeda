@@ -1,16 +1,18 @@
 from abc import ABC, abstractmethod
 from typing import List
 
+from monakeeda.helpers import ExceptionsDict
+
 
 class MonkeyBuilder(ABC):
     __builders__: List["MonkeyBuilder"] = []
 
     @abstractmethod
-    def _build(self, monkey_cls, bases, monkey_attrs, exceptions: List[Exception], main_builder):
+    def _build(self, monkey_cls, bases, monkey_attrs, exceptions: ExceptionsDict, main_builder):
         pass
 
-    def build(self, monkey_cls, bases, monkey_attrs, exceptions: List[Exception], main_builder=None):
-        new_exceptions = []
+    def build(self, monkey_cls, bases, monkey_attrs, exceptions: ExceptionsDict, main_builder=None):
+        new_exceptions = ExceptionsDict()
 
         for builder in self.__builders__:
             if not new_exceptions:
@@ -20,4 +22,5 @@ class MonkeyBuilder(ABC):
             self._build(monkey_cls, bases, monkey_attrs, exceptions, main_builder)
 
         else:
-            exceptions.extend(new_exceptions)
+            for key, key_exceptions in new_exceptions.items():
+                exceptions[key].extend(key_exceptions)
