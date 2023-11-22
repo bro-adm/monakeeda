@@ -43,3 +43,8 @@ class DecoratorConsts:
 
 class TmpConsts:
     GENERICS = 'generics'
+
+
+class DiscriminationConsts:
+    FIELD_KEY = 'field_key'
+    VALUES = 'values'

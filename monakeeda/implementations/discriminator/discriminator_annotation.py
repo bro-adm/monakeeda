@@ -47,26 +47,26 @@ class Discriminator(GenericAnnotation, Generic[*TModels]):
         super()._build(monkey_cls, bases, monkey_attrs, exceptions, main_builder)
 
         unavailable_discriminator = []
-        discriminators = []
+        discriminators_keys = []
 
         for sub_type in self._core_types:
             sub_type.struct.setdefault(NamespacesConsts.DISCRIMINATOR, inspect._empty)
-            discriminator = sub_type.struct[NamespacesConsts.DISCRIMINATOR]
+            discriminator_info = sub_type.struct[NamespacesConsts.DISCRIMINATOR]
 
-            if not discriminator:
+            if not discriminator_info:
                 unavailable_discriminator.append(sub_type)
             else:
-                field_key, value = discriminator
-                discriminators.append(field_key)
-                self._monkey_mappings[value] = sub_type
+                field_key, values = discriminator_info.values()
+                discriminators_keys.append(field_key)
+                self._monkey_mappings.update({value: sub_type for value in values})
 
         if unavailable_discriminator:
             exceptions.append(GivenModelsDoNotHaveADiscriminator(unavailable_discriminator))
-        if len(set(discriminators)) > 1:
-            exceptions.append(GivenModelsHaveMoreThanOneDiscriminationKey(self._core_types, discriminators))
+        if len(set(discriminators_keys)) > 1:
+            exceptions.append(GivenModelsHaveMoreThanOneDiscriminationKey(self._core_types, discriminators_keys))
 
         if not exceptions:
-            self._discriminator_field_key = discriminators[0]
+            self._discriminator_field_key = discriminators_keys[0]
 
     def _handle_values(self, model_instance, values, stage):
         value = values[self._field_key]
