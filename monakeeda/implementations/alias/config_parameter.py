@@ -14,7 +14,7 @@ class AliasGenerator(ConfigParameter):
     __prior_handler__ = AbstractParameter
     __builders__ = [ParameterCallableValueValidator(1), AllFieldsAcknowledgeParameterValidator('alias')]
 
-    def _handle_values(self, model_instance, values, stage):
+    def _handle_values(self, model_instance, values, stage, exceptions: ExceptionsDict):
         pass
 
     def _build(self, monkey_cls, bases, monkey_attrs, exceptions: ExceptionsDict, main_builder):

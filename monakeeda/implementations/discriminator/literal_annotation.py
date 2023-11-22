@@ -17,7 +17,7 @@ class LiteralAnnotation(Annotation):
         monkey_attrs[NamespacesConsts.STRUCT][NamespacesConsts.FIELDS][self._field_key][FieldConsts.PRIVATE] = True
         monkey_attrs[NamespacesConsts.STRUCT][NamespacesConsts.DISCRIMINATOR] = {DiscriminationConsts.FIELD_KEY: self._field_key, DiscriminationConsts.VALUES: get_args(self.base_type)}
 
-    def _handle_values(self, model_instance, values, stage):
+    def _handle_values(self, model_instance, values, stage, exceptions: ExceptionsDict):
         pass
 
     def accept_operator(self, operator_visitor: ImplementationsOperatorVisitor, context: Any):

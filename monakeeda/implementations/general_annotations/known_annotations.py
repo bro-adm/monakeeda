@@ -1,10 +1,10 @@
 from typing import Any, get_args, TypeVar
 
 from monakeeda.base import Annotation, type_validation, Stages, OperatorVisitor, known_annotation_mapper, \
-    KnownAnnotations, BaseModel
+    KnownAnnotations, BaseModel, ExceptionsDict
 from monakeeda.consts import NamespacesConsts, TmpConsts
 from monakeeda.implementations.general_annotations.basic_annotations import DictAnnotation
-from monakeeda.implementations.missing.errors import MissingFieldValuesException
+from monakeeda.implementations.missing.errors import MissingFieldValueException
 
 
 @known_annotation_mapper(KnownAnnotations.TypeVarAnnotation, TypeVar, isinstance)
@@ -25,11 +25,11 @@ class TypeVarAnnotation(Annotation):
         index = model_generics.index(self.base_type)  # in this specific anntoation the base_type is mapped to the TypeVar instance
         return instance_types[index]
 
-    def _handle_values(self, model_instance, values, stage):
+    def _handle_values(self, model_instance, values, stage, exceptions: ExceptionsDict):
         instance_type = self._get_actual_type(model_instance, stage)
         annotation = self._annotations_mapping[instance_type](self._field_key, instance_type, self._annotations_mapping)
 
-        annotation.handle_values(model_instance, values, stage)
+        annotation.handle_values(model_instance, values, stage, exceptions)
 
     def accept_operator(self, operator_visitor: OperatorVisitor, context: Any):
         operator_visitor.operate_model_annotation(self, context)
@@ -38,9 +38,9 @@ class TypeVarAnnotation(Annotation):
 @known_annotation_mapper(KnownAnnotations.ModelAnnotation, BaseModel, issubclass)
 class ModelAnnotation(Annotation):
     __prior_handler__ = TypeVarAnnotation
-    __pass_on_errors__ = [MissingFieldValuesException]
+    __pass_on_errors__ = [MissingFieldValueException]
 
-    def _handle_values(self, model_instance, values, stage):
+    def _handle_values(self, model_instance, values, stage, exceptions: ExceptionsDict):
         value = values[self._field_key]
 
         if isinstance(value, dict):
@@ -48,13 +48,13 @@ class ModelAnnotation(Annotation):
                 monkey = self.base_type(**value)
                 values[self._field_key] = monkey
             except Exception as e:
-                getattr(model_instance, NamespacesConsts.EXCEPTIONS).append(e)
+                exceptions[self.scope].append(e)
 
         else:
             result = type_validation(value, self.base_type)
 
             if result:
-                getattr(model_instance, NamespacesConsts.EXCEPTIONS).append(result)
+                exceptions[self.scope].append(result)
 
     def accept_operator(self, operator_visitor: OperatorVisitor, context: Any):
         operator_visitor.operate_model_annotation(self, context)
@@ -63,13 +63,13 @@ class ModelAnnotation(Annotation):
 @known_annotation_mapper(KnownAnnotations.ArbitraryAnnotation, object, issubclass)
 class ArbitraryAnnotation(Annotation):
     __prior_handler__ = ModelAnnotation
-    __pass_on_errors__ = [MissingFieldValuesException]
+    __pass_on_errors__ = [MissingFieldValueException]
 
-    def _handle_values(self, model_instance, values, stage):
+    def _handle_values(self, model_instance, values, stage, exceptions: ExceptionsDict):
         result = type_validation(values[self._field_key], self.base_type)
 
         if result:
-            getattr(model_instance, NamespacesConsts.EXCEPTIONS).append(result)
+            exceptions[self.scope].append(result)
 
     def accept_operator(self, operator_visitor: OperatorVisitor, context: Any):
         operator_visitor.operate_model_annotation(self, context)

@@ -21,7 +21,7 @@ class ExtrasParameter(ConfigParameter):
     __builders__ = [ParameterValueTypeValidator(Extras)]
     __prior_handler__ = AllowMutation
 
-    def _handle_values(self, model_instance, values, stage):
+    def _handle_values(self, model_instance, values, stage, exceptions: ExceptionsDict):
         if self.param_val != Extras.ALLOW:
             fields = list(getattr(model_instance, NamespacesConsts.STRUCT)[NamespacesConsts.FIELDS].keys())
 

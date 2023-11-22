@@ -1,9 +1,6 @@
-from typing import List
-
-
-class MissingFieldValuesException(Exception):
-    def __init__(self, missing_keys: List[str]):
-        self.missing_keys = missing_keys
+class MissingFieldValueException(Exception):
+    def __init__(self):
+        pass
 
     def __str__(self):
-        return f"{self.missing_keys} are required and where not provided in any form (e.g. alias)"
+        return f"Field required and was not provided in any form (e.g. alias)"

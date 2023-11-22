@@ -1,18 +1,18 @@
 from typing import Union, List, Any, Dict
 
-from monakeeda.base import Annotation, annotation_mapper, GenericAnnotation, type_validation
+from monakeeda.base import Annotation, annotation_mapper, GenericAnnotation, type_validation, ExceptionsDict
 from monakeeda.consts import NamespacesConsts
 from monakeeda.implementations.cast import Cast
 from monakeeda.implementations.implemenations_base_operator_visitor import ImplementationsOperatorVisitor
-from monakeeda.implementations.missing.errors import MissingFieldValuesException
+from monakeeda.implementations.missing.errors import MissingFieldValueException
 
 
 @annotation_mapper(object, Any)
 class ObjectAnnotation(Annotation):
     __prior_handler__ = Cast
-    __pass_on_errors__ = [MissingFieldValuesException]
+    __pass_on_errors__ = [MissingFieldValueException]
 
-    def _handle_values(self, model_instance, values, stage):
+    def _handle_values(self, model_instance, values, stage, exceptions: ExceptionsDict):
         pass
 
     def accept_operator(self, operator_visitor: ImplementationsOperatorVisitor, context: Any):
@@ -22,13 +22,13 @@ class ObjectAnnotation(Annotation):
 @annotation_mapper(int, str, list, dict)
 class BasicTypeAnnotation(Annotation):
     __prior_handler__ = ObjectAnnotation
-    __pass_on_errors__ = [MissingFieldValuesException]
+    __pass_on_errors__ = [MissingFieldValueException]
 
-    def _handle_values(self, model_instance, values, stage):
+    def _handle_values(self, model_instance, values, stage, exceptions: ExceptionsDict):
         result = type_validation(values[self._field_key], self.base_type)
 
         if result:
-            getattr(model_instance, NamespacesConsts.EXCEPTIONS).append(result)
+            exceptions[self.scope].append(result)
 
     def accept_operator(self, operator_visitor: ImplementationsOperatorVisitor, context: Any):
         operator_visitor.operate_basic_annotation(self, context)
@@ -37,15 +37,15 @@ class BasicTypeAnnotation(Annotation):
 @annotation_mapper(Union)
 class UnionAnnotation(GenericAnnotation):
     __prior_handler__ = BasicTypeAnnotation
-    __pass_on_errors__ = [MissingFieldValuesException]
+    __pass_on_errors__ = [MissingFieldValueException]
 
-    def _handle_values(self, model_instance, values, stage):
+    def _handle_values(self, model_instance, values, stage, exceptions: ExceptionsDict):
         union_types = self._types
 
         result = type_validation(values[self._field_key], union_types)
 
         if result:
-            getattr(model_instance, NamespacesConsts.EXCEPTIONS).append(result)
+            exceptions[self.scope].append(result)
 
     def accept_operator(self, operator_visitor: ImplementationsOperatorVisitor, context: Any):
         operator_visitor.operate_union_annotation(self, context)
@@ -54,9 +54,9 @@ class UnionAnnotation(GenericAnnotation):
 @annotation_mapper(List)
 class ListAnnotation(GenericAnnotation):
     __prior_handler__ = UnionAnnotation
-    __pass_on_errors__ = [MissingFieldValuesException]
+    __pass_on_errors__ = [MissingFieldValueException]
 
-    def _handle_values(self, model_instance, values, stage):
+    def _handle_values(self, model_instance, values, stage, exceptions: ExceptionsDict):
         value = values[self._field_key]
 
         list_type = self._types
@@ -67,7 +67,7 @@ class ListAnnotation(GenericAnnotation):
                 unmatched_values.append(value)
 
         if unmatched_values:
-            getattr(model_instance, NamespacesConsts.EXCEPTIONS).append(TypeError(f'the following values are not of type {list_type} -> {unmatched_values}'))
+            exceptions[self.scope].append(TypeError(f'the following values are not of type {list_type} -> {unmatched_values}'))
 
     def accept_operator(self, operator_visitor: ImplementationsOperatorVisitor, context: Any):
         operator_visitor.operate_list_annotation(self, context)
@@ -76,9 +76,9 @@ class ListAnnotation(GenericAnnotation):
 @annotation_mapper(Dict)
 class DictAnnotation(GenericAnnotation):
     __prior_handler__ = ListAnnotation
-    __pass_on_errors__ = [MissingFieldValuesException]
+    __pass_on_errors__ = [MissingFieldValueException]
 
-    def _handle_values(self, model_instance, values, stage):
+    def _handle_values(self, model_instance, values, stage, exceptions: ExceptionsDict):
         value = values[self._field_key]
 
         key_type, value_type = self._types
@@ -89,7 +89,7 @@ class DictAnnotation(GenericAnnotation):
                 unmatched_pairs[key] = val
 
         if unmatched_pairs:
-            getattr(model_instance, NamespacesConsts.EXCEPTIONS).append(TypeError(f'{self._field_key} is not a dict of {key_type} key and {value_type} value -> {unmatched_pairs}'))
+            exceptions[self.scope].append(TypeError(f'{self._field_key} is not a dict of {key_type} key and {value_type} value -> {unmatched_pairs}'))
 
     def accept_operator(self, operator_visitor: ImplementationsOperatorVisitor, context: Any):
         operator_visitor.operate_dict_annotation(self, context)

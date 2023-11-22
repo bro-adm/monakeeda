@@ -10,7 +10,6 @@ class ComponentConsts:
 class NamespacesConsts:
     COMPONENTS = '__monkey_components__'
     STRUCT = '__monkey_struct__'
-    EXCEPTIONS = '__monkey_exceptions__'
     TMP = '__monkey_tmp__'
 
     FIELDS = 'fields'

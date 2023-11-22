@@ -51,7 +51,7 @@ class Config(ConfigurableComponent[ConfigParameter]):
     def _build(self, monkey_cls, bases, monkey_attrs, exceptions: ExceptionsDict, main_builder):
         pass
 
-    def _handle_values(self, model_instance, values, stage):
+    def _handle_values(self, model_instance, values, stage, exceptions: ExceptionsDict):
         pass
 
     def accept_operator(self, operator_visitor: OperatorVisitor, context: Any):

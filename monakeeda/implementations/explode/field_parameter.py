@@ -36,9 +36,9 @@ class ExplodeFieldParameter(FieldParameter):
                 if alias_parameter:
                     self._relevant_components.append(alias_parameter)
 
-    def _handle_values(self, model_instance, values, stage):
+    def _handle_values(self, model_instance, values, stage, exceptions: ExceptionsDict):
         for sub_component in self._relevant_components:
-            sub_component.handle_values(model_instance, values, stage)
+            sub_component.handle_values(model_instance, values, stage, exceptions)
 
         values[self._field_key] = get_wanted_params(values, self._relevant_field_keys)
 

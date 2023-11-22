@@ -6,7 +6,7 @@ from monakeeda.consts import NamespacesConsts, FieldConsts
 from ..creators import CreateFrom
 from ..implemenations_base_operator_visitor import ImplementationsOperatorVisitor
 from ..known_builders import CoreAnnotationsExtractor
-from ..missing.errors import MissingFieldValuesException
+from ..missing.errors import MissingFieldValueException
 from ...utils import get_wanted_params
 
 TModels = TypeVarTuple("TModels")
@@ -39,7 +39,7 @@ class DiscriminatorKeyNotProvidedInValues(Exception):
 
 class Discriminator(GenericAnnotation, Generic[*TModels]):
     __prior_handler__ = CreateFrom
-    __pass_on_errors__ = [MissingFieldValuesException]
+    __pass_on_errors__ = [MissingFieldValueException]
     __builders__ = [CoreAnnotationsExtractor(BaseModel)]
     __supports_infinite__ = True
 
@@ -81,14 +81,14 @@ class Discriminator(GenericAnnotation, Generic[*TModels]):
         if not exceptions:
             self._discriminator_field_key = discriminators_keys[0]
 
-    def _handle_values(self, model_instance, values, stage):
+    def _handle_values(self, model_instance, values, stage, exceptions: ExceptionsDict):
         value = values[self._field_key]
         for sub_component in self._relevant_components:
-            sub_component.handle_values(model_instance, value, stage)
+            sub_component.handle_values(model_instance, value, stage, exceptions)
 
         relevant_values = get_wanted_params(value, [self._discriminator_field_key])
         if not relevant_values:
-            getattr(model_instance, NamespacesConsts.EXCEPTIONS).append(DiscriminatorKeyNotProvidedInValues(self._discriminator_field_key))
+            exceptions[self.scope].append(DiscriminatorKeyNotProvidedInValues(self._discriminator_field_key))
 
         else:
             discriminator_value = value[self._discriminator_field_key]
@@ -96,7 +96,7 @@ class Discriminator(GenericAnnotation, Generic[*TModels]):
 
             index = self._core_types.index(monkey)
             provided_annotation = self._annotations[index]
-            provided_annotation.handle_values(model_instance, values, stage)
+            provided_annotation.handle_values(model_instance, values, stage, exceptions)
 
     def accept_operator(self, operator_visitor: ImplementationsOperatorVisitor, context: Any):
         operator_visitor.operate_list_annotation(self, context)

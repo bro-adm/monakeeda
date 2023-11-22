@@ -1,11 +1,10 @@
 from typing import Any
 
-from monakeeda.base import FieldParameter, Field
-from monakeeda.consts import NamespacesConsts
+from monakeeda.base import FieldParameter, Field, ExceptionsDict
 from ..general_annotations import ArbitraryAnnotation
 from ..implemenations_base_operator_visitor import ImplementationsOperatorVisitor
 from ..known_builders import ParameterValueTypeValidator
-from ..missing.errors import MissingFieldValuesException
+from ..missing.errors import MissingFieldValueException
 
 
 class NotAValidValue(ValueError):
@@ -20,13 +19,13 @@ class ValidValues(FieldParameter):
     __label__ = 'specific_value'
     __builders__ = [ParameterValueTypeValidator((list, tuple, set))]
     __prior_handler__ = ArbitraryAnnotation
-    __pass_on_errors__ = [MissingFieldValuesException]
+    __pass_on_errors__ = [MissingFieldValueException]
 
-    def _handle_values(self, model_instance, values, stage):
+    def _handle_values(self, model_instance, values, stage, exceptions: ExceptionsDict):
         val = values[self._field_key]
 
         if val not in self.param_val:
-            getattr(model_instance, NamespacesConsts.EXCEPTIONS).append(NotAValidValue(self.param_val, val))
+            exceptions[self.scope].append(NotAValidValue(self.param_val, val))
 
     def accept_operator(self, operator_visitor: ImplementationsOperatorVisitor, context: Any):
         operator_visitor.operate_valid_values_field_parameter(self, context)

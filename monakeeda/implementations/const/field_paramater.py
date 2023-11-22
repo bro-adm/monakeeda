@@ -1,6 +1,6 @@
 from typing import Any
 
-from monakeeda.base import FieldParameter, Field, Stages
+from monakeeda.base import FieldParameter, Field, Stages, ExceptionsDict
 from monakeeda.consts import NamespacesConsts
 from .annotation import Const
 from .exceptions import ConstError
@@ -15,15 +15,13 @@ class AllowMutation(FieldParameter):
     __builders__ = [ParameterValueTypeValidator(bool)]
     __prior_handler__ = Const
 
-    def _handle_values(self, model_instance, values, stage):
+    def _handle_values(self, model_instance, values, stage, exceptions: ExceptionsDict):
         if stage == Stages.UPDATE:
             curr_val = getattr(model_instance, self._field_key)
             new_val = values[self._field_key]
 
             if self.param_val and new_val != curr_val:
-                getattr(model_instance, NamespacesConsts.EXCEPTIONS).append(ConstError(curr_val, new_val))
-
-        return
+                exceptions[self.scope].append(ConstError(curr_val, new_val))
 
     def accept_operator(self, operator_visitor: ImplementationsOperatorVisitor, context: Any):
         operator_visitor.operate_const_field_parameter(self, context)

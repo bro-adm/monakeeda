@@ -1,6 +1,6 @@
 from typing import Any
 
-from monakeeda.base import FieldParameter, Field
+from monakeeda.base import FieldParameter, Field, ExceptionsDict
 from monakeeda.consts import NamespacesConsts
 from .annotation import Abstract
 from .exceptions import AbstractFieldFoundError
@@ -15,9 +15,9 @@ class AbstractParameter(FieldParameter):
     __builders__ = [ParameterValueTypeValidator(bool)]
     __prior_handler__ = Abstract
 
-    def _handle_values(self, model_instance, values, stage):
+    def _handle_values(self, model_instance, values, stage, exceptions: ExceptionsDict):
         if self.param_val:
-            getattr(model_instance, NamespacesConsts.EXCEPTIONS).append(AbstractFieldFoundError(self._field_key))
+            exceptions[self.scope].append(AbstractFieldFoundError(self._field_key))
 
     def accept_operator(self, operator_visitor: ImplementationsOperatorVisitor, context: Any):
         operator_visitor.operate_abstract_field_parameter(self, context)

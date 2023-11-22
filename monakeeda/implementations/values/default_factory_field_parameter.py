@@ -1,6 +1,6 @@
 from typing import Any
 
-from monakeeda.base import Field, Stages
+from monakeeda.base import Field, Stages, ExceptionsDict
 from .base import BaseValueFieldParameter
 from .default_field_parameter import DefaultFieldParameter
 from ..implemenations_base_operator_visitor import ImplementationsOperatorVisitor
@@ -13,7 +13,7 @@ class DefaultFactoryFieldParameter(BaseValueFieldParameter):
     __prior_handler__ = DefaultFieldParameter
     __builders__ = [ParameterCallableValueValidator(0)]
 
-    def _handle_values(self, model_instance, values, stage):
+    def _handle_values(self, model_instance, values, stage, exceptions: ExceptionsDict):
         if stage == Stages.INIT:
             value = values.get(self._field_key, self.param_val())
             values[self._field_key] = value

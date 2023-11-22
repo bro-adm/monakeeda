@@ -1,7 +1,7 @@
 import inspect
 from typing import Any
 
-from monakeeda.base import FieldParameter, Field
+from monakeeda.base import FieldParameter, Field, ExceptionsDict
 from .config_parameter import AliasGenerator
 from ..implemenations_base_operator_visitor import ImplementationsOperatorVisitor
 from ..known_builders import ParameterValueTypeValidator
@@ -14,7 +14,7 @@ class Alias(FieldParameter):
     __prior_handler__ = AliasGenerator
     __builders__ = [ParameterValueTypeValidator(str)]
 
-    def _handle_values(self, model_instance, values, stage):
+    def _handle_values(self, model_instance, values, stage, exceptions: ExceptionsDict):
         values.setdefault(self.param_val, inspect._empty)
         field_val_by_alias = values.pop(self.param_val)  # in order to remove the extra created field
 

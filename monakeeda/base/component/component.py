@@ -2,6 +2,7 @@ import inspect
 from abc import ABC, abstractmethod
 from typing import ClassVar, TypeVar, Type, Any
 
+from ..exceptions_manager import ExceptionsDict
 from ..interfaces import ValuesHandler, MonkeyBuilder
 from ..operator import OperatorVisitor
 
@@ -52,6 +53,9 @@ class Component(MonkeyBuilder, ValuesHandler, ABC):
     @abstractmethod
     def scope(self) -> str:
         pass
+
+    def _extract_relevant_exceptions(self, exceptions: ExceptionsDict):
+        return exceptions[self.scope]
 
     @abstractmethod
     def accept_operator(self, operator_visitor: OperatorVisitor, context: Any):

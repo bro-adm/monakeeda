@@ -1,10 +1,10 @@
 from typing import Generic, T, Any
 
-from monakeeda.base import GenericAnnotation
+from monakeeda.base import GenericAnnotation, ExceptionsDict
 from monakeeda.consts import NamespacesConsts
 from ..creators import CreateFrom
 from ..implemenations_base_operator_visitor import ImplementationsOperatorVisitor
-from ..missing.errors import MissingFieldValuesException
+from ..missing.errors import MissingFieldValueException
 
 
 class CastingError(ValueError):
@@ -15,9 +15,9 @@ class CastingError(ValueError):
 
 class Cast(GenericAnnotation, Generic[T]):
     __prior_handler__ = CreateFrom
-    __pass_on_errors__ = [MissingFieldValuesException]
+    __pass_on_errors__ = [MissingFieldValueException]
 
-    def _handle_values(self, model_instance, values, stage):
+    def _handle_values(self, model_instance, values, stage, exceptions: ExceptionsDict):
         cast_to = self._types[0]
         value = values[self._field_key]
 
@@ -25,7 +25,7 @@ class Cast(GenericAnnotation, Generic[T]):
             wanted_value = cast_to(value)
             values[self._field_key] = wanted_value
         except TypeError:
-            getattr(model_instance, NamespacesConsts.EXCEPTIONS).append(CastingError(value, cast_to))
+            exceptions[self.scope].append(CastingError(value, cast_to))
 
     def accept_operator(self, operator_visitor: ImplementationsOperatorVisitor, context: Any):
         operator_visitor.operate_cast_annotation(self, context)

@@ -1,19 +1,20 @@
 from typing import Any, _TYPING_INTERNALS, Generic
 
 from monakeeda.consts import NamespacesConsts, TmpConsts
-from monakeeda.utils import deep_update
 from monakeeda.logger import logger, STAGE, MONKEY
+from monakeeda.utils import deep_update
 from .base_components_organizer import BaseComponentsOrganizer
 from .errors import MonkeyValuesHandlingException
 from .generic_alias import MonkeyGenericAlias
 from ..annotations import AnnotationManager, annotation_mapping
+from ..component import all_components
 from ..config import ConfigManager, all_configs
 from ..decorators import DecoratorManager
+from ..exceptions_manager import ExceptionsDict
 from ..fields import FieldManager, Field, NoField
 from ..interfaces import Stages
 from ..meta import MonkeyMeta
 from ..operator import all_operators
-from ..component import all_components
 
 component_managers = [ConfigManager(all_configs), FieldManager(Field, NoField), DecoratorManager(), AnnotationManager(annotation_mapping)]
 
@@ -41,12 +42,10 @@ class BaseModel(metaclass=MonkeyMeta, component_managers=component_managers, com
         return getattr(cls, NamespacesConsts.STRUCT)
 
     def _handle_values(self, values: dict, stage):
-        exceptions = []  # pass by reference - so updates will be available
-        super(BaseModel, self).__setattr__(NamespacesConsts.EXCEPTIONS, exceptions)
-        # this is an instance level field as opposed to the class level exceptions list used in the build phase
+        exceptions = ExceptionsDict()  # pass by reference - so updates will be available
 
         for component in self.__run_organized_components__:
-            component.handle_values(self, values, stage)
+            component.handle_values(self, values, stage, exceptions)
 
         if exceptions:
             raise MonkeyValuesHandlingException(self.__class__.__name__, values, exceptions)
