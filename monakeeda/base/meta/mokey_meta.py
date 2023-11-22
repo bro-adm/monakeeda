@@ -1,10 +1,10 @@
 from abc import ABCMeta
 
-from monakeeda.consts import NamespacesConsts, ComponentConsts
+from monakeeda.consts import NamespacesConsts
 from monakeeda.logger import logger, STAGE, MONKEY
-from monakeeda.helpers import ExceptionsDict
-from .helpers import handle_class_inputs
 from .errors import MonkeyBuildException
+from .helpers import handle_class_inputs
+from ..exceptions_manager import ExceptionsDict
 
 
 class MonkeyMeta(ABCMeta):

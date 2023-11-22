@@ -4,8 +4,8 @@ from typing import Any, Union, TypeVar
 from typing_extensions import get_args, get_origin
 
 from monakeeda.consts import NamespacesConsts, FieldConsts
-from monakeeda.helpers import ExceptionsDict
 from ..component import Component
+from ..exceptions_manager import ExceptionsDict
 
 
 class Annotation(Component, ABC):

@@ -2,8 +2,8 @@ from functools import reduce
 from typing import List
 
 from monakeeda.consts import NamespacesConsts, DecoratorConsts
-from monakeeda.helpers import ExceptionsDict
 from .base_decorator import BaseDecorator
+from ..exceptions_manager import ExceptionsDict
 from ..meta import ComponentManager
 
 

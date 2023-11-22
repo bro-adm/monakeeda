@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import List
 
-from monakeeda.helpers import ExceptionsDict
+from ..exceptions_manager import ExceptionsDict
 
 
 class MonkeyBuilder(ABC):

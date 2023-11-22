@@ -1,8 +1,7 @@
 from abc import ABC
 
-from monakeeda.base import FieldParameter
+from monakeeda.base import FieldParameter, ExceptionsDict
 from monakeeda.consts import NamespacesConsts, FieldConsts
-from monakeeda.helpers import ExceptionsDict
 
 
 class BaseValueFieldParameter(FieldParameter, ABC):

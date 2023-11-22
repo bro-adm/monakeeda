@@ -2,8 +2,8 @@ from abc import ABC
 from typing import Any, List, Dict
 
 from monakeeda.consts import FieldConsts, NamespacesConsts
-from monakeeda.helpers import ExceptionsDict
 from ..component import Parameter, ConfigurableComponent
+from ..exceptions_manager import ExceptionsDict
 from ..operator import OperatorVisitor
 
 

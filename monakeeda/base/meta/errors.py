@@ -1,5 +1,4 @@
-from typing import List, Dict
-from monakeeda.helpers import ExceptionsDict
+from ..exceptions_manager import ExceptionsDict
 
 
 class MonkeyBuildException(Exception):

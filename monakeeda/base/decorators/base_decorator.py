@@ -3,7 +3,7 @@ from abc import ABC
 from monakeeda.consts import DecoratorConsts, FieldConsts, NamespacesConsts
 from monakeeda.utils import set_default_attr_if_does_not_exist
 from ..component import Component
-from ...helpers import ExceptionsDict
+from ..exceptions_manager import ExceptionsDict
 
 
 class BaseDecorator(Component, ABC):

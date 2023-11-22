@@ -2,8 +2,8 @@ from collections import OrderedDict
 from typing import List, TypeVar
 
 from monakeeda.consts import NamespacesConsts, PythonNamingConsts, TmpConsts
-from monakeeda.helpers import ExceptionsDict
 from .base_annotations import Annotation
+from ..exceptions_manager import ExceptionsDict
 from ..meta import ComponentManager
 
 

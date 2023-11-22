@@ -2,6 +2,7 @@ from .annotations import *
 from .component import *
 from .config import *
 from .decorators import *
+from .exceptions_manager import ExceptionsDict
 from .fields import *
 from .interfaces import *
 from .meta import *

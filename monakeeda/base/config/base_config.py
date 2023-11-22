@@ -1,10 +1,9 @@
 from abc import ABC
 from typing import Any
 
-from monakeeda.helpers import ExceptionsDict
 from monakeeda.consts import ComponentConsts
-
 from ..component import ConfigurableComponent, Parameter
+from ..exceptions_manager import ExceptionsDict
 from ..fields import NoField
 from ..operator import OperatorVisitor
 

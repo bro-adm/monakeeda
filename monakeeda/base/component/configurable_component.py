@@ -1,10 +1,9 @@
 from abc import ABC
 from typing import Dict, List, Type, Generic, Any, Tuple
 
-from monakeeda.consts import ComponentConsts
-from monakeeda.helpers import ExceptionsDict
 from .component import Component
 from .parameter_component import TParameter
+from ..exceptions_manager import ExceptionsDict
 from ..interfaces import MonkeyBuilder
 
 

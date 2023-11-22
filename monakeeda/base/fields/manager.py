@@ -3,8 +3,9 @@ from collections import OrderedDict
 from typing import List, Type
 
 from monakeeda.consts import FieldConsts, NamespacesConsts, PythonNamingConsts
-from monakeeda.helpers import defaultdictvalue, ExceptionsDict
+from monakeeda.helpers import defaultdictvalue
 from .base_fields import Field, FieldParameter
+from ..exceptions_manager import ExceptionsDict
 from ..meta import ConfigurableComponentManager
 
 

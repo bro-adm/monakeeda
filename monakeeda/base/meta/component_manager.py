@@ -3,8 +3,8 @@ from typing import List, Generic
 
 from monakeeda.consts import NamespacesConsts
 from monakeeda.logger import logger, STAGE, MONKEY
-from monakeeda.helpers import ExceptionsDict
 from ..component import Component, TParameter
+from ..exceptions_manager import ExceptionsDict
 from ..interfaces import MonkeyBuilder
 
 

@@ -1,9 +1,10 @@
 from typing import List
 
 from monakeeda.consts import NamespacesConsts, ConfigConsts
-from monakeeda.helpers import get_cls_attrs, ExceptionsDict
+from monakeeda.helpers import get_cls_attrs
 from .base_config import ConfigParameter
 from ..component import Component
+from ..exceptions_manager import ExceptionsDict
 from ..meta import ConfigurableComponentManager
 
 

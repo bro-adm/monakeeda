@@ -1,8 +1,7 @@
-from typing import Any, get_origin, get_args, Union
+from typing import Any, get_origin, get_args
 
-from monakeeda.base import MonkeyBuilder, Annotation, Component
+from monakeeda.base import MonkeyBuilder, Annotation, Component, ExceptionsDict
 from monakeeda.consts import NamespacesConsts
-from monakeeda.helpers import ExceptionsDict
 
 
 class CoreAnnotationNotAllowedException(Exception):

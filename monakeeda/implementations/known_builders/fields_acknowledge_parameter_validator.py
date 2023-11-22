@@ -1,9 +1,8 @@
 from abc import ABC
 from typing import Dict
 
-from monakeeda.base import MonkeyBuilder, ConfigParameter, Component
+from monakeeda.base import MonkeyBuilder, ConfigParameter, Component, ExceptionsDict
 from monakeeda.consts import NamespacesConsts, FieldConsts
-from monakeeda.helpers import ExceptionsDict
 
 
 class FieldsDontAcknowledgeParameterKeyException(Exception):

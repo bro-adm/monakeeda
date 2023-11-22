@@ -1,8 +1,7 @@
 from abc import ABC
 
-from monakeeda.base import BaseDecorator
+from monakeeda.base import BaseDecorator, ExceptionsDict
 from monakeeda.consts import NamespacesConsts, FieldConsts
-from monakeeda.helpers import ExceptionsDict
 from ..missing.errors import MissingFieldValuesException
 
 

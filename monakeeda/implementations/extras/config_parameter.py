@@ -1,9 +1,8 @@
 from enum import Enum
 from typing import Any
 
-from monakeeda.base import ConfigParameter, Config
+from monakeeda.base import ConfigParameter, Config, ExceptionsDict
 from monakeeda.consts import NamespacesConsts
-from monakeeda.helpers import ExceptionsDict
 from ..const import AllowMutation
 from ..implemenations_base_operator_visitor import ImplementationsOperatorVisitor
 from ..known_builders import ParameterValueTypeValidator
