@@ -11,7 +11,7 @@ from ..interfaces import MonkeyBuilder
 class OneComponentPerLabelAllowedException(Exception):
     def __init__(self, component: str, duplicate_labels_components: Dict[str, List[str]]):
         self.component = component
-        self.duplicate_labels_components = duplicate_labels_components  # list of component names per label
+        self.duplicate_labels_components = duplicate_labels_components
 
     def __str__(self):
         duplication_description = f"{self.component} does not allow the following components to be set together -> "
@@ -31,9 +31,9 @@ class OneComponentPerLabelValidator(MonkeyBuilder):
             label = nested_component.__label__
             if label in existing_labels:
                 duplicate_labels_components.setdefault(label, [existing_labels[label]])
-                duplicate_labels_components[label].append(nested_component.__class__.__name__)
+                duplicate_labels_components[label].append(nested_component.__key__)
             else:
-                existing_labels[label] = nested_component.__class__.__name__
+                existing_labels[label] = nested_component.__key__
 
         if duplicate_labels_components:
             key = getattr(main_builder, ComponentConsts.FIELD_KEY, None)
