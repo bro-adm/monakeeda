@@ -9,12 +9,12 @@ from ..interfaces import MonkeyBuilder
 
 
 class OneComponentPerLabelAllowedException(Exception):
-    def __init__(self, component: str, duplicate_labels_components: Dict[str, List[str]]):
-        self.component = component
+    def __init__(self, component: "ConfigurableComponent", duplicate_labels_components: Dict[str, List[str]]):
+        self.component_representor = component.representor
         self.duplicate_labels_components = duplicate_labels_components
 
     def __str__(self):
-        duplication_description = f"{self.component} does not allow the following components to be set together -> "
+        duplication_description = f"{self.component_representor} does not allow the following components to be set together -> "
 
         for label, components in self.duplicate_labels_components.items():
             duplication_description = duplication_description + f"\n\t\t Label: {label} -> {components}"
@@ -38,18 +38,18 @@ class OneComponentPerLabelValidator(MonkeyBuilder):
         if duplicate_labels_components:
             key = getattr(main_builder, ComponentConsts.FIELD_KEY, None)
             if not key:
-                key = main_builder.__class__.__name__
+                key = main_builder.representor
 
-            exceptions[key].append(OneComponentPerLabelAllowedException(main_builder.__class__.__name__, duplicate_labels_components))
+            exceptions[key].append(OneComponentPerLabelAllowedException(main_builder, duplicate_labels_components))
 
 
 class UnmatchedParameterKeysException(Exception):
-    def __init__(self, component: str, unmatched_params: dict):
-        self.component = component
+    def __init__(self, component: "ConfigurableComponent", unmatched_params: dict):
+        self.component_representor = component.representor
         self.unmatched_params = unmatched_params
 
     def __str__(self):
-        return f"{self.component} does not support the following given params -> {self.unmatched_params}"
+        return f"{self.component_representor} does not support the following given params -> {self.unmatched_params}"
 
 
 class NoUnmatchedParameterKeyValidator(MonkeyBuilder):
@@ -57,9 +57,9 @@ class NoUnmatchedParameterKeyValidator(MonkeyBuilder):
         if main_builder._unused_params:
             key = getattr(main_builder, ComponentConsts.FIELD_KEY, None)
             if not key:
-                key = main_builder.__class__.__name__
+                key = main_builder.representor
 
-            exceptions[key].append(UnmatchedParameterKeysException(main_builder.__class__.__name__, main_builder._unused_params))
+            exceptions[key].append(UnmatchedParameterKeysException(main_builder, main_builder._unused_params))
 
 
 class ConfigurableComponent(Component, Generic[TParameter], ABC):
