@@ -44,18 +44,18 @@ class CoreAnnotationsExtractor(MonkeyBuilder):
             supported_annotations.append(annotation)
         supported_core_annotations = [wrap_in_list(annotation.core_types) for annotation in supported_annotations]
 
-        is_error = False
+        found_match = False
 
         for core_annotation in set_core_annotations:
             for supported_annotation_set in supported_core_annotations:
-                if not isinstance(core_annotation, TypeVar) and not issubclass(core_annotation, tuple(supported_annotation_set)):
-                    is_error = True
+                if not isinstance(core_annotation, TypeVar) and issubclass(core_annotation, tuple(supported_annotation_set)):
+                    found_match = True
                     break
 
-            if is_error:
+            if not found_match:
                 break
 
-        if is_error:
+        if not found_match:
             exception = CoreAnnotationNotAllowedException(main_builder, supported_core_annotations, set_core_annotations)
             exceptions[main_builder.scope].append(exception)
 
