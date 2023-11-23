@@ -4,7 +4,6 @@ from monakeeda.base import Annotation, type_validation, Stages, OperatorVisitor,
     KnownAnnotations, BaseModel, ExceptionsDict
 from monakeeda.consts import NamespacesConsts, TmpConsts
 from monakeeda.implementations.general_annotations.basic_annotations import DictAnnotation
-from monakeeda.implementations.missing.errors import MissingFieldValueException
 
 
 @known_annotation_mapper(KnownAnnotations.TypeVarAnnotation, TypeVar, isinstance)
@@ -38,7 +37,6 @@ class TypeVarAnnotation(Annotation):
 @known_annotation_mapper(KnownAnnotations.ModelAnnotation, BaseModel, issubclass)
 class ModelAnnotation(Annotation):
     __prior_handler__ = TypeVarAnnotation
-    __pass_on_errors__ = [MissingFieldValueException]
 
     def _handle_values(self, model_instance, values, stage, exceptions: ExceptionsDict):
         value = values[self._field_key]
@@ -63,7 +61,6 @@ class ModelAnnotation(Annotation):
 @known_annotation_mapper(KnownAnnotations.ArbitraryAnnotation, object, issubclass)
 class ArbitraryAnnotation(Annotation):
     __prior_handler__ = ModelAnnotation
-    __pass_on_errors__ = [MissingFieldValueException]
 
     def _handle_values(self, model_instance, values, stage, exceptions: ExceptionsDict):
         result = type_validation(values[self._field_key], self.base_type)

@@ -6,7 +6,6 @@ from monakeeda.consts import NamespacesConsts, FieldConsts
 from ..creators import CreateFrom
 from ..implemenations_base_operator_visitor import ImplementationsOperatorVisitor
 from ..known_builders import CoreAnnotationsExtractor
-from ..missing.errors import MissingFieldValueException
 from ...utils import get_wanted_params
 
 TModels = TypeVarTuple("TModels")
@@ -39,7 +38,6 @@ class DiscriminatorKeyNotProvidedInValues(Exception):
 
 class Discriminator(GenericAnnotation, Generic[*TModels]):
     __prior_handler__ = CreateFrom
-    __pass_on_errors__ = [MissingFieldValueException]
     __builders__ = [CoreAnnotationsExtractor(BaseModel)]
     __supports_infinite__ = True
 

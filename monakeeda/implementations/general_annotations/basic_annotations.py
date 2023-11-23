@@ -1,16 +1,13 @@
 from typing import Union, List, Any, Dict
 
 from monakeeda.base import Annotation, annotation_mapper, GenericAnnotation, type_validation, ExceptionsDict
-from monakeeda.consts import NamespacesConsts
 from monakeeda.implementations.cast import Cast
 from monakeeda.implementations.implemenations_base_operator_visitor import ImplementationsOperatorVisitor
-from monakeeda.implementations.missing.errors import MissingFieldValueException
 
 
 @annotation_mapper(object, Any)
 class ObjectAnnotation(Annotation):
     __prior_handler__ = Cast
-    __pass_on_errors__ = [MissingFieldValueException]
 
     def _handle_values(self, model_instance, values, stage, exceptions: ExceptionsDict):
         pass
@@ -22,7 +19,6 @@ class ObjectAnnotation(Annotation):
 @annotation_mapper(int, str, list, dict)
 class BasicTypeAnnotation(Annotation):
     __prior_handler__ = ObjectAnnotation
-    __pass_on_errors__ = [MissingFieldValueException]
 
     def _handle_values(self, model_instance, values, stage, exceptions: ExceptionsDict):
         result = type_validation(values[self._field_key], self.base_type)
@@ -37,7 +33,6 @@ class BasicTypeAnnotation(Annotation):
 @annotation_mapper(Union)
 class UnionAnnotation(GenericAnnotation):
     __prior_handler__ = BasicTypeAnnotation
-    __pass_on_errors__ = [MissingFieldValueException]
 
     def _handle_values(self, model_instance, values, stage, exceptions: ExceptionsDict):
         union_types = self._types
@@ -54,7 +49,6 @@ class UnionAnnotation(GenericAnnotation):
 @annotation_mapper(List)
 class ListAnnotation(GenericAnnotation):
     __prior_handler__ = UnionAnnotation
-    __pass_on_errors__ = [MissingFieldValueException]
 
     def _handle_values(self, model_instance, values, stage, exceptions: ExceptionsDict):
         value = values[self._field_key]
@@ -76,7 +70,6 @@ class ListAnnotation(GenericAnnotation):
 @annotation_mapper(Dict)
 class DictAnnotation(GenericAnnotation):
     __prior_handler__ = ListAnnotation
-    __pass_on_errors__ = [MissingFieldValueException]
 
     def _handle_values(self, model_instance, values, stage, exceptions: ExceptionsDict):
         value = values[self._field_key]
