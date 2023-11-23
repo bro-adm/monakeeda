@@ -1,4 +1,5 @@
 from .core_annotations_extractor import CoreAnnotationsExtractor
+from .dependencies_builder import DependenciesBuilder
 from .fields_acknowledge_parameter_validator import AllFieldsAcknowledgeParameterValidator
 from .parameter_allowed_values_validator import ParameterAllowedValuesValidator
 from .parameter_callable_value_validator import ParameterCallableValueValidator
