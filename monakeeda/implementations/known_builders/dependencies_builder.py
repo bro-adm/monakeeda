@@ -16,8 +16,9 @@ class DependenciesKeysNotFieldsException(Exception):
 class DependenciesBuilder(MonkeyBuilder):
 
     def _build(self, monkey_cls, bases, monkey_attrs, exceptions: ExceptionsDict, main_builder: Component):
-
-        if main_builder.dependencies[0] == "*":
+        if not main_builder.dependencies:
+            pass
+        elif main_builder.dependencies[0] == "*":
             main_builder.dependencies = list(monkey_attrs[NamespacesConsts.STRUCT][NamespacesConsts.FIELDS].keys()).copy()
             main_builder.dependencies.remove(main_builder.scope)
         else:
