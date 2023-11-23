@@ -17,6 +17,13 @@ class Validator(BaseValidatorDecorator):
         super(Validator, self).__init__(field_key)
         self.dependencies = wrap_in_list(dependencies) if dependencies else []
 
+    def _extract_relevant_exceptions(self, exceptions: ExceptionsDict):
+        relevant_exceptions = super()._extract_relevant_exceptions(exceptions)
+        for key in self.dependencies:
+            relevant_exceptions.extend(exceptions[key])
+
+        return relevant_exceptions
+
     def _handle_values(self, model_instance, values, stage, exceptions: ExceptionsDict):
         configs = getattr(model_instance, NamespacesConsts.STRUCT)[NamespacesConsts.CONFIGS]
         fields_info = getattr(model_instance, NamespacesConsts.STRUCT)[NamespacesConsts.FIELDS]
