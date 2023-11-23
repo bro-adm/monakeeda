@@ -26,6 +26,7 @@ class FieldConsts:
     ANNOTATION = 'annotation_cls'
     VALIDATORS = 'validators'
     CREATOR = 'creator'
+    MUTATORS = 'mutators'
     DEPENDENTS = 'dependents'
     DEPENDENCIES = 'dependencies'
     COMPONENTS = 'components'

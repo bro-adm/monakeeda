@@ -1,14 +1,13 @@
 from typing import Generic, T, Any
 
 from monakeeda.base import GenericAnnotation, Stages, ExceptionsDict
-from monakeeda.consts import NamespacesConsts
 from .exceptions import ConstError
 from ..implemenations_base_operator_visitor import ImplementationsOperatorVisitor
-from ..validators import Validator
+from ..mutators import Mutator
 
 
 class Const(GenericAnnotation, Generic[T]):
-    __prior_handler__ = Validator
+    __prior_handler__ = Mutator
 
     def _handle_values(self, model_instance, values, stage, exceptions: ExceptionsDict):
         if stage == Stages.INIT:
