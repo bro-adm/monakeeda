@@ -1,7 +1,6 @@
 from abc import ABC
-from typing import Any, Union, TypeVar
 
-from typing_extensions import get_args, get_origin
+from typing_extensions import get_args
 
 from monakeeda.consts import NamespacesConsts, FieldConsts
 from ..component import Component
@@ -31,33 +30,13 @@ class Annotation(Component, ABC):
     def scope(self) -> str:
         return self._field_key
 
+    @property
+    def core_types(self):
+        return self.base_type
+
     def _build(self, monkey_cls, bases, monkey_attrs, exceptions: ExceptionsDict, main_builder):
         monkey_attrs[NamespacesConsts.STRUCT][NamespacesConsts.FIELDS][self._field_key][FieldConsts.ANNOTATION] = self
         monkey_attrs[NamespacesConsts.STRUCT][NamespacesConsts.FIELDS][self._field_key][FieldConsts.COMPONENTS].append(self)
-
-    def is_same(self, other) -> Union[Any, bool]:
-        if isinstance(other, GenericAnnotation):
-            if other.__supports_infinite__:
-                demo_annotation = get_origin(other.base_type)[(self.base_type, )]
-                demo_annotation = self._annotations_mapping[demo_annotation](self._field_key, demo_annotation, self._annotations_mapping)
-                result = demo_annotation.is_same(other)
-
-                if result:
-                    return get_args(result)
-
-                return result
-
-            annotations = other._annotations
-
-            if len(annotations) > 1:
-                return False
-
-            return self.is_same(annotations[0])
-
-        if not isinstance(other.base_type, TypeVar) and issubclass(other.base_type, self.base_type):
-            return other.base_type
-
-        return False
 
 
 class GenericAnnotation(Annotation, ABC):
@@ -94,51 +73,13 @@ class GenericAnnotation(Annotation, ABC):
 
         return annotations
 
-    def is_same(self, other) -> Union[Any, bool]:
-        scoped_annotation = get_origin(other.base_type)
-        scoped_sub_annotations = []
+    @property
+    def core_types(self):
+        types = []
+        for annotation in self._annotations:
+            types.append(annotation.core_types)
 
-        annotations = self._annotations
-
-        if isinstance(other, GenericAnnotation):
-            other_annotations = other._annotations
-
-            if len(other_annotations) == 1 and not self.__supports_infinite__:
-                return self.is_same(other_annotations[0])
-
-            elif not self.__supports_infinite__:
-                if len(annotations) != len(other_annotations):
-                    return False
-
-                annotations_zip = zip(annotations, other_annotations)
-
-                for annotation, other_annotation in annotations_zip:
-                    result = annotation.is_same(other_annotation)
-                    if not result:
-                        return False
-
-                    scoped_sub_annotations.append(result)
-
-            else:
-                for other_annotation in other_annotations:
-                    matched = False
-                    for annotation in annotations:
-                        result = annotation.is_same(other_annotation)
-
-                        if result:
-                            scoped_sub_annotations.append(result)
-                            matched = True
-                            break
-
-                    if not matched:
-                        return False
-
-            return scoped_annotation[tuple(scoped_sub_annotations)]
-
-        if len(annotations) == 1 and not self.__supports_infinite__:  # also means that other is of type Annotation
-            return annotations[0].is_same(other)
-
-        return False
+        return tuple(types) if len(types) > 1 else types[0]
 
     def __getitem__(self, item):
         return item
