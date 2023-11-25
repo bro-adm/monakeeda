@@ -1,7 +1,8 @@
 from typing import Literal, Any, get_args
 
 from monakeeda.base import annotation_mapper, Annotation, ExceptionsDict
-from monakeeda.consts import NamespacesConsts, FieldConsts, DiscriminationConsts
+from monakeeda.consts import NamespacesConsts, FieldConsts
+from .consts import DISCRIMINATION_KEY, DISCRIMINATION_VALUES, DISCRIMINATOR_NAMESPACE
 from ..implemenations_base_operator_visitor import ImplementationsOperatorVisitor
 from ..optional import OptionalAnnotation
 
@@ -10,12 +11,17 @@ from ..optional import OptionalAnnotation
 class LiteralAnnotation(Annotation):
     __prior_handler__ = OptionalAnnotation
 
+    @classmethod
+    @property
+    def label(cls) -> str:
+        return "discrimination_setup"
+
     def _build(self, monkey_cls, bases, monkey_attrs, exceptions: ExceptionsDict, main_builder):
         super()._build(monkey_cls, bases, monkey_attrs, exceptions, main_builder)
 
         monkey_attrs[NamespacesConsts.STRUCT][NamespacesConsts.FIELDS][self._field_key][FieldConsts.REQUIRED] = False
         monkey_attrs[NamespacesConsts.STRUCT][NamespacesConsts.FIELDS][self._field_key][FieldConsts.PRIVATE] = True
-        monkey_attrs[NamespacesConsts.STRUCT][NamespacesConsts.DISCRIMINATOR] = {DiscriminationConsts.FIELD_KEY: self._field_key, DiscriminationConsts.VALUES: get_args(self.base_type)}
+        monkey_attrs[NamespacesConsts.STRUCT][DISCRIMINATOR_NAMESPACE] = {DISCRIMINATION_KEY: self._field_key, DISCRIMINATION_VALUES: get_args(self.base_type)}
 
     def _handle_values(self, model_instance, values, stage, exceptions: ExceptionsDict):
         pass

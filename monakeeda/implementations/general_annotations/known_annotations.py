@@ -1,9 +1,9 @@
 from typing import Any, get_args, TypeVar
 
 from monakeeda.base import Annotation, type_validation, Stages, OperatorVisitor, known_annotation_mapper, \
-    KnownAnnotations, BaseModel, ExceptionsDict
+    KnownAnnotations, BaseMonkey, ExceptionsDict
 from monakeeda.consts import NamespacesConsts, TmpConsts
-from monakeeda.implementations.general_annotations.basic_annotations import DictAnnotation
+from .basic_annotations import DictAnnotation
 
 
 @known_annotation_mapper(KnownAnnotations.TypeVarAnnotation, TypeVar, isinstance)
@@ -26,7 +26,7 @@ class TypeVarAnnotation(Annotation):
 
     def _handle_values(self, model_instance, values, stage, exceptions: ExceptionsDict):
         instance_type = self._get_actual_type(model_instance, stage)
-        annotation = self._annotations_mapping[instance_type](self._field_key, instance_type, self._annotations_mapping)
+        annotation = self._annotations_mapping[instance_type](self.scope, instance_type, self._annotations_mapping)
 
         annotation.handle_values(model_instance, values, stage, exceptions)
 
@@ -34,17 +34,17 @@ class TypeVarAnnotation(Annotation):
         operator_visitor.operate_model_annotation(self, context)
 
 
-@known_annotation_mapper(KnownAnnotations.ModelAnnotation, BaseModel, issubclass)
+@known_annotation_mapper(KnownAnnotations.ModelAnnotation, BaseMonkey, issubclass)
 class ModelAnnotation(Annotation):
     __prior_handler__ = TypeVarAnnotation
 
     def _handle_values(self, model_instance, values, stage, exceptions: ExceptionsDict):
-        value = values[self._field_key]
+        value = values[self.scope]
 
         if isinstance(value, dict):
             try:
                 monkey = self.base_type(**value)
-                values[self._field_key] = monkey
+                values[self.scope] = monkey
             except Exception as e:
                 exceptions[self.scope].append(e)
 
@@ -63,7 +63,7 @@ class ArbitraryAnnotation(Annotation):
     __prior_handler__ = ModelAnnotation
 
     def _handle_values(self, model_instance, values, stage, exceptions: ExceptionsDict):
-        result = type_validation(values[self._field_key], self.base_type)
+        result = type_validation(values[self.scope], self.base_type)
 
         if result:
             exceptions[self.scope].append(result)

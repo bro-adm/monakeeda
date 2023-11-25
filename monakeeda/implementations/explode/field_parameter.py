@@ -1,6 +1,6 @@
 from typing import Any
 
-from monakeeda.base import FieldParameter, Field, BaseModel, get_parameter_component_by_identifier, ParameterIdentifier, \
+from monakeeda.base import FieldParameter, Field, BaseMonkey, get_parameter_component_by_identifier, ComponentIdentifier, \
     ExceptionsDict
 from monakeeda.consts import NamespacesConsts, FieldConsts
 from monakeeda.utils import get_wanted_params
@@ -12,9 +12,13 @@ from ..known_builders import ParameterValueTypeValidator, CoreAnnotationsExtract
 @Field.parameter
 class ExplodeFieldParameter(FieldParameter):
     __key__ = 'explode'
-    __label__ = 'initialization'
     __prior_handler__ = AbstractParameter
-    __builders__ = [ParameterValueTypeValidator(bool), CoreAnnotationsExtractor(BaseModel)]
+    __builders__ = [ParameterValueTypeValidator(bool), CoreAnnotationsExtractor(BaseMonkey)]
+
+    @classmethod
+    @property
+    def label(cls) -> str:
+        return "initialization_manager"
 
     def __init__(self, param_val, field_key):
         super().__init__(param_val, field_key)
@@ -31,7 +35,7 @@ class ExplodeFieldParameter(FieldParameter):
                 self._relevant_field_keys.append(sub_key)
 
                 sub_field = sub_field_info[FieldConsts.FIELD]
-                alias_parameter = get_parameter_component_by_identifier(sub_field, 'alias', ParameterIdentifier.key)
+                alias_parameter = get_parameter_component_by_identifier(sub_field, 'alias', ComponentIdentifier.key)
 
                 if alias_parameter:
                     self._relevant_components.append(alias_parameter)

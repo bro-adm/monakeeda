@@ -1,7 +1,8 @@
 from typing import Any
 
-from monakeeda.base import ConfigParameter, Config, get_parameter_component_type_by_key, ExceptionsDict
+from monakeeda.base import ConfigParameter, Config, ExceptionsDict
 from monakeeda.consts import NamespacesConsts, FieldConsts
+from ..known_scopes import KnownScopes
 from ..abstract import AbstractParameter
 from ..implemenations_base_operator_visitor import ImplementationsOperatorVisitor
 from ..known_builders import ParameterCallableValueValidator, AllFieldsAcknowledgeParameterValidator
@@ -10,14 +11,28 @@ from ..known_builders import ParameterCallableValueValidator, AllFieldsAcknowled
 @Config.parameter
 class AliasGenerator(ConfigParameter):
     __key__ = 'alias_generator'
-    __label__ = 'alias_generator'
     __prior_handler__ = AbstractParameter
     __builders__ = [ParameterCallableValueValidator(1), AllFieldsAcknowledgeParameterValidator('alias')]
+
+    @classmethod
+    @property
+    def label(cls) -> str:
+        return 'aliases_generation'
+
+    @property
+    def scope(self) -> str:
+        return KnownScopes.ParametersGenerators
+
+    def is_collision(self, other) -> bool:
+        super().is_collision(other)
+        return False
 
     def _handle_values(self, model_instance, values, stage, exceptions: ExceptionsDict):
         pass
 
     def _build(self, monkey_cls, bases, monkey_attrs, exceptions: ExceptionsDict, main_builder):
+        super()._build(monkey_cls, bases, monkey_attrs, exceptions, main_builder)
+
         for field_key, field_info in monkey_attrs[NamespacesConsts.STRUCT][NamespacesConsts.FIELDS].items():
             field = field_info[FieldConsts.FIELD]
             alias_parameter_type = get_parameter_component_type_by_key(field, 'alias')

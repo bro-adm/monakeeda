@@ -3,6 +3,7 @@ from typing import Any
 
 from monakeeda.base import ConfigParameter, Config, ExceptionsDict
 from monakeeda.consts import NamespacesConsts
+from ..known_scopes import KnownScopes
 from ..const import AllowMutation
 from ..implemenations_base_operator_visitor import ImplementationsOperatorVisitor
 from ..known_builders import ParameterValueTypeValidator
@@ -17,9 +18,17 @@ class Extras(Enum):
 @Config.parameter
 class ExtrasParameter(ConfigParameter):
     __key__ = 'extra'
-    __label__ = 'extras'
     __builders__ = [ParameterValueTypeValidator(Extras)]
     __prior_handler__ = AllowMutation
+
+    @classmethod
+    @property
+    def label(cls) -> str:
+        return "finalizer"
+
+    @property
+    def scope(self) -> str:
+        return KnownScopes.ValuesManager
 
     def _handle_values(self, model_instance, values, stage, exceptions: ExceptionsDict):
         if self.param_val != Extras.ALLOW:

@@ -5,7 +5,11 @@ from monakeeda.consts import NamespacesConsts, FieldConsts
 
 
 class BaseCreatorDecorator(BaseDecorator, ABC):
+    @classmethod
+    @property
+    def label(cls) -> str:
+        return "value_creators"
+
     def _build(self, monkey_cls, bases, monkey_attrs, exceptions: ExceptionsDict, main_builder):
         super()._build(monkey_cls, bases, monkey_attrs, exceptions, main_builder)
-        monkey_attrs[NamespacesConsts.STRUCT][NamespacesConsts.FIELDS][self._field_key].update({FieldConsts.CREATOR: self, FieldConsts.REQUIRED: False})
-
+        monkey_attrs[NamespacesConsts.STRUCT][NamespacesConsts.FIELDS][self._field_key][FieldConsts.REQUIRED] = False

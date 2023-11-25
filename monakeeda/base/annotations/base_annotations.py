@@ -2,9 +2,7 @@ from abc import ABC
 
 from typing_extensions import get_args
 
-from monakeeda.consts import NamespacesConsts, FieldConsts
 from ..component import Component
-from ..exceptions_manager import ExceptionsDict
 
 
 class Annotation(Component, ABC):
@@ -22,6 +20,11 @@ class Annotation(Component, ABC):
         self.base_type = base_type
         self._annotations_mapping = annotations_mapping
 
+    @classmethod
+    @property
+    def label(cls) -> str:
+        return "type_validator"  # default implementation
+
     @property
     def representor(self) -> str:
         return self.__class__.__name__
@@ -33,10 +36,6 @@ class Annotation(Component, ABC):
     @property
     def core_types(self):
         return self.base_type
-
-    def _build(self, monkey_cls, bases, monkey_attrs, exceptions: ExceptionsDict, main_builder):
-        monkey_attrs[NamespacesConsts.STRUCT][NamespacesConsts.FIELDS][self._field_key][FieldConsts.ANNOTATION] = self
-        monkey_attrs[NamespacesConsts.STRUCT][NamespacesConsts.FIELDS][self._field_key][FieldConsts.COMPONENTS].append(self)
 
 
 class GenericAnnotation(Annotation, ABC):

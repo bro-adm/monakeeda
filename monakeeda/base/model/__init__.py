@@ -4,4 +4,5 @@ not override the metaclass functions -> not like regular extension. a class that
 still inherit from other classes as long as their meta classes come from the same base metaclass...
 """
 
-from .base_model import BaseModel
+from .base_monkey import BaseMonkey
+from .errors import MonkeyValuesHandlingException

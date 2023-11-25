@@ -1,8 +1,8 @@
 from typing import Any
 
 from monakeeda.base import FieldParameter, Field, Stages, ExceptionsDict
-from monakeeda.consts import NamespacesConsts
 from .annotation import Const
+from .consts import MUTATION_MANAGER
 from .exceptions import ConstError
 from ..implemenations_base_operator_visitor import ImplementationsOperatorVisitor
 from ..known_builders import ParameterValueTypeValidator
@@ -11,9 +11,13 @@ from ..known_builders import ParameterValueTypeValidator
 @Field.parameter
 class AllowMutation(FieldParameter):
     __key__ = 'const'
-    __label__ = 'mutation'
     __builders__ = [ParameterValueTypeValidator(bool)]
     __prior_handler__ = Const
+
+    @classmethod
+    @property
+    def label(cls) -> str:
+        return MUTATION_MANAGER
 
     def _handle_values(self, model_instance, values, stage, exceptions: ExceptionsDict):
         if stage == Stages.UPDATE:

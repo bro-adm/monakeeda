@@ -8,7 +8,7 @@ from ..component import Component
 from ..meta import ComponentsOrganizer
 
 
-class BaseComponentsOrganizer(ComponentsOrganizer):
+class MonkeyComponentsOrganizer(ComponentsOrganizer):
     """
     The Main organizer logic.
 

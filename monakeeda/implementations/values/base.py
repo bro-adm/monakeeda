@@ -5,7 +5,10 @@ from monakeeda.consts import NamespacesConsts, FieldConsts
 
 
 class BaseValueFieldParameter(FieldParameter, ABC):
-    __label__ = 'value_provider'
+    @classmethod
+    @property
+    def label(cls) -> str:
+        return "value_provider"
 
     def _build(self, monkey_cls, bases, monkey_attrs, exceptions: ExceptionsDict, main_builder):
         super(BaseValueFieldParameter, self)._build(monkey_cls, bases, monkey_attrs, exceptions, main_builder)

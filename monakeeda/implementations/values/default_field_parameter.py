@@ -8,7 +8,7 @@ from ..implemenations_base_operator_visitor import ImplementationsOperatorVisito
 
 @Field.parameter
 class DefaultFieldParameter(BaseValueFieldParameter):
-    __key__: str = 'default'
+    __key__ = 'default'
     __prior_handler__ = ValueFieldParameter
 
     def _handle_values(self, model_instance, values, stage, exceptions: ExceptionsDict):

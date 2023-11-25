@@ -1,8 +1,10 @@
 from typing import Any, Generic, TypeVarTuple, List, Type
 
-from monakeeda.base import BaseModel, GenericAnnotation, get_parameter_component_by_identifier, ParameterIdentifier, \
+from monakeeda.base import BaseMonkey, GenericAnnotation, \
     ExceptionsDict
 from monakeeda.consts import NamespacesConsts, FieldConsts
+from .consts import DISCRIMINATOR_NAMESPACE
+from .exceptions import DiscriminatorKeyNotProvidedInValues, GivenModelsDoNotHaveADiscriminator, GivenModelsHaveMoreThanOneDiscriminationKey
 from ..creators import CreateFrom
 from ..implemenations_base_operator_visitor import ImplementationsOperatorVisitor
 from ..known_builders import CoreAnnotationsExtractor
@@ -11,35 +13,15 @@ from ...utils import get_wanted_params
 TModels = TypeVarTuple("TModels")
 
 
-class GivenModelsDoNotHaveADiscriminator(Exception):
-    def __init__(self, models: List[Type[BaseModel]]):
-        self.models = models
-
-    def __str__(self):
-        return f"Discriminator provided with models that do not set a Literal for discrimination purposes -> {self.models}"
-
-
-class GivenModelsHaveMoreThanOneDiscriminationKey(Exception):
-    def __init__(self, models: List[Type[BaseModel]], keys: List[str]):
-        self.models = models
-        self.keys = keys
-
-    def __str__(self):
-        return f"Discriminator provided with models that have more then one discrimination key -> {list(zip(self.models, self.keys))}"
-
-
-class DiscriminatorKeyNotProvidedInValues(Exception):
-    def __init__(self, key: str):
-        self.key = key
-
-    def __str__(self):
-        return f"{self.key} was not provided for discrimination purposes"
-
-
 class Discriminator(GenericAnnotation, Generic[*TModels]):
     __prior_handler__ = CreateFrom
-    __builders__ = [CoreAnnotationsExtractor(BaseModel)]
+    __builders__ = [CoreAnnotationsExtractor(BaseMonkey)]
     __supports_infinite__ = True
+
+    @classmethod
+    @property
+    def label(cls) -> str:
+        return "discrimination_manager"
 
     def __init__(self, field_key, base_type, annotations_mapping):
         super().__init__(field_key, base_type, annotations_mapping)
@@ -55,8 +37,8 @@ class Discriminator(GenericAnnotation, Generic[*TModels]):
         discriminators_keys = []
 
         for sub_type in self._core_types:
-            sub_type.struct.setdefault(NamespacesConsts.DISCRIMINATOR, None)
-            discriminator_info = sub_type.struct[NamespacesConsts.DISCRIMINATOR]
+            sub_type.struct.setdefault(DISCRIMINATOR_NAMESPACE, None)
+            discriminator_info = sub_type.struct[DISCRIMINATOR_NAMESPACE]
 
             if not discriminator_info:
                 unavailable_discriminator.append(sub_type)
@@ -66,7 +48,7 @@ class Discriminator(GenericAnnotation, Generic[*TModels]):
                 self._monkey_mappings.update({value: sub_type for value in values})
 
                 sub_field = sub_type.struct[NamespacesConsts.FIELDS][field_key][FieldConsts.FIELD]
-                alias_parameter = get_parameter_component_by_identifier(sub_field, 'alias', ParameterIdentifier.key)
+                alias_parameter = get_parameter_component_by_identifier(sub_field, 'alias', ComponentIdentifier.key)
 
                 if alias_parameter:
                     self._relevant_components.append(alias_parameter)

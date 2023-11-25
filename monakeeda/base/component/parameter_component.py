@@ -1,14 +1,8 @@
 from abc import ABC
-from enum import Enum
 from typing import ClassVar, TypeVar, Type
 
+from monakeeda.utils import capitalize_words
 from .component import Component
-from ...utils import capitalize_words
-
-
-class ParameterIdentifier(Enum):
-    key = '__key__'
-    label = '__label__'
 
 
 class Parameter(Component, ABC):
@@ -18,7 +12,6 @@ class Parameter(Component, ABC):
     """
 
     __key__: ClassVar[str]  # key for setting value
-    __label__: ClassVar[str]  # concept - multiple parameters can be responsible for the same goal (e.g. default & default_factory)
 
     def __init__(self, param_val):
         self.param_val = param_val

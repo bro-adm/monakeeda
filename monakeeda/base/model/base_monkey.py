@@ -3,7 +3,8 @@ from typing import Any, _TYPING_INTERNALS, Generic
 from monakeeda.consts import NamespacesConsts, TmpConsts
 from monakeeda.logger import logger, STAGE, MONKEY
 from monakeeda.utils import deep_update
-from .base_components_organizer import BaseComponentsOrganizer
+from .monkey_components_organizer import MonkeyComponentsOrganizer
+from .monkey_scopes_manager import MonkeyScopesManager
 from .errors import MonkeyValuesHandlingException
 from .generic_alias import MonkeyGenericAlias
 from ..annotations import AnnotationManager, annotation_mapping
@@ -19,7 +20,7 @@ from ..operator import all_operators
 component_managers = [ConfigManager(all_configs), FieldManager(Field, NoField), DecoratorManager(), AnnotationManager(annotation_mapping)]
 
 
-class BaseModel(metaclass=MonkeyMeta, component_managers=component_managers, component_organizer=BaseComponentsOrganizer(all_components), operators_visitors=all_operators):
+class BaseMonkey(metaclass=MonkeyMeta, component_managers=component_managers, scopes_manager=MonkeyScopesManager(), component_organizer=MonkeyComponentsOrganizer(all_components), operators_visitors=all_operators):
     """
     Responsible for holding the PURE run of all the logics combined without being dependent on any specific compartment.
 
@@ -41,6 +42,11 @@ class BaseModel(metaclass=MonkeyMeta, component_managers=component_managers, com
     def struct(cls) -> dict:
         return getattr(cls, NamespacesConsts.STRUCT)
 
+    @classmethod
+    @property
+    def scopes(cls) -> dict:
+        return getattr(cls, NamespacesConsts.SCOPES)
+
     def _handle_values(self, values: dict, stage):
         exceptions = ExceptionsDict()  # pass by reference - so updates will be available
 
@@ -51,7 +57,7 @@ class BaseModel(metaclass=MonkeyMeta, component_managers=component_managers, com
             raise MonkeyValuesHandlingException(self.__class__.__name__, values, exceptions)
 
         for key in values:
-            super(BaseModel, self).__setattr__(key, values[key])
+            super(BaseMonkey, self).__setattr__(key, values[key])
 
     def __init__(self, **kwargs):
         self._handle_values(kwargs, Stages.INIT)

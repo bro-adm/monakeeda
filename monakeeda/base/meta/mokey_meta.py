@@ -1,9 +1,11 @@
 from abc import ABCMeta
+from collections import defaultdict
 
 from monakeeda.consts import NamespacesConsts
 from monakeeda.logger import logger, STAGE, MONKEY
 from .errors import MonkeyBuildException
 from .helpers import handle_class_inputs
+from ..scope import ScopeDict
 from ..exceptions_manager import ExceptionsDict
 
 
@@ -23,6 +25,7 @@ class MonkeyMeta(ABCMeta):
 
     def __new__(mcs, name, bases, attrs, **_):
         attrs[NamespacesConsts.STRUCT] = {}
+        attrs[NamespacesConsts.SCOPES] = defaultdict(lambda: ScopeDict(), {})
         attrs[NamespacesConsts.COMPONENTS] = []
         attrs[NamespacesConsts.TMP] = {}
 
@@ -32,8 +35,8 @@ class MonkeyMeta(ABCMeta):
         cls = super(MonkeyMeta, mcs).__new__(mcs, name, bases, attrs)
         return cls
 
-    def __init__(cls, name, bases, attrs, component_managers=None, component_organizer=None, operators_visitors=None):
-        handle_class_inputs(cls, bases, component_managers=component_managers, component_organizer=component_organizer, operators_visitors=operators_visitors)
+    def __init__(cls, name, bases, attrs, component_managers=None, scopes_manager=None, component_organizer=None, operators_visitors=None):
+        handle_class_inputs(cls, bases, component_managers=component_managers, scopes_manager=scopes_manager, component_organizer=component_organizer, operators_visitors=operators_visitors)
 
         super(MonkeyMeta, cls).__init__(name, bases, attrs)
 
@@ -52,6 +55,8 @@ class MonkeyMeta(ABCMeta):
         for component_type, components in cls.__type_organized_components__.items():
             for component in components:
                 component.build(cls, bases, attrs, build_exceptions)
+
+        cls.__scopes_manager__.build(cls, bases, attrs, build_exceptions)
 
         if build_exceptions:
             raise MonkeyBuildException(name, build_exceptions)

@@ -7,38 +7,6 @@ from ..exceptions_manager import ExceptionsDict
 from ..interfaces import MonkeyBuilder
 
 
-class OneComponentPerLabelAllowedException(Exception):
-    def __init__(self, component: "ConfigurableComponent", duplicate_labels_components: Dict[str, List[str]]):
-        self.component_representor = component.representor
-        self.duplicate_labels_components = duplicate_labels_components
-
-    def __str__(self):
-        duplication_description = f"{self.component_representor} does not allow the following components to be set together -> "
-
-        for label, components in self.duplicate_labels_components.items():
-            duplication_description = duplication_description + f"\n\t\t Label: {label} -> {components}"
-
-        return duplication_description
-
-
-class OneComponentPerLabelValidator(MonkeyBuilder):
-    def _build(self, monkey_cls, bases, monkey_attrs, exceptions: ExceptionsDict, main_builder: "ConfigurableComponent"):
-        existing_labels: Dict[str, str] = {}
-        duplicate_labels_components: Dict[str, List[str]] = {}
-
-        for nested_component in main_builder._parameters:
-            label = nested_component.__label__
-            if label in existing_labels:
-                duplicate_labels_components.setdefault(label, [existing_labels[label]])
-                duplicate_labels_components[label].append(nested_component.__key__)
-            else:
-                existing_labels[label] = nested_component.__key__
-
-        if duplicate_labels_components:
-            exception = OneComponentPerLabelAllowedException(main_builder, duplicate_labels_components)
-            exceptions[main_builder.scope].append(exception)
-
-
 class UnmatchedParameterKeysException(Exception):
     def __init__(self, component: "ConfigurableComponent", unmatched_params: dict):
         self.component_representor = component.representor
@@ -68,7 +36,7 @@ class ConfigurableComponent(Component, Generic[TParameter], ABC):
     The Component Managers are the ones to actually use this hidden API and actually start the class.
     """
 
-    __builders__: List[MonkeyBuilder] = [OneComponentPerLabelValidator(), NoUnmatchedParameterKeyValidator()]
+    __builders__: List[MonkeyBuilder] = [NoUnmatchedParameterKeyValidator()]
     __parameter_components__: List[Type[TParameter]] = []
 
     @classmethod
@@ -105,6 +73,15 @@ class ConfigurableComponent(Component, Generic[TParameter], ABC):
 
         if copy_parameter_components:
             cls.__parameter_components__ = cls.__parameter_components__.copy()
+
+    @classmethod
+    @property
+    def label(cls) -> str:
+        return cls.__name__
+
+    @property
+    def representor(self) -> str:
+        return self.__class__.__name__
 
     @classmethod
     def override_init(cls, parameters: List[TParameter], unused_params: Dict[str, Any]):

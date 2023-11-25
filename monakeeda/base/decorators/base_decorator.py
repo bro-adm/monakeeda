@@ -1,9 +1,8 @@
 from abc import ABC
 
-from monakeeda.consts import DecoratorConsts, FieldConsts, NamespacesConsts
+from monakeeda.consts import DecoratorConsts
 from monakeeda.utils import set_default_attr_if_does_not_exist
 from ..component import Component
-from ..exceptions_manager import ExceptionsDict
 
 
 class BaseDecorator(Component, ABC):
@@ -25,9 +24,6 @@ class BaseDecorator(Component, ABC):
     @property
     def scope(self) -> str:
         return self._field_key
-
-    def _build(self, monkey_cls, bases, monkey_attrs, exceptions: ExceptionsDict, main_builder):
-        monkey_attrs[NamespacesConsts.STRUCT][NamespacesConsts.FIELDS][self._field_key][FieldConsts.COMPONENTS].append(self)
 
     def _set_func_landscape(self):
         # Adds the decorator class instance to the function attributes for further usage in the DecoratorMainComponent

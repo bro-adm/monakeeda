@@ -1,8 +1,8 @@
 from typing import Union, List, Any, Dict
 
 from monakeeda.base import Annotation, annotation_mapper, GenericAnnotation, type_validation, ExceptionsDict
-from monakeeda.implementations.cast import Cast
-from monakeeda.implementations.implemenations_base_operator_visitor import ImplementationsOperatorVisitor
+from ..cast import Cast
+from ..implemenations_base_operator_visitor import ImplementationsOperatorVisitor
 
 
 @annotation_mapper(object, Any)
@@ -21,7 +21,7 @@ class BasicTypeAnnotation(Annotation):
     __prior_handler__ = ObjectAnnotation
 
     def _handle_values(self, model_instance, values, stage, exceptions: ExceptionsDict):
-        result = type_validation(values[self._field_key], self.base_type)
+        result = type_validation(values[self.scope], self.base_type)
 
         if result:
             exceptions[self.scope].append(result)
@@ -37,7 +37,7 @@ class UnionAnnotation(GenericAnnotation):
     def _handle_values(self, model_instance, values, stage, exceptions: ExceptionsDict):
         union_types = self._types
 
-        result = type_validation(values[self._field_key], union_types)
+        result = type_validation(values[self.scope], union_types)
 
         if result:
             exceptions[self.scope].append(result)
@@ -51,7 +51,7 @@ class ListAnnotation(GenericAnnotation):
     __prior_handler__ = UnionAnnotation
 
     def _handle_values(self, model_instance, values, stage, exceptions: ExceptionsDict):
-        value = values[self._field_key]
+        value = values[self.scope]
 
         list_type = self._types
         unmatched_values = []
@@ -72,7 +72,7 @@ class DictAnnotation(GenericAnnotation):
     __prior_handler__ = ListAnnotation
 
     def _handle_values(self, model_instance, values, stage, exceptions: ExceptionsDict):
-        value = values[self._field_key]
+        value = values[self.scope]
 
         key_type, value_type = self._types
         unmatched_pairs = {}

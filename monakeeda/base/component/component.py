@@ -1,6 +1,6 @@
 import inspect
 from abc import ABC, abstractmethod
-from typing import ClassVar, TypeVar, Type, Any
+from typing import ClassVar, TypeVar, Type, Any, List
 
 from ..exceptions_manager import ExceptionsDict
 from ..interfaces import ValuesHandler, MonkeyBuilder
@@ -44,6 +44,12 @@ class Component(MonkeyBuilder, ValuesHandler, ABC):
             else:
                 all_components.append(cls)
 
+    @classmethod
+    @property
+    @abstractmethod
+    def label(cls) -> str:
+        pass
+
     @property
     @abstractmethod
     def representor(self) -> str:
@@ -54,12 +60,21 @@ class Component(MonkeyBuilder, ValuesHandler, ABC):
     def scope(self) -> str:
         pass
 
-    def _extract_relevant_exceptions(self, exceptions: ExceptionsDict):
-        return exceptions[self.scope]
+    def _extract_relevant_exceptions(self, exceptions: ExceptionsDict) -> List[Exception]:
+        return exceptions[self.scope]  # default implementation
+
+    def is_collision(self, other) -> bool:
+        if self.label != other.label:
+            raise NotImplemented
+
+        return True  # default implementation
 
     @abstractmethod
     def accept_operator(self, operator_visitor: OperatorVisitor, context: Any):
         pass
+
+    def _build(self, monkey_cls, bases, monkey_attrs, exceptions: ExceptionsDict, main_builder):
+        monkey_cls.scopes[self.scope][self.label].append(self)
 
 
 TComponent = TypeVar('TComponent', bound=Type[Component])

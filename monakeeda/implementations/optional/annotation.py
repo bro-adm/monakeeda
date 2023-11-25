@@ -10,6 +10,11 @@ from ..values import DefaultFactoryFieldParameter
 class OptionalAnnotation(GenericAnnotation):
     __prior_handler__ = DefaultFactoryFieldParameter
 
+    @classmethod
+    @property
+    def label(cls) -> str:
+        return "requirement_manager"
+
     def _handle_values(self, model_instance, values, stage, exceptions: ExceptionsDict):
         if self._field_key in values:
             self._annotations[0].handle_values(model_instance, values, stage, exceptions)
