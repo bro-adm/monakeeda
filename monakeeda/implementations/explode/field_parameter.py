@@ -1,6 +1,6 @@
 from typing import Any
 
-from monakeeda.base import FieldParameter, Field, BaseMonkey, get_parameter_component_by_identifier, ComponentIdentifier, \
+from monakeeda.base import FieldParameter, Field, BaseMonkey, get_scoped_components_by_label, \
     ExceptionsDict
 from monakeeda.consts import NamespacesConsts, FieldConsts
 from monakeeda.utils import get_wanted_params
@@ -33,18 +33,13 @@ class ExplodeFieldParameter(FieldParameter):
         for core_type in self._core_types:
             for sub_key, sub_field_info in core_type.struct[NamespacesConsts.FIELDS].items():
                 self._relevant_field_keys.append(sub_key)
-
-                sub_field = sub_field_info[FieldConsts.FIELD]
-                alias_parameter = get_parameter_component_by_identifier(sub_field, 'alias', ComponentIdentifier.key)
-
-                if alias_parameter:
-                    self._relevant_components.append(alias_parameter)
+                self._relevant_components.extend(get_scoped_components_by_label(core_type, sub_key, 'alias'))
 
     def _handle_values(self, model_instance, values, stage, exceptions: ExceptionsDict):
         for sub_component in self._relevant_components:
             sub_component.handle_values(model_instance, values, stage, exceptions)
 
-        values[self._field_key] = get_wanted_params(values, self._relevant_field_keys)
+        values[self.scope] = get_wanted_params(values, self._relevant_field_keys)
 
     def accept_operator(self, operator_visitor: ImplementationsOperatorVisitor, context: Any):
         operator_visitor.operate_alias_field_parameter(self, context)

@@ -1,8 +1,6 @@
-from typing import Any, Generic, TypeVarTuple, List, Type
+from typing import Any, Generic, TypeVarTuple
 
-from monakeeda.base import BaseMonkey, GenericAnnotation, \
-    ExceptionsDict
-from monakeeda.consts import NamespacesConsts, FieldConsts
+from monakeeda.base import BaseMonkey, GenericAnnotation, ExceptionsDict, get_scoped_components_by_label
 from .consts import DISCRIMINATOR_NAMESPACE
 from .exceptions import DiscriminatorKeyNotProvidedInValues, GivenModelsDoNotHaveADiscriminator, GivenModelsHaveMoreThanOneDiscriminationKey
 from ..creators import CreateFrom
@@ -46,12 +44,7 @@ class Discriminator(GenericAnnotation, Generic[*TModels]):
                 field_key, values = discriminator_info.values()
                 discriminators_keys.append(field_key)
                 self._monkey_mappings.update({value: sub_type for value in values})
-
-                sub_field = sub_type.struct[NamespacesConsts.FIELDS][field_key][FieldConsts.FIELD]
-                alias_parameter = get_parameter_component_by_identifier(sub_field, 'alias', ComponentIdentifier.key)
-
-                if alias_parameter:
-                    self._relevant_components.append(alias_parameter)
+                self._relevant_components.extend(get_scoped_components_by_label(sub_type, field_key, 'alias'))
 
         if unavailable_discriminator:
             exceptions[self._field_key].append(GivenModelsDoNotHaveADiscriminator(unavailable_discriminator))
