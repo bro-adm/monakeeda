@@ -2,4 +2,5 @@ from .gt_constraint import GTNumericConstraintFieldParameter
 from .gte_constraint import GTENumericConstraintFieldParameter
 from .lt_constraint import LTNumericConstraintFieldParameter
 from .lte_constraint import LTENumericConstraintFieldParameter
+from .negative_annotation import Negative
 from .positive_annotation import Positive

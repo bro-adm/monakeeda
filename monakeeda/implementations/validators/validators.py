@@ -6,11 +6,11 @@ from monakeeda.utils import get_wanted_params, wrap_in_list
 from .base_decorator import BaseValidatorDecorator
 from ..implemenations_base_operator_visitor import ImplementationsOperatorVisitor
 from ..known_builders import DependenciesBuilder
-from ..valid_values import ValidValues
+from ..numeric_constraints import Negative
 
 
 class Validator(BaseValidatorDecorator):
-    __prior_handler__ = ValidValues
+    __prior_handler__ = Negative
     __builders__ = [DependenciesBuilder()]
 
     def __init__(self, field_key: str, dependencies: Union[list, str] = None):
