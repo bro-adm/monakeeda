@@ -1,9 +1,9 @@
-import inspect
 from collections import OrderedDict
+from functools import reduce
 from itertools import islice
 from typing import List, Dict, Type, Optional, Tuple
 
-from monakeeda.consts import NamespacesConsts, FieldConsts, ComponentConsts
+from monakeeda.consts import NamespacesConsts, FieldConsts
 from ..component import Component
 from ..meta import ComponentsOrganizer
 
@@ -17,7 +17,7 @@ class MonkeyComponentsOrganizer(ComponentsOrganizer):
     The per method docs are great :)
     """
 
-    def __init__(self, ordered_component_types: List[Component]):
+    def __init__(self, ordered_component_types: List[Type[Component]]):
         self._ordered_component_types = ordered_component_types
 
     def order_by_chain_of_responsibility(self, monkey_components: List[Component]) -> Dict[Type[Component], List[Component]]:
@@ -34,19 +34,19 @@ class MonkeyComponentsOrganizer(ComponentsOrganizer):
 
         return ordered_dict
 
-    def _is_attr_level_component(self, components: List[Component]) -> Optional[bool]:
+    def _is_attr_level_component(self, monkey_cls, components: List[Component]) -> Optional[bool]:
         if components:
-            return getattr(components[0], ComponentConsts.FIELD_KEY, inspect._empty) != inspect._empty
+            return components[0].scope in monkey_cls.struct[NamespacesConsts.FIELDS].keys()
 
         return
 
-    def _find_next_global_scoped_component_type(self, monkey_type_organized_components: Dict[Type[Component], List[Component]]) -> Tuple[Type[Component], int]:
+    def _find_next_global_scoped_component_type(self, monkey_cls, monkey_type_organized_components: Dict[Type[Component], List[Component]]) -> Tuple[Optional[Type[Component]], int]:
         index = -1
 
         for component_type, components in monkey_type_organized_components.items():
             index += 1
 
-            if self._is_attr_level_component(components) is False:
+            if self._is_attr_level_component(monkey_cls, components) is False:
                 return component_type, index
 
         return None, -1
@@ -74,7 +74,7 @@ class MonkeyComponentsOrganizer(ComponentsOrganizer):
                 organized.extend(organized_dependencies)
                 processed_fields.extend(processed_dependencies)
 
-        attr_components = monkey_cls.struct[NamespacesConsts.FIELDS][field_key][FieldConsts.COMPONENTS]
+        attr_components = reduce(lambda x1, x2: [*x1, *x2], monkey_cls.scopes[field_key].values(), [])
         attr_components = [component for component in attr_components if type(component) in attrs_scoped_organized_components.keys()]
 
         organized.extend(attr_components)
@@ -97,7 +97,7 @@ class MonkeyComponentsOrganizer(ComponentsOrganizer):
 
         for component_type, components in attrs_scoped_organized_components.items():
             for component in components:
-                field_key = component._field_key
+                field_key = component.scope
 
                 if field_key not in processed_attrs:
                     _organized, _processed_attrs = self._order_attr_scoped_components_for_instance_operation_per_field(field_key, monkey_cls, attrs_scoped_organized_components)
@@ -124,7 +124,7 @@ class MonkeyComponentsOrganizer(ComponentsOrganizer):
 
         organized_components = []
 
-        next_global_component_type, next_index = self._find_next_global_scoped_component_type(monkey_type_organized_components)
+        next_global_component_type, next_index = self._find_next_global_scoped_component_type(monkey_cls, monkey_type_organized_components)
         if next_index == -1:
             next_index = len(monkey_type_organized_components)
 
