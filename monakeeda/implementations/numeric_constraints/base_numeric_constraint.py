@@ -1,22 +1,27 @@
-# from abc import ABC
-# from typing import Union
-#
-# from monakeeda.base import Component, FieldParameter, BaseModel
-# from ..known_builders import ParameterValueTypeValidator, CoreAnnotationsExtractor
-# from ..discriminator import Discriminator
-# from ..cast import Cast
-#
-#
-# class NumericConstraintFieldParameter(FieldParameter, ABC):
-#     __builders__ = [ParameterValueTypeValidator((int, float)), CoreAnnotationsExtractor(int, float)]
-#     # __builders__ = [ParameterValueTypeValidator((int, float)), CoreAnnotationsExtractor(Cast)]
-#
-#
-# class NumericConstraintFailedException(ValueError):
-#     def __init__(self, component: Component, constraint_value: Union[int, float], provided_value: Union[int, float]):
-#         self.component_representor = component.representor
-#         self.constraint_value = constraint_value
-#         self.provided_value = provided_value
-#
-#     def __str__(self):
-#         return f"{self.component_representor} constraint of {self.constraint_value} not matched -> provided {self.provided_value}"
+from abc import ABC
+
+from monakeeda.base import FieldParameter
+from ..known_builders import ParameterValueTypeValidator, CoreAnnotationsExtractor
+from .helpers import constraint_collisions_validation
+
+
+class NumericConstraintFieldParameter(FieldParameter, ABC):
+    __builders__ = [ParameterValueTypeValidator((int, float)), CoreAnnotationsExtractor(int, float)]
+
+    @classmethod
+    @property
+    def label(cls) -> str:
+        return "numeric_constraint"
+
+    @property
+    def representor(self) -> str:
+        return self.__key__
+
+    def is_collision(self, other) -> bool:
+        super().is_collision(other)
+
+        key1, val1 = self.__key__, self.param_val
+        key2, val2 = other.__key__, other.param_val
+
+        is_valid = constraint_collisions_validation[(key1, key2)](val1, val2) if (key1, key2) in constraint_collisions_validation else constraint_collisions_validation[(key2, key1)](val2, val1)
+        return not is_valid
