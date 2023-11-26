@@ -39,6 +39,11 @@ class Field(ConfigurableComponent[FieldParameter]):
     Allows override of a Field class "type" by class name.
     """
 
+    @classmethod
+    @property
+    def label(cls) -> str:
+        return "field"
+
     @property
     def scope(self) -> str:
         return self._field_key

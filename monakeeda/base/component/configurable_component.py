@@ -77,7 +77,7 @@ class ConfigurableComponent(Component, Generic[TParameter], ABC):
     @classmethod
     @property
     def label(cls) -> str:
-        return cls.__name__
+        return cls.__name__  # default implementation
 
     @property
     def representor(self) -> str:
