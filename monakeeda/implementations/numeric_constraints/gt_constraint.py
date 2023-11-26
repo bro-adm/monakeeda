@@ -16,7 +16,7 @@ class GTNumericConstraintFieldParameter(NumericConstraintFieldParameter):
         value = values[self.scope]
 
         if value <= self.param_val:
-            exceptions[self.scope].append(NumericConstraintFailedException(self, self.param_val, value))
+            exceptions[self.scope].append(NumericConstraintFailedException(f"{self.representor}={self.param_val}", value))
 
     def accept_operator(self, operator_visitor: ImplementationsOperatorVisitor, context: Any):
         pass
