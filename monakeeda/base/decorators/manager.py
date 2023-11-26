@@ -44,7 +44,7 @@ class DecoratorManager(ComponentManager):
     def _set_curr_cls(self, monkey_cls, bases, monkey_attrs):
         for attr, attr_val in monkey_attrs.items():
             decorated_with = getattr(attr_val, DecoratorConsts.DECORATED_WITH, None)
-            if decorated_with != None:
+            if decorated_with:
                 # attr_val in here is a decorated method
                 monkey_attrs[NamespacesConsts.STRUCT][NamespacesConsts.DECORATORS][attr] = decorated_with
 

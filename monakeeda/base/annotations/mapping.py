@@ -1,8 +1,8 @@
 from abc import ABCMeta
-from typing import Type, TypeVar
+from typing import Type
 
 from monakeeda.helpers import defaultdictvalue
-from .base_annotations import Annotation, GenericAnnotation
+from .base_annotations import Annotation
 from .helpers import get_type_cls
 from .known_annotations import known_annotations
 
@@ -68,7 +68,7 @@ annotation_mapping = {}
 annotation_mapping = AnnotationDefaultDict(lambda annotation: annotation, annotation_mapping, known_annotations)
 
 
-def annotation_mapper(*key_annotations: Type, annotation_mapping=annotation_mapping):
+def annotation_mapper(*key_annotations, annotation_mapping=annotation_mapping):
     def inner_get_annotation_cls(annotation_cls: Type[Annotation]):
         for key_annotation in key_annotations:
             annotation_mapping[key_annotation] = annotation_cls

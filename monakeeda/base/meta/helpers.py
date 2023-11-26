@@ -31,4 +31,3 @@ def handle_class_inputs(cls, bases, **inputs):
 
             setattr(cls, attr_name, attr_val)
             logger.info(f"\t {capitalize_words(key)} = {attr_val}", extra={STAGE: "META SETUP", MONKEY: cls.__name__})
-

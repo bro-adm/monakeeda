@@ -19,4 +19,3 @@ class ParameterValueTypeValidator(MonkeyBuilder):
         if not isinstance(main_builder.param_val, self.wanted_type):
             exception = ParameterValueTypeNotAllowedException(main_builder, self.wanted_type)
             exceptions[main_builder.scope].append(exception)
-

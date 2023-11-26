@@ -111,7 +111,7 @@ class FieldManager(ConfigurableComponentManager[FieldParameter]):
             monkey_attrs[NamespacesConsts.STRUCT][NamespacesConsts.FIELDS][field_key][FieldConsts.FIELD] = merged_field
 
     def _build(self, monkey_cls, bases, monkey_attrs, exceptions: ExceptionsDict, main_builder):
-        default_fields_dict = defaultdictvalue(lambda key: {FieldConsts.DEPENDENCIES: [], FieldConsts.DEPENDENTS: [], FieldConsts.COMPONENTS: [], FieldConsts.FIELD: self._default_no_field_type.override_init(key, [], {})}, OrderedDict())
+        default_fields_dict = defaultdictvalue(lambda key: {FieldConsts.DEPENDENCIES: [], FieldConsts.DEPENDENTS: [], FieldConsts.FIELD: self._default_no_field_type.override_init(key, [], {})}, OrderedDict())
         # Do note that this defaultdict does not hurt priorly set bases becasue we never directly ask for a field_info of a base field without knowing it exists there
 
         monkey_attrs[NamespacesConsts.STRUCT][NamespacesConsts.FIELDS] = default_fields_dict

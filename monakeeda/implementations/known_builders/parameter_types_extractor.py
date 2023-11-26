@@ -1,5 +1,4 @@
 from abc import ABC
-from collections import defaultdict
 from typing import Dict, List, Tuple, Type
 
 from monakeeda.base import MonkeyBuilder, ConfigParameter, Component, ExceptionsDict, get_parameter_type_by_key, \
@@ -38,7 +37,7 @@ class BaseParameterTypesExtractor(MonkeyBuilder, ABC):
 
 class FieldsParameterTypesExtractor(BaseParameterTypesExtractor):
     def _build(self, monkey_cls, bases, monkey_attrs, exceptions: ExceptionsDict, main_builder: ConfigParameter):
-        fields = [field_info[FieldConsts.FIELD] for field_info in monkey_cls.struct[NamespacesConsts.FIELDS]]
+        fields = [field_info[FieldConsts.FIELD] for field_info in monkey_cls.struct[NamespacesConsts.FIELDS].values()]
 
         all_parameters_mapping = {}
 

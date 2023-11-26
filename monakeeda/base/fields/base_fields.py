@@ -28,9 +28,6 @@ class FieldParameter(Parameter, ABC):
             return NotImplemented
         return self._field_key == other._field_key and self.param_val == other.param_val
 
-    def _build(self, monkey_cls, bases, monkey_attrs, exceptions: ExceptionsDict, main_builder):
-        monkey_attrs[NamespacesConsts.STRUCT][NamespacesConsts.FIELDS][self._field_key][FieldConsts.COMPONENTS].append(self)
-
 
 class Field(ConfigurableComponent[FieldParameter]):
     """
@@ -59,7 +56,7 @@ class Field(ConfigurableComponent[FieldParameter]):
 
     def _build(self, monkey_cls, bases, monkey_attrs, exceptions: ExceptionsDict, main_builder):
         super()._build(monkey_cls, bases, monkey_attrs, exceptions, main_builder)
-        monkey_attrs[NamespacesConsts.STRUCT][NamespacesConsts.FIELDS][self._field_key][FieldConsts.REQUIRED] = True
+        monkey_attrs[NamespacesConsts.STRUCT][NamespacesConsts.FIELDS][self.scope][FieldConsts.REQUIRED] = True
 
     def _handle_values(self, model_instance, values, stage, exceptions: ExceptionsDict):
         pass

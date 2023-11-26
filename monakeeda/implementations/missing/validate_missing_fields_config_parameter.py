@@ -22,7 +22,7 @@ class ValidateMissingFieldsConfigParameter(ConfigParameter):
 
     @property
     def scope(self) -> str:
-        return KnownScopes.ValuesManager
+        return KnownScopes.ValuesManagers
 
     def _handle_values(self, model_instance, values, stage, exceptions: ExceptionsDict):
         if self.param_val:

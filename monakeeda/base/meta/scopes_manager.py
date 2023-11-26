@@ -1,8 +1,8 @@
 from abc import ABC, abstractmethod
 from typing import List
 
-from monakeeda.base.exceptions_manager import ExceptionsDict
-from monakeeda.base.component import Component
+from ..component import Component
+from ..exceptions_manager import ExceptionsDict
 from ..interfaces import MonkeyBuilder
 
 

@@ -62,6 +62,7 @@ class MonkeyMeta(ABCMeta):
             raise MonkeyBuildException(name, build_exceptions)
 
         logger.info(f"Post Components Build Organized Model Components = {cls.__type_organized_components__}", extra={STAGE: "Component Info", MONKEY: name})
+        logger.info(f"Scopes = {attrs[NamespacesConsts.SCOPES]}", extra={STAGE: "Component Info", MONKEY: name})
 
         cls.__run_organized_components__ = cls.__component_organizer__.order_for_instance_operation(cls, cls.__type_organized_components__)
         logger.info(f"Model Components Run Order:", extra={STAGE: "Component Info", MONKEY: name})

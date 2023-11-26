@@ -1,3 +1,3 @@
 class KnownScopes:
     ParametersGenerators = 'parameters_generators'
-    ValuesManager = 'values_manager'
+    ValuesManagers = 'values_managers'

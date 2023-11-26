@@ -1,5 +1,5 @@
 from abc import ABC
-from typing import ClassVar, TypeVar, Type
+from typing import ClassVar, TypeVar
 
 from monakeeda.utils import capitalize_words
 from .component import Component
@@ -21,4 +21,4 @@ class Parameter(Component, ABC):
         return capitalize_words(self.__key__)
 
 
-TParameter = TypeVar('TParameter', bound=Type[Parameter])
+TParameter = TypeVar('TParameter', bound=Parameter)
