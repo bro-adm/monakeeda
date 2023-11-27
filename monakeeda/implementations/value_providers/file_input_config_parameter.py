@@ -6,7 +6,7 @@ from pathvalidate import validate_filepath, ValidationError
 
 from monakeeda.base import ConfigParameter, Config, ExceptionsDict, OperatorVisitor, Component
 from monakeeda.utils import deep_update
-from ..abstract import AbstractParameter
+from ..generators import AliasGenerator
 from ..known_builders import ParameterValueTypeValidator
 
 
@@ -22,7 +22,7 @@ class FileInputException(Exception):
 @Config.parameter
 class FileInputConfigParameter(ConfigParameter):
     __key__ = "file_input"
-    __prior_handler__ = AbstractParameter
+    __prior_handler__ = AliasGenerator
     __builders__ = [ParameterValueTypeValidator(str)]
 
     @property
