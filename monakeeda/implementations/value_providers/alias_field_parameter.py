@@ -2,7 +2,7 @@ import inspect
 from typing import Any
 
 from monakeeda.base import FieldParameter, Field, ExceptionsDict
-from .config_parameter import AliasGenerator
+from ..generators import AliasGenerator
 from ..implemenations_base_operator_visitor import ImplementationsOperatorVisitor
 from ..known_builders import ParameterValueTypeValidator
 

@@ -1,3 +1,4 @@
+from .alias_field_parameter import Alias
 from .default_factory_field_parameter import DefaultFactoryFieldParameter
 from .default_field_parameter import DefaultFieldParameter
 from .explode_field_parameter import ExplodeFieldParameter

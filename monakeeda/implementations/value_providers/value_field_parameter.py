@@ -1,8 +1,8 @@
 from typing import Any
 
 from monakeeda.base import Field, Stages, ExceptionsDict
+from .alias_field_parameter import Alias
 from .base import BaseValueFieldParameter
-from ..alias import Alias
 from ..implemenations_base_operator_visitor import ImplementationsOperatorVisitor
 
 
