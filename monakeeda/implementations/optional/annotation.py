@@ -3,7 +3,7 @@ from typing import Optional, Any
 from monakeeda.base import annotation_mapper, GenericAnnotation, ExceptionsDict
 from monakeeda.consts import NamespacesConsts, FieldConsts
 from ..implemenations_base_operator_visitor import ImplementationsOperatorVisitor
-from ..values import DefaultFactoryFieldParameter
+from ..value_providers import DefaultFactoryFieldParameter
 
 
 @annotation_mapper(Optional)

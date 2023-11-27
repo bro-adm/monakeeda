@@ -9,7 +9,7 @@ from ..general_annotations import ObjectAnnotation, BasicTypeAnnotation, UnionAn
 from ..implemenations_base_operator_visitor import ImplementationsOperatorVisitor
 from ..valid_values import ValidValues
 from ..validators import Validator
-from ..values import DefaultFieldParameter, DefaultFactoryFieldParameter
+from ..value_providers import DefaultFieldParameter, DefaultFactoryFieldParameter
 
 
 # class OpenAPIPropertySpec(BaseModel):
