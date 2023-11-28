@@ -6,6 +6,7 @@ from pathvalidate import validate_filepath, ValidationError
 
 from monakeeda.base import ConfigParameter, Config, ExceptionsDict, OperatorVisitor, Component
 from monakeeda.utils import deep_update
+from .consts import KnownLabels, KnownScopes
 from ..generators import AliasGenerator
 from ..known_builders import ParameterValueTypeValidator
 
@@ -25,13 +26,14 @@ class FileInputConfigParameter(ConfigParameter):
     __prior_handler__ = AliasGenerator
     __builders__ = [ParameterValueTypeValidator(str)]
 
+    @classmethod
     @property
     def label(cls) -> str:
-        return 'external-provider'
+        return KnownLabels.EXTERNAL_PROVIDER
 
     @property
     def scope(self) -> str:
-        return 'values_provider'
+        return KnownScopes.VALUES_PROVIDER
 
     def is_collision(self, other) -> bool:
         super().is_collision(other)

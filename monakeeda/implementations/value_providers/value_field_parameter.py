@@ -1,8 +1,9 @@
-from typing import Any, Set
+from typing import Any
 
 from monakeeda.base import Field, Stages, ExceptionsDict, FieldParameter, ScopedLabeledComponentsCollisionsException
 from monakeeda.consts import NamespacesConsts, FieldConsts
 from monakeeda.utils import get_wanted_params
+from .consts import KnownLabels
 from .default_factory_field_parameter import DefaultFactoryFieldParameter
 from ..implemenations_base_operator_visitor import ImplementationsOperatorVisitor
 
@@ -15,13 +16,13 @@ class ValueFieldParameter(FieldParameter):
     @classmethod
     @property
     def label(cls) -> str:
-        return "main-provider"
+        return KnownLabels.MAIN_PROVIDER
 
     def _build(self, monkey_cls, bases, monkey_attrs, exceptions: ExceptionsDict, main_builder):
         super()._build(monkey_cls, bases, monkey_attrs, exceptions, main_builder)
         monkey_attrs[NamespacesConsts.STRUCT][NamespacesConsts.FIELDS][self._field_key][FieldConsts.REQUIRED] = False
 
-        scoped_collisions = get_wanted_params(monkey_cls.scopes[self.scope], ["default-provider", "external-provider"])
+        scoped_collisions = get_wanted_params(monkey_cls.scopes[self.scope], [KnownLabels.DEFAULT_PROVIDER, KnownLabels.EXTERNAL_PROVIDER])
         if scoped_collisions:
             collision_components = set[str]()
             for label, components in scoped_collisions.items():

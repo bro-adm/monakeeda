@@ -2,6 +2,7 @@ import inspect
 from typing import Any
 
 from monakeeda.base import FieldParameter, Field, ExceptionsDict, BaseMonkey
+from .consts import KnownLabels
 from .explode_field_parameter import ExplodeFieldParameter
 from ..implemenations_base_operator_visitor import ImplementationsOperatorVisitor
 from ..known_builders import ParameterValueTypeValidator
@@ -24,7 +25,7 @@ class AliasFieldParameter(FieldParameter):
     @classmethod
     @property
     def label(cls) -> str:
-        return 'alias-provider'
+        return KnownLabels.ALIAS_PROVIDER
 
     def is_collision(self, other) -> bool:
         super().is_collision(other)

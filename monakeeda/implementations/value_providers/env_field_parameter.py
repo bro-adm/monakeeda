@@ -5,6 +5,7 @@ from typing import Any
 from monakeeda.base import Field, Stages, ExceptionsDict, FieldParameter, BaseMonkey
 from monakeeda.consts import NamespacesConsts, FieldConsts
 from .alias_field_parameter import AliasFieldParameter
+from .consts import KnownLabels
 from ..implemenations_base_operator_visitor import ImplementationsOperatorVisitor
 from ..known_builders import ParameterValueTypeValidator
 
@@ -27,8 +28,9 @@ class EnvFieldParameter(FieldParameter):
     __builders__ = [ParameterValueTypeValidator((str, EnvInfo))]
 
     @classmethod
+    @property
     def label(cls) -> str:
-        return "external-provider"
+        return KnownLabels.EXTERNAL_PROVIDER
 
     def _build(self, monkey_cls, bases, monkey_attrs, exceptions: ExceptionsDict, main_builder):
         super()._build(monkey_cls, bases, monkey_attrs, exceptions, main_builder)

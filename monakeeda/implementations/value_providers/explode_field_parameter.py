@@ -3,6 +3,7 @@ from typing import Any
 from monakeeda.base import Field, BaseMonkey, get_scoped_components_by_label, ExceptionsDict, FieldParameter
 from monakeeda.consts import NamespacesConsts, FieldConsts
 from monakeeda.utils import get_wanted_params
+from .consts import KnownLabels
 from .file_input_config_parameter import FileInputConfigParameter
 from ..implemenations_base_operator_visitor import ImplementationsOperatorVisitor
 from ..known_builders import ParameterValueTypeValidator, CoreAnnotationsExtractor
@@ -17,7 +18,7 @@ class ExplodeFieldParameter(FieldParameter):
     @classmethod
     @property
     def label(cls) -> str:
-        return "external-provider"
+        return KnownLabels.EXTERNAL_PROVIDER
 
     def __init__(self, param_val, field_key):
         super().__init__(param_val, field_key)

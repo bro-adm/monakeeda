@@ -2,6 +2,7 @@ from typing import Any
 
 from monakeeda.base import Field, Stages, ExceptionsDict, FieldParameter
 from monakeeda.consts import NamespacesConsts, FieldConsts
+from .consts import KnownLabels
 from .env_field_parameter import EnvFieldParameter
 from ..implemenations_base_operator_visitor import ImplementationsOperatorVisitor
 
@@ -14,7 +15,7 @@ class DefaultFieldParameter(FieldParameter):
     @classmethod
     @property
     def label(cls) -> str:
-        return "default-provider"
+        return KnownLabels.DEFAULT_PROVIDER
 
     def _build(self, monkey_cls, bases, monkey_attrs, exceptions: ExceptionsDict, main_builder):
         super()._build(monkey_cls, bases, monkey_attrs, exceptions, main_builder)
