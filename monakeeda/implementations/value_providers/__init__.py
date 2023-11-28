@@ -1,6 +1,7 @@
 from .alias_field_parameter import Alias
 from .default_factory_field_parameter import DefaultFactoryFieldParameter
 from .default_field_parameter import DefaultFieldParameter
+from .env_field_parameter import EnvFieldParameter, EnvInfo
 from .explode_field_parameter import ExplodeFieldParameter
 from .file_input_config_parameter import FileInputConfigParameter
 from .value_field_parameter import ValueFieldParameter

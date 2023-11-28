@@ -1,15 +1,15 @@
 from typing import Any
 
 from monakeeda.base import Field, Stages, ExceptionsDict
-from .alias_field_parameter import Alias
 from .base import BaseValueFieldParameter
+from .env_field_parameter import EnvFieldParameter
 from ..implemenations_base_operator_visitor import ImplementationsOperatorVisitor
 
 
 @Field.parameter
 class ValueFieldParameter(BaseValueFieldParameter):
     __key__ = 'value'
-    __prior_handler__ = Alias
+    __prior_handler__ = EnvFieldParameter
 
     def _handle_values(self, model_instance, values, stage, exceptions: ExceptionsDict):
         if stage == Stages.INIT:

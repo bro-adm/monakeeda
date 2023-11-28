@@ -38,7 +38,6 @@ class FileInputConfigParameter(ConfigParameter):
 
         try:
             validate_filepath(self.param_val)
-            print(validate_filepath(self.param_val))
         except ValidationError as e:
             exceptions[self.scope].append(FileInputException(self, e))
 
