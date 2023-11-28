@@ -1,15 +1,24 @@
 from typing import Any
 
-from monakeeda.base import Field, Stages, ExceptionsDict
-from .base import BaseValueFieldParameter
-from .value_field_parameter import ValueFieldParameter
+from monakeeda.base import Field, Stages, ExceptionsDict, FieldParameter
+from monakeeda.consts import NamespacesConsts, FieldConsts
+from .env_field_parameter import EnvFieldParameter
 from ..implemenations_base_operator_visitor import ImplementationsOperatorVisitor
 
 
 @Field.parameter
-class DefaultFieldParameter(BaseValueFieldParameter):
+class DefaultFieldParameter(FieldParameter):
     __key__ = 'default'
-    __prior_handler__ = ValueFieldParameter
+    __prior_handler__ = EnvFieldParameter
+
+    @classmethod
+    @property
+    def label(cls) -> str:
+        return "default-provider"
+
+    def _build(self, monkey_cls, bases, monkey_attrs, exceptions: ExceptionsDict, main_builder):
+        super()._build(monkey_cls, bases, monkey_attrs, exceptions, main_builder)
+        monkey_attrs[NamespacesConsts.STRUCT][NamespacesConsts.FIELDS][self._field_key][FieldConsts.REQUIRED] = False
 
     def _handle_values(self, model_instance, values, stage, exceptions: ExceptionsDict):
         if stage == Stages.INIT:

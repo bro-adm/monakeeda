@@ -5,4 +5,4 @@ still inherit from other classes as long as their meta classes come from the sam
 """
 
 from .base_monkey import BaseMonkey
-from .errors import MonkeyValuesHandlingException
+from .errors import MonkeyValuesHandlingException, ScopedLabeledComponentsCollisionsException

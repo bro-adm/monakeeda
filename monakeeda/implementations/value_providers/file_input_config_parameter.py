@@ -27,11 +27,15 @@ class FileInputConfigParameter(ConfigParameter):
 
     @property
     def label(cls) -> str:
-        return 'value_provider'
+        return 'external-provider'
 
     @property
     def scope(self) -> str:
-        return 'value_provider'
+        return 'values_provider'
+
+    def is_collision(self, other) -> bool:
+        super().is_collision(other)
+        return False
 
     def _build(self, monkey_cls, bases, monkey_attrs, exceptions: ExceptionsDict, main_builder):
         super()._build(monkey_cls, bases, monkey_attrs, exceptions, main_builder)

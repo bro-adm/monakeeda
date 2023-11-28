@@ -1,20 +1,23 @@
 from typing import Any
 
-from monakeeda.base import Field, BaseMonkey, get_scoped_components_by_label, \
-    ExceptionsDict
-from monakeeda.consts import NamespacesConsts
+from monakeeda.base import Field, BaseMonkey, get_scoped_components_by_label, ExceptionsDict, FieldParameter
+from monakeeda.consts import NamespacesConsts, FieldConsts
 from monakeeda.utils import get_wanted_params
-from .base import BaseValueFieldParameter
 from .file_input_config_parameter import FileInputConfigParameter
 from ..implemenations_base_operator_visitor import ImplementationsOperatorVisitor
 from ..known_builders import ParameterValueTypeValidator, CoreAnnotationsExtractor
 
 
 @Field.parameter
-class ExplodeFieldParameter(BaseValueFieldParameter):
+class ExplodeFieldParameter(FieldParameter):
     __key__ = 'explode'
     __prior_handler__ = FileInputConfigParameter
     __builders__ = [ParameterValueTypeValidator(bool), CoreAnnotationsExtractor(BaseMonkey)]
+
+    @classmethod
+    @property
+    def label(cls) -> str:
+        return "external-provider"
 
     def __init__(self, param_val, field_key):
         super().__init__(param_val, field_key)
@@ -24,6 +27,8 @@ class ExplodeFieldParameter(BaseValueFieldParameter):
 
     def _build(self, monkey_cls, bases, monkey_attrs, exceptions: ExceptionsDict, main_builder):
         super()._build(monkey_cls, bases, monkey_attrs, exceptions, main_builder)
+
+        monkey_attrs[NamespacesConsts.STRUCT][NamespacesConsts.FIELDS][self._field_key][FieldConsts.REQUIRED] = False
 
         for core_type in self._core_types:
             for sub_key, sub_field_info in core_type.struct[NamespacesConsts.FIELDS].items():

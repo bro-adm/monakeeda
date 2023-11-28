@@ -3,12 +3,12 @@ from typing import Optional, Any
 from monakeeda.base import annotation_mapper, GenericAnnotation, ExceptionsDict
 from monakeeda.consts import NamespacesConsts, FieldConsts
 from ..implemenations_base_operator_visitor import ImplementationsOperatorVisitor
-from ..value_providers import DefaultFactoryFieldParameter
+from ..value_providers import ValueFieldParameter
 
 
 @annotation_mapper(Optional)
 class OptionalAnnotation(GenericAnnotation):
-    __prior_handler__ = DefaultFactoryFieldParameter
+    __prior_handler__ = ValueFieldParameter
 
     @classmethod
     @property
