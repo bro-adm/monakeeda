@@ -8,7 +8,7 @@ from ..known_builders import ParameterValueTypeValidator
 
 
 @Field.parameter
-class Alias(FieldParameter):
+class AliasFieldParameter(FieldParameter):
     __key__ = 'alias'
     __prior_handler__ = AliasGenerator
     __builders__ = [ParameterValueTypeValidator(str)]
@@ -16,7 +16,7 @@ class Alias(FieldParameter):
     @classmethod
     @property
     def label(cls) -> str:
-        return 'alias'
+        return 'alias-provider'
 
     def is_collision(self, other) -> bool:
         super().is_collision(other)

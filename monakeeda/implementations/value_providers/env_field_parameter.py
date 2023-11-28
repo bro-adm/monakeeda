@@ -3,7 +3,7 @@ import os
 from typing import Any
 
 from monakeeda.base import Field, Stages, ExceptionsDict, FieldParameter, BaseMonkey
-from .alias_field_parameter import Alias
+from .alias_field_parameter import AliasFieldParameter
 from ..implemenations_base_operator_visitor import ImplementationsOperatorVisitor
 from ..known_builders import ParameterValueTypeValidator
 
@@ -21,7 +21,7 @@ class EnvInfo(BaseMonkey, delay=True):
 @Field.parameter
 class EnvFieldParameter(FieldParameter):
     __key__ = 'env'
-    __prior_handler__ = Alias
+    __prior_handler__ = AliasFieldParameter
     __builders__ = [ParameterValueTypeValidator((str, EnvInfo))]
 
     @classmethod
