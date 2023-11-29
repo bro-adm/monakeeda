@@ -1,12 +1,15 @@
 from typing import Generic, T, Any
 
-from monakeeda.base import GenericAnnotation, Stages, ExceptionsDict
+from monakeeda.base import GenericAnnotation, Stages, ExceptionsDict, managed_by
 from .consts import MUTATION_MANAGER
 from .exceptions import ConstError
+from ..existence_managers import OptionalAnnotation
 from ..implemenations_base_operator_visitor import ImplementationsOperatorVisitor
 from ..mutators import Mutator
+from ..type_managers import Discriminator, UnionAnnotation
 
 
+@managed_by(OptionalAnnotation, Discriminator, UnionAnnotation)
 class Const(GenericAnnotation, Generic[T]):
     __prior_handler__ = Mutator
 
@@ -16,12 +19,8 @@ class Const(GenericAnnotation, Generic[T]):
         return MUTATION_MANAGER
 
     def _handle_values(self, model_instance, values, stage, exceptions: ExceptionsDict):
-        if stage == Stages.INIT:
-            self.represented_annotations[0].handle_values(model_instance, values, stage, exceptions)
-
-        elif stage == Stages.UPDATE:
+        if stage == Stages.UPDATE:
             curr_val = getattr(model_instance, self.scope)
-            self.represented_annotations[0].handle_values(model_instance, values, stage, exceptions)
 
             value = values[self.scope]
 
