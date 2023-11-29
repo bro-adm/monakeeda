@@ -7,7 +7,7 @@ from ..known_builders import ParameterValueTypeValidator, CoreAnnotationsExtract
 
 
 class NumericConstraintFieldParameter(FieldParameter, ABC):
-    __builders__ = [ParameterValueTypeValidator((int, float)), CoreAnnotationsExtractor(int, float)]
+    # __builders__ = [ParameterValueTypeValidator((int, float)), CoreAnnotationsExtractor(int, float)]
 
     @classmethod
     @property
@@ -30,6 +30,10 @@ class NumericConstraintFieldParameter(FieldParameter, ABC):
 
         is_valid = constraint_collisions_validation[(key1, key2)](val1, val2) if (key1, key2) in constraint_collisions_validation else constraint_collisions_validation[(key2, key1)](val2, val1)
         return not is_valid
+
+    def _build(self, monkey_cls, bases, monkey_attrs, exceptions: ExceptionsDict, main_builder):
+        if not self.is_managed:
+            exceptions[self._field_key].append(Exception(f"{self.representor} must be set along a int or float"))
 
 
 class NumericConstraintAnnotation(GenericAnnotation, Generic[T]):
@@ -57,7 +61,5 @@ class NumericConstraintAnnotation(GenericAnnotation, Generic[T]):
     def _build(self, monkey_cls, bases, monkey_attrs, exceptions: ExceptionsDict, main_builder):
         super()._build(monkey_cls, bases, monkey_attrs, exceptions, main_builder)
 
-        annotation = self.represented_annotations[0]
-        annotation.build(monkey_cls, bases, monkey_attrs, exceptions)
-
-        monkey_cls.__type_organized_components__[type(annotation)].append(annotation)
+        if not self.is_managed:
+            exceptions[self._field_key].append(Exception(f"{self.representor} must be set along a int or float"))
