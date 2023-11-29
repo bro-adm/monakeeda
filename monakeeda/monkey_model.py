@@ -1,8 +1,12 @@
 from typing import Dict, Any, Tuple, List, Union, Type
 
-from monakeeda.base import BaseMonkey, Field
+from monakeeda.base import BaseMonkey, Field, delayed_monkeys
 from monakeeda.consts import NamespacesConsts, PythonNamingConsts
 from .implementations import OpenAPIOperatorVisitor
+
+for monkey in delayed_monkeys:
+    args, kwargs = monkey._init_args
+    BaseMonkey.__class__.__init__(monkey, *args, **kwargs)
 
 
 class MonkeyModel(BaseMonkey):
