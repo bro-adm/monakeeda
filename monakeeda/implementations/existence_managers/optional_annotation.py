@@ -17,10 +17,16 @@ class OptionalAnnotation(GenericAnnotation):
 
     def _handle_values(self, model_instance, values, stage, exceptions: ExceptionsDict):
         if self._field_key in values:
-            self.represented_annotations[0].handle_values(model_instance, values, stage, exceptions)
+            for component in self.managing:
+                model_instance.__run_organized_components__[component] = True
 
     def _build(self, monkey_cls, bases, monkey_attrs, exceptions: ExceptionsDict, main_builder):
         super()._build(monkey_cls, bases, monkey_attrs, exceptions, main_builder)
+
+        for component in self.direct_annotations:
+            component.scope = f"{component.scope}.{self.__class__.__name__}"
+            self.managing.append(component)
+
         monkey_attrs[NamespacesConsts.STRUCT][NamespacesConsts.FIELDS][self._field_key][FieldConsts.REQUIRED] = False
 
     def accept_operator(self, operator_visitor: ImplementationsOperatorVisitor, context: Any):

@@ -24,7 +24,7 @@ class BasicTypeAnnotation(Annotation):
     __prior_handler__ = ObjectAnnotation
 
     def _handle_values(self, model_instance, values, stage, exceptions: ExceptionsDict):
-        result = type_validation(values[self.scope], self.set_annotation)
+        result = type_validation(values[self._field_key], self.set_annotation)
 
         if result:
             exceptions[self.scope].append(result)
