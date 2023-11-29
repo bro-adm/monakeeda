@@ -18,10 +18,18 @@ class FieldParameter(Parameter, ABC):
     def __init__(self, param_val, field_key, is_managed=False):
         super().__init__(param_val, is_managed)
         self._field_key = field_key
+        self._scope = field_key
 
     @property
     def scope(self) -> str:
         return self._field_key
+
+    @scope.setter
+    def scope(self, value: str):
+        if isinstance(value, str) and value.startswith(self._scope):
+            self._scope = value
+        else:
+            raise NotImplemented
 
     def __eq__(self, other):
         if not isinstance(other, FieldParameter):
