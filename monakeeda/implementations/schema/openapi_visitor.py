@@ -9,7 +9,7 @@ from ..generators import AliasGenerator
 from ..implemenations_base_operator_visitor import ImplementationsOperatorVisitor
 from ..valid_values import ValidValues
 from ..validators import Validator
-from ..value_providers import DefaultFieldParameter, DefaultFactoryFieldParameter, Alias
+from ..value_providers import DefaultFieldParameter, DefaultFactoryFieldParameter, AliasFieldParameter
 
 
 # class OpenAPIPropertySpec(BaseModel):
@@ -51,7 +51,7 @@ class OpenAPIOperatorVisitor(ImplementationsOperatorVisitor[dict]):
     def operate_abstract_field_parameter(self, field: AbstractParameter, context: dict):
         pass
 
-    def operate_alias_field_parameter(self, parameter: Alias, context: dict):
+    def operate_alias_field_parameter(self, parameter: AliasFieldParameter, context: dict):
         pass
 
     def operate_alias_generator_config_parameter(self, parameter: AliasGenerator, context: dict):
