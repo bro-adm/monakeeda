@@ -5,6 +5,7 @@ from typing import ClassVar, TypeVar, Type, Any, List
 from ..exceptions_manager import ExceptionsDict
 from ..interfaces import ValuesHandler, MonkeyBuilder
 from ..operator import OperatorVisitor
+from ..scope import extract_main_scope
 
 all_components = []
 
@@ -85,7 +86,8 @@ class Component(MonkeyBuilder, ValuesHandler, ABC):
             components = monkey_cls.__type_organized_components__[managed_component_type]
 
             for component in components:
-                if component.scope == self.scope:
+                if component.scope == extract_main_scope(self.scope):
+                    component.is_managed = True
                     self.managing.append(component)
 
     def build(self, monkey_cls, bases, monkey_attrs, exceptions: ExceptionsDict, main_builder=None):
