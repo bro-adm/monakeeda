@@ -12,7 +12,7 @@ class DictAnnotation(GenericAnnotation):
     def _handle_values(self, model_instance, values, stage, exceptions: ExceptionsDict):
         value = values[self.scope]
 
-        key_type, value_type = self._types
+        key_type, value_type = self.args
         unmatched_pairs = {}
 
         for key, val in value.items():

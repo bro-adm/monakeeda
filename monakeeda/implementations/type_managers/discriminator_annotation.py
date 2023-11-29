@@ -22,8 +22,8 @@ class Discriminator(GenericAnnotation, Generic[*TModels]):
     def label(cls) -> str:
         return KnownLabels.TYPE_MANAGER
 
-    def __init__(self, field_key, base_type, annotations_mapping):
-        super().__init__(field_key, base_type, annotations_mapping)
+    def __init__(self, field_key, set_annotation, annotations_mapping):
+        super().__init__(field_key, set_annotation, annotations_mapping)
         self._core_types = None
         self._relevant_components = []
         self._discriminator_field_key = None
@@ -69,7 +69,7 @@ class Discriminator(GenericAnnotation, Generic[*TModels]):
             monkey = self._monkey_mappings[discriminator_value]
 
             index = self._core_types.index(monkey)
-            provided_annotation = self._annotations[index]
+            provided_annotation = self.represented_annotations[index]
             provided_annotation.handle_values(model_instance, values, stage, exceptions)
 
     def accept_operator(self, operator_visitor: ImplementationsOperatorVisitor, context: Any):

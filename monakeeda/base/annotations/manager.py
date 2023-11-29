@@ -31,7 +31,7 @@ class AnnotationManager(ComponentManager):
 
     def _find_field_by_type_var(self, monkey_cls, type_var: TypeVar) -> str:
         for field_key, annotation_instance in monkey_cls.struct[NamespacesConsts.ANNOTATIONS].items():
-            if annotation_instance.base_type == type_var:
+            if annotation_instance.set_annotation == type_var:
                 return field_key
 
     def _set_by_base(self, monkey_cls, base, attrs, collisions):

@@ -17,7 +17,7 @@ class OptionalAnnotation(GenericAnnotation):
 
     def _handle_values(self, model_instance, values, stage, exceptions: ExceptionsDict):
         if self._field_key in values:
-            self._annotations[0].handle_values(model_instance, values, stage, exceptions)
+            self.represented_annotations[0].handle_values(model_instance, values, stage, exceptions)
 
     def _build(self, monkey_cls, bases, monkey_attrs, exceptions: ExceptionsDict, main_builder):
         super()._build(monkey_cls, bases, monkey_attrs, exceptions, main_builder)

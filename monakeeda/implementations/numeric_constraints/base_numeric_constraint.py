@@ -57,7 +57,7 @@ class NumericConstraintAnnotation(GenericAnnotation, Generic[T]):
     def _build(self, monkey_cls, bases, monkey_attrs, exceptions: ExceptionsDict, main_builder):
         super()._build(monkey_cls, bases, monkey_attrs, exceptions, main_builder)
 
-        annotation = self._annotations[0]
+        annotation = self.represented_annotations[0]
         annotation.build(monkey_cls, bases, monkey_attrs, exceptions)
 
         monkey_cls.__type_organized_components__[type(annotation)].append(annotation)

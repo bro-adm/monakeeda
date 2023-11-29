@@ -1,8 +1,10 @@
 from abc import ABC
+from functools import lru_cache
 
 from typing_extensions import get_args
 
 from ..component import Component
+from ...utils import wrap_in_list
 
 
 class Annotation(Component, ABC):
@@ -15,10 +17,10 @@ class Annotation(Component, ABC):
     Additionally because it is a mirror of any python type, typing type, generic type or just any object it keeps the original annotation in the base_type attr
     """
 
-    def __init__(self, field_key, base_type, annotations_mapping, is_managed=False):
+    def __init__(self, field_key, set_annotation, annotations_mapping, is_managed=False):
         super().__init__(is_managed)
         self._field_key = field_key
-        self.base_type = base_type
+        self.set_annotation = set_annotation
         self._annotations_mapping = annotations_mapping
 
     @classmethod
@@ -35,8 +37,8 @@ class Annotation(Component, ABC):
         return self._field_key
 
     @property
-    def core_types(self):
-        return self.base_type
+    def represented_types(self):
+        return self.set_annotation
 
 
 class GenericAnnotation(Annotation, ABC):
@@ -50,14 +52,14 @@ class GenericAnnotation(Annotation, ABC):
     Both these objects are either _GenericAlias or _AnnotatedAlias via the logic of how python works with Generics.
     Therefore works with get_args typing helper
     """
-    __supports_infinite__ = False
 
     @property
-    def _types(self):
-        return get_args(self.base_type)
+    def args(self):
+        return get_args(self.set_annotation)
 
     @property
-    def _annotations(self):
+    @lru_cache()
+    def represented_annotations(self):
         """
             Returns the Monakeeda Annotations of each of the generics set in the GenericAnnotation.
 
@@ -66,18 +68,26 @@ class GenericAnnotation(Annotation, ABC):
 
         annotations = []
 
-        for t in self._types:
+        for t in self.args:
             if t != type(None):
                 self._annotations_mapping[t]
-                annotations.append(self._annotations_mapping[t](self._field_key, t, self._annotations_mapping))
+                sub_annotation = self._annotations_mapping[t](self._field_key, t, self._annotations_mapping)
+
+                annotations.append(sub_annotation)
+                if isinstance(sub_annotation, GenericAnnotation):
+                    annotations.extend(sub_annotation.represented_annotations)
 
         return annotations
 
     @property
-    def core_types(self):
+    def represented_types(self):
         types = []
-        for annotation in self._annotations:
-            types.append(annotation.core_types)
+
+        for t in self.args:
+            if t != type(None):
+                self._annotations_mapping[t]
+                sub_annotation: Annotation = self._annotations_mapping[t](self._field_key, t, self._annotations_mapping)
+                types.extend(wrap_in_list(sub_annotation.represented_types))
 
         return tuple(types) if len(types) > 1 else types[0]
 

@@ -23,7 +23,7 @@ class TypeVarAnnotation(Annotation):
 
         model_generics = model_instance.__class__.__parameters__  # saved attr for Generics -> saved in tuple which preserves order
 
-        index = model_generics.index(self.base_type)  # in this specific anntoation the base_type is mapped to the TypeVar instance
+        index = model_generics.index(self.set_annotation)  # in this specific anntoation the base_type is mapped to the TypeVar instance
         return instance_types[index]
 
     def _handle_values(self, model_instance, values, stage, exceptions: ExceptionsDict):
@@ -46,13 +46,13 @@ class ModelAnnotation(Annotation):
 
         if isinstance(value, dict):
             try:
-                monkey = self.base_type(**value)
+                monkey = self.set_annotation(**value)
                 values[self.scope] = monkey
             except Exception as e:
                 exceptions[self.scope].append(e)
 
         else:
-            result = type_validation(value, self.base_type)
+            result = type_validation(value, self.set_annotation)
 
             if result:
                 exceptions[self.scope].append(result)
@@ -67,7 +67,7 @@ class ArbitraryAnnotation(Annotation):
     __prior_handler__ = ModelAnnotation
 
     def _handle_values(self, model_instance, values, stage, exceptions: ExceptionsDict):
-        result = type_validation(values[self.scope], self.base_type)
+        result = type_validation(values[self.scope], self.set_annotation)
 
         if result:
             exceptions[self.scope].append(result)

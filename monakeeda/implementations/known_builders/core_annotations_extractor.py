@@ -38,10 +38,10 @@ class CoreAnnotationsExtractor(MonkeyBuilder):
             raise NotImplemented  # not implemented subtype requirements validation -> what does it even mean
 
         if isinstance(set_annotation, supported_annotation.__class__):
-            return set_annotation.base_type
+            return set_annotation.set_annotation
 
         if isinstance(set_annotation, GenericAnnotation):
-            sub_annotations = set_annotation._annotations
+            sub_annotations = set_annotation.represented_annotations
             if len(sub_annotations) == 1:
                 return self._generic_annotation_extraction(supported_annotation, sub_annotations[0])
 
@@ -67,16 +67,16 @@ class CoreAnnotationsExtractor(MonkeyBuilder):
                     main_builder._core_types = (result, )
                     break
             else:
-                supported_core_annotations.extend(wrap_in_list(supported_annotation.core_types))
+                supported_core_annotations.extend(wrap_in_list(supported_annotation.represented_types))
 
         if not main_builder._core_types:
             if not supported_core_annotations:
                 # exception for the case where provided with support for only Generic Types and no match was found
-                exception = CoreAnnotationNotAllowedException(main_builder, self.supported_core_annotations, set_annotation.base_type)
+                exception = CoreAnnotationNotAllowedException(main_builder, self.supported_core_annotations, set_annotation.set_annotation)
                 exceptions[main_builder.scope].append(exception)
 
             else:  # try match for supported non-generic annotations via core api
-                set_core_annotations = wrap_in_list(set_annotation.core_types)
+                set_core_annotations = wrap_in_list(set_annotation.represented_types)
 
                 for core_annotation in set_core_annotations:
                     if not isinstance(core_annotation, TypeVar) and not issubclass(core_annotation, tuple(supported_core_annotations)):

@@ -17,11 +17,11 @@ class Const(GenericAnnotation, Generic[T]):
 
     def _handle_values(self, model_instance, values, stage, exceptions: ExceptionsDict):
         if stage == Stages.INIT:
-            self._annotations[0].handle_values(model_instance, values, stage, exceptions)
+            self.represented_annotations[0].handle_values(model_instance, values, stage, exceptions)
 
         elif stage == Stages.UPDATE:
             curr_val = getattr(model_instance, self.scope)
-            self._annotations[0].handle_values(model_instance, values, stage, exceptions)
+            self.represented_annotations[0].handle_values(model_instance, values, stage, exceptions)
 
             value = values[self.scope]
 

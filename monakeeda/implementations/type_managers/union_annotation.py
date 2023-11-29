@@ -10,7 +10,7 @@ class UnionAnnotation(GenericAnnotation):
     __prior_handler__ = CreateFrom
 
     def _handle_values(self, model_instance, values, stage, exceptions: ExceptionsDict):
-        union_types = self._types
+        union_types = self.args
 
         result = type_validation(values[self.scope], union_types)
 

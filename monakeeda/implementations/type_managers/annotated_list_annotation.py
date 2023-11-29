@@ -12,7 +12,7 @@ class ListAnnotation(GenericAnnotation):
     def _handle_values(self, model_instance, values, stage, exceptions: ExceptionsDict):
         value = values[self.scope]
 
-        list_type = self._types
+        list_type = self.args
         unmatched_values = []
 
         for val in value:
