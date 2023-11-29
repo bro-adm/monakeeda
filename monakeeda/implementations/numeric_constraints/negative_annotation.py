@@ -1,11 +1,13 @@
 from typing import Tuple, Union, Any, Generic, T
 
-from monakeeda.base import ExceptionsDict, OperatorVisitor
+from monakeeda.base import ExceptionsDict, OperatorVisitor, managed_by
 from .base_numeric_constraint import NumericConstraintAnnotation
 from .exceptions import NumericConstraintFailedException
 from .positive_annotation import Positive
+from ..general_annotations import NumericTypeAnnotation
 
 
+@managed_by(NumericTypeAnnotation)
 class Negative(NumericConstraintAnnotation[T], Generic[T]):
     __prior_handler__ = Positive
 

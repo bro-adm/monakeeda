@@ -15,9 +15,9 @@ class FieldParameter(Parameter, ABC):
     To ensure no duplications of components, the __eq__ methodology is implemented.
     """
 
-    def __init__(self, param_val, field_key):
+    def __init__(self, param_val, field_key, is_managed=False):
+        super().__init__(param_val, is_managed)
         self._field_key = field_key
-        super().__init__(param_val)
 
     @property
     def scope(self) -> str:
@@ -26,7 +26,10 @@ class FieldParameter(Parameter, ABC):
     def __eq__(self, other):
         if not isinstance(other, FieldParameter):
             return NotImplemented
-        return self._field_key == other._field_key and self.param_val == other.param_val
+        return self.scope == other.scope and self.param_val == other.param_val
+
+    def __hash__(self):
+        return hash((self.scope, self.param_val))
 
 
 class Field(ConfigurableComponent[FieldParameter]):

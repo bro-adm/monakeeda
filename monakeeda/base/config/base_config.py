@@ -12,8 +12,8 @@ class ConfigParameter(Parameter, ABC):
     Conceptually just like the base Parameter Component, this one just get passed the Config Class name it gets initialized by.
     """
 
-    def __init__(self, param_val, config_cls_name: str):
-        super().__init__(param_val)
+    def __init__(self, param_val, config_cls_name: str, is_managed=False):
+        super().__init__(param_val, is_managed)
         self._config_cls_name = config_cls_name
 
 

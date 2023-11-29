@@ -14,7 +14,8 @@ class BaseDecorator(Component, ABC):
     The __call__ method is pre implemented to set the known namespace that the Decorator Manager looks for on Monakeeda decorated methods.
     """
 
-    def __init__(self, field_key: str):
+    def __init__(self, field_key: str, is_managed=False):
+        super().__init__(is_managed)
         self._field_key = field_key
 
     @property

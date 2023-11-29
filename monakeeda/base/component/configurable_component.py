@@ -62,14 +62,14 @@ class ConfigurableComponent(Component, Generic[TParameter], ABC):
 
         return parameter
 
-    def __init_subclass__(cls, copy_parameter_components=True):
+    def __init_subclass__(cls, copy_parameter_components=True, **kwargs):
         """
         copy_parameter_components -> False ->
             - will keep the same list memory context as the current Component cls itself.
             - if in the inheriting cls you override some parameter component so the same will happen to all base
               classes with the same memory dict.
         """
-        super().__init_subclass__()
+        super().__init_subclass__(**kwargs)
 
         if copy_parameter_components:
             cls.__parameter_components__ = cls.__parameter_components__.copy()
@@ -91,9 +91,10 @@ class ConfigurableComponent(Component, Generic[TParameter], ABC):
 
         return instance
 
-    def __init__(self, **params):
+    def __init__(self, is_managed=False, **params):
         # Pretty init for client's sake
         # Generally the override_init is the correct init api and holds the actual necessary attrs
+        super().__init__(is_managed)
         self._init_params = params
 
     @classmethod

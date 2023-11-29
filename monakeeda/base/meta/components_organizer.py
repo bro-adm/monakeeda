@@ -24,5 +24,5 @@ class ComponentsOrganizer(ABC):
         pass
 
     @abstractmethod
-    def order_for_instance_operation(self, monkey_cls, monkey_type_organized_components: Dict[Type[Component], List[Component]]) -> List[Component]:
+    def order_for_instance_operation(self, monkey_cls, monkey_type_organized_components: Dict[Type[Component], List[Component]]) -> Dict[Component, bool]:
         pass

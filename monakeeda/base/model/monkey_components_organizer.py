@@ -106,7 +106,7 @@ class MonkeyComponentsOrganizer(ComponentsOrganizer):
 
         return organized
 
-    def order_for_instance_operation(self, monkey_cls, monkey_type_organized_components: Dict[Type[Component], List[Component]]) -> List[Component]:
+    def _order_for_instance_operation(self, monkey_cls, monkey_type_organized_components: Dict[Type[Component], List[Component]]) -> List[Component]:
         """
         Gets the fully organized dict of components list per component type -> organization based on chain of responsibility setup.
         Generates the components run order list for instance level action such as init and some of the operators.
@@ -138,8 +138,21 @@ class MonkeyComponentsOrganizer(ComponentsOrganizer):
             organized_components.extend(monkey_type_organized_components[next_global_component_type])
 
             next_monkey_type_organized_components = OrderedDict(islice(monkey_type_organized_components.items(), next_index+1, len(monkey_type_organized_components)))
-            next_organized_components = self.order_for_instance_operation(monkey_cls, next_monkey_type_organized_components)
+            next_organized_components = self._order_for_instance_operation(monkey_cls, next_monkey_type_organized_components)
 
             organized_components.extend(next_organized_components)
 
         return organized_components
+
+    def order_for_instance_operation(self, monkey_cls, monkey_type_organized_components: Dict[Type[Component], List[Component]]) -> Dict[Component, bool]:
+        """
+        calls the above method to get the final run order and then adds the switch on off according to if managed by a component or not
+        """
+
+        organized_components = self._order_for_instance_operation(monkey_cls, monkey_type_organized_components)
+        managed_components = []
+
+        for component in organized_components:
+            managed_components.extend(component.managing)
+
+        return OrderedDict({component: True if component not in managed_components else False for component in organized_components})

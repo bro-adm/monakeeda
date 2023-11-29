@@ -15,7 +15,8 @@ class Annotation(Component, ABC):
     Additionally because it is a mirror of any python type, typing type, generic type or just any object it keeps the original annotation in the base_type attr
     """
 
-    def __init__(self, field_key, base_type, annotations_mapping):
+    def __init__(self, field_key, base_type, annotations_mapping, is_managed=False):
+        super().__init__(is_managed)
         self._field_key = field_key
         self.base_type = base_type
         self._annotations_mapping = annotations_mapping

@@ -1,11 +1,13 @@
 from typing import Any
 
-from monakeeda.base import FieldParameter, Field, ExceptionsDict
+from monakeeda.base import FieldParameter, Field, ExceptionsDict, managed_by
+from ..existence_managers import OptionalAnnotation
 from ..general_annotations import ArbitraryAnnotation
 from ..implemenations_base_operator_visitor import ImplementationsOperatorVisitor
 from ..known_builders import ParameterValueTypeValidator
 
 
+@managed_by(OptionalAnnotation)
 @Field.parameter
 class ValidValues(FieldParameter):
     __key__ = 'valid_values'

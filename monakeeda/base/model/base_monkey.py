@@ -48,10 +48,12 @@ class BaseMonkey(metaclass=MonkeyMeta, component_managers=component_managers, sc
         return getattr(cls, NamespacesConsts.SCOPES)
 
     def _handle_values(self, values: dict, stage):
+        super().__setattr__("__run_organized_components__", self.__class__.__run_organized_components__.copy())
         exceptions = ExceptionsDict()  # pass by reference - so updates will be available
 
-        for component in self.__run_organized_components__:
-            component.handle_values(self, values, stage, exceptions)
+        for component, is_run in self.__run_organized_components__.items():
+            if is_run:
+                component.handle_values(self, values, stage, exceptions)
 
         if exceptions:
             raise MonkeyValuesHandlingException(self.__class__.__name__, values, exceptions)

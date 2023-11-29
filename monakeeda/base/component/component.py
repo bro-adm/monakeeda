@@ -25,17 +25,23 @@ class Component(MonkeyBuilder, ValuesHandler, ABC):
     """
 
     __prior_handler__: ClassVar[Type['Component']] = None
+    __managed_components__: ClassVar[List[Type['Component']]] = []
 
-    def __init_subclass__(cls):
+    def __init_subclass__(cls, copy_managed_component=True):
         """
         One of Monakeeda's core concept is to have a components run order.
         That means supporting the chain of responsibility design in a dynamic library that can be extended outside of this project.
         To do that any inheriting class is listed in the all_components list and indexed via the __prior_handler__ attr.
         Do note that inside any lone project, this would effect the import order directly.
         On outer project extensions this is supported via finding the already indexed prior component and inserting this component after it.
+
+        Regarding copy_managed_components -> if True it copies the current list to not share reference with subclasses
         """
 
         super().__init_subclass__()
+
+        if copy_managed_component:
+            cls.__managed_components__ = cls.__managed_components__.copy()
 
         if not inspect.isabstract(cls):
             if cls.__prior_handler__:
@@ -49,6 +55,10 @@ class Component(MonkeyBuilder, ValuesHandler, ABC):
     @abstractmethod
     def label(cls) -> str:
         pass
+
+    def __init__(self, is_managed=False):
+        self.is_managed = is_managed
+        self.managing = []
 
     @property
     @abstractmethod
@@ -69,16 +79,27 @@ class Component(MonkeyBuilder, ValuesHandler, ABC):
 
         return True  # default implementation
 
+    def _build(self, monkey_cls, bases, monkey_attrs, exceptions: ExceptionsDict, main_builder):
+        print("-------------------")
+        print(f"Monkey = {monkey_cls}, Main Component {self.__class__}, scope = {self.scope}")
+        for managed_component_type in self.__managed_components__:
+            components = monkey_cls.__type_organized_components__[managed_component_type]
+
+            for component in components:
+                if component.scope == self.scope:
+                    print(component)
+                    self.managing.append(component)
+
+    def build(self, monkey_cls, bases, monkey_attrs, exceptions: ExceptionsDict, main_builder=None):
+        super().build(monkey_cls, bases, monkey_attrs, exceptions, main_builder)
+        monkey_cls.scopes[self.scope][self.label].append(self)  # Add regardless of build exceptions
+
     @abstractmethod
     def accept_operator(self, operator_visitor: OperatorVisitor, context: Any):
         pass
 
-    def _build(self, monkey_cls, bases, monkey_attrs, exceptions: ExceptionsDict, main_builder):
-        pass
-
-    def build(self, monkey_cls, bases, monkey_attrs, exceptions: ExceptionsDict, main_builder=None):
-        super().build(monkey_cls, bases, monkey_attrs, exceptions, main_builder)
-        monkey_cls.scopes[self.scope][self.label].append(self)
+    # def __hash__(self):
+    #     return hash((self.scope, self.label, self.representor))
 
 
 TComponent = TypeVar('TComponent', bound=Type[Component])
