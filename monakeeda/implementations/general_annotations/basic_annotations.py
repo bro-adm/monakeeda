@@ -28,6 +28,9 @@ class BasicTypeAnnotation(Annotation):
 
         if result:
             exceptions[self.scope].append(result)
+        else:
+            for component in self.managing:
+                model_instance.__run_organized_components__[component] = True
 
     def accept_operator(self, operator_visitor: ImplementationsOperatorVisitor, context: Any):
         operator_visitor.operate_basic_annotation(self, context)

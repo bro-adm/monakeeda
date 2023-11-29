@@ -80,14 +80,12 @@ class Component(MonkeyBuilder, ValuesHandler, ABC):
         return True  # default implementation
 
     def _build(self, monkey_cls, bases, monkey_attrs, exceptions: ExceptionsDict, main_builder):
-        print("-------------------")
-        print(f"Monkey = {monkey_cls}, Main Component {self.__class__}, scope = {self.scope}")
+        # default implementation
         for managed_component_type in self.__managed_components__:
             components = monkey_cls.__type_organized_components__[managed_component_type]
 
             for component in components:
                 if component.scope == self.scope:
-                    print(component)
                     self.managing.append(component)
 
     def build(self, monkey_cls, bases, monkey_attrs, exceptions: ExceptionsDict, main_builder=None):
@@ -97,9 +95,6 @@ class Component(MonkeyBuilder, ValuesHandler, ABC):
     @abstractmethod
     def accept_operator(self, operator_visitor: OperatorVisitor, context: Any):
         pass
-
-    # def __hash__(self):
-    #     return hash((self.scope, self.label, self.representor))
 
 
 TComponent = TypeVar('TComponent', bound=Type[Component])
