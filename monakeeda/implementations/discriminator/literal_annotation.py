@@ -4,7 +4,7 @@ from monakeeda.base import annotation_mapper, Annotation, ExceptionsDict
 from monakeeda.consts import NamespacesConsts, FieldConsts
 from .consts import DISCRIMINATION_KEY, DISCRIMINATION_VALUES, DISCRIMINATOR_NAMESPACE
 from ..implemenations_base_operator_visitor import ImplementationsOperatorVisitor
-from ..optional import OptionalAnnotation
+from ..existence_managers import OptionalAnnotation
 
 
 @annotation_mapper(Literal)

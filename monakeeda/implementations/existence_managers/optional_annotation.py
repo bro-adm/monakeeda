@@ -13,7 +13,7 @@ class OptionalAnnotation(GenericAnnotation):
     @classmethod
     @property
     def label(cls) -> str:
-        return "requirement_manager"
+        return "existence_manager"
 
     def _handle_values(self, model_instance, values, stage, exceptions: ExceptionsDict):
         if self._field_key in values:

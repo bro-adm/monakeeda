@@ -3,7 +3,7 @@ from typing import Any, Generic, TypeVarTuple
 from monakeeda.base import BaseMonkey, GenericAnnotation, ExceptionsDict, get_scoped_components_by_label
 from .consts import DISCRIMINATOR_NAMESPACE
 from .exceptions import DiscriminatorKeyNotProvidedInValues, GivenModelsDoNotHaveADiscriminator, GivenModelsHaveMoreThanOneDiscriminationKey
-from ..creators import CreateFrom
+from ..existence_managers import CreateFrom
 from ..implemenations_base_operator_visitor import ImplementationsOperatorVisitor
 from ..known_builders import CoreAnnotationsExtractor
 from ...utils import get_wanted_params

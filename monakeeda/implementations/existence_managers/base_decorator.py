@@ -2,13 +2,14 @@ from abc import ABC
 
 from monakeeda.base import BaseDecorator, ExceptionsDict
 from monakeeda.consts import NamespacesConsts, FieldConsts
+from .consts import KnownLabels
 
 
 class BaseCreatorDecorator(BaseDecorator, ABC):
     @classmethod
     @property
     def label(cls) -> str:
-        return "value_creators"
+        return KnownLabels.EXISTENCE_MANAGER
 
     def _build(self, monkey_cls, bases, monkey_attrs, exceptions: ExceptionsDict, main_builder):
         super()._build(monkey_cls, bases, monkey_attrs, exceptions, main_builder)

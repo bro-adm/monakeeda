@@ -1,13 +1,13 @@
 from typing import Union, List, Any, Dict
 
 from monakeeda.base import Annotation, annotation_mapper, GenericAnnotation, type_validation, ExceptionsDict
-from ..cast import Cast
+from ..existence_managers import CreateFrom
 from ..implemenations_base_operator_visitor import ImplementationsOperatorVisitor
 
 
 @annotation_mapper(object, Any)
 class ObjectAnnotation(Annotation):
-    __prior_handler__ = Cast
+    __prior_handler__ = CreateFrom
 
     def _handle_values(self, model_instance, values, stage, exceptions: ExceptionsDict):
         pass
@@ -61,7 +61,8 @@ class ListAnnotation(GenericAnnotation):
                 unmatched_values.append(value)
 
         if unmatched_values:
-            exceptions[self.scope].append(TypeError(f'the following values are not of type {list_type} -> {unmatched_values}'))
+            exceptions[self.scope].append(
+                TypeError(f'the following values are not of type {list_type} -> {unmatched_values}'))
 
     def accept_operator(self, operator_visitor: ImplementationsOperatorVisitor, context: Any):
         operator_visitor.operate_list_annotation(self, context)
@@ -82,7 +83,8 @@ class DictAnnotation(GenericAnnotation):
                 unmatched_pairs[key] = val
 
         if unmatched_pairs:
-            exceptions[self.scope].append(TypeError(f'{self._field_key} is not a dict of {key_type} key and {value_type} value -> {unmatched_pairs}'))
+            exceptions[self.scope].append(TypeError(
+                f'{self._field_key} is not a dict of {key_type} key and {value_type} value -> {unmatched_pairs}'))
 
     def accept_operator(self, operator_visitor: ImplementationsOperatorVisitor, context: Any):
         operator_visitor.operate_dict_annotation(self, context)
