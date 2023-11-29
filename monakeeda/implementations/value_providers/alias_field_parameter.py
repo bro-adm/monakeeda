@@ -41,8 +41,8 @@ class AliasFieldParameter(FieldParameter):
         set_input = values.get(self.scope, inspect._empty)
 
         if set_input == inspect._empty or self.param_val.override_set_input:
-            values.setdefault(self.param_val, inspect._empty)
-            field_val_by_alias = values.pop(self.param_val)  # in order to remove the extra created field
+            values.setdefault(self.param_val.key, inspect._empty)
+            field_val_by_alias = values.pop(self.param_val.key)  # in order to remove the extra created field
 
             # alias takes priority over the actual field key
             if field_val_by_alias != inspect._empty:
