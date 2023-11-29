@@ -1,2 +1,0 @@
-from .discriminator_annotation import Discriminator
-from .literal_annotation import LiteralAnnotation

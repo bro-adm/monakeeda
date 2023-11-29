@@ -2,7 +2,7 @@ from typing import Dict, Any, Tuple, List, Union, Type
 
 from monakeeda.base import BaseMonkey, Field, delayed_monkeys
 from monakeeda.consts import NamespacesConsts, PythonNamingConsts
-from .implementations import OpenAPIOperatorVisitor
+from .operators import OpenAPIOperatorVisitor
 
 for monkey in delayed_monkeys:
     args, kwargs = monkey._init_args

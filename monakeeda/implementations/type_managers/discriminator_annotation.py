@@ -1,9 +1,10 @@
 from typing import Any, Generic, TypeVarTuple
 
 from monakeeda.base import BaseMonkey, GenericAnnotation, ExceptionsDict, get_scoped_components_by_label
-from .consts import DISCRIMINATOR_NAMESPACE
+from .consts import DISCRIMINATOR_NAMESPACE, KnownLabels
 from .exceptions import DiscriminatorKeyNotProvidedInValues, GivenModelsDoNotHaveADiscriminator, GivenModelsHaveMoreThanOneDiscriminationKey
-from ..existence_managers import CreateFrom
+from .union_annotation import UnionAnnotation
+from ..value_providers import KnownLabels
 from ..implemenations_base_operator_visitor import ImplementationsOperatorVisitor
 from ..known_builders import CoreAnnotationsExtractor
 from ...utils import get_wanted_params
@@ -12,14 +13,14 @@ TModels = TypeVarTuple("TModels")
 
 
 class Discriminator(GenericAnnotation, Generic[*TModels]):
-    __prior_handler__ = CreateFrom
+    __prior_handler__ = UnionAnnotation
     __builders__ = [CoreAnnotationsExtractor(BaseMonkey)]
     __supports_infinite__ = True
 
     @classmethod
     @property
     def label(cls) -> str:
-        return "discrimination_manager"
+        return KnownLabels.TYPE_MANAGER
 
     def __init__(self, field_key, base_type, annotations_mapping):
         super().__init__(field_key, base_type, annotations_mapping)
@@ -44,7 +45,7 @@ class Discriminator(GenericAnnotation, Generic[*TModels]):
                 field_key, values = discriminator_info.values()
                 discriminators_keys.append(field_key)
                 self._monkey_mappings.update({value: sub_type for value in values})
-                self._relevant_components.extend(get_scoped_components_by_label(sub_type, field_key, 'alias'))
+                self._relevant_components.extend(get_scoped_components_by_label(sub_type, field_key, KnownLabels.ALIAS_PROVIDER))
 
         if unavailable_discriminator:
             exceptions[self._field_key].append(GivenModelsDoNotHaveADiscriminator(unavailable_discriminator))

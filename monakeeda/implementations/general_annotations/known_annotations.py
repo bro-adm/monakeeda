@@ -3,12 +3,12 @@ from typing import Any, get_args, TypeVar
 from monakeeda.base import Annotation, type_validation, Stages, OperatorVisitor, known_annotation_mapper, \
     KnownAnnotations, BaseMonkey, ExceptionsDict
 from monakeeda.consts import NamespacesConsts, TmpConsts
-from .basic_annotations import DictAnnotation
+from .basic_annotations import BasicTypeAnnotation
 
 
 @known_annotation_mapper(KnownAnnotations.TypeVarAnnotation, TypeVar, isinstance)
 class TypeVarAnnotation(Annotation):
-    __prior_handler__ = DictAnnotation
+    __prior_handler__ = BasicTypeAnnotation
 
     def _get_actual_type(self, model_instance, stage):
         model_tmp = getattr(model_instance, NamespacesConsts.TMP)

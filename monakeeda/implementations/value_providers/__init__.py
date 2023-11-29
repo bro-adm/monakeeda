@@ -1,4 +1,5 @@
 from .alias_field_parameter import AliasFieldParameter
+from .consts import KnownLabels
 from .default_factory_field_parameter import DefaultFactoryFieldParameter
 from .default_field_parameter import DefaultFieldParameter
 from .env_field_parameter import EnvFieldParameter, EnvInfo
