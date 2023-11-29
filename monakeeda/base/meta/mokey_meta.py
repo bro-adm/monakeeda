@@ -5,7 +5,7 @@ from monakeeda.consts import NamespacesConsts
 from monakeeda.logger import logger, STAGE, MONKEY
 from .errors import MonkeyBuildException
 from .helpers import handle_class_inputs
-from ..scope import ScopeDict
+from ..scope import ScopesDict
 from ..exceptions_manager import ExceptionsDict
 
 delayed_monkeys = []
@@ -27,7 +27,7 @@ class MonkeyMeta(ABCMeta):
 
     def __new__(mcs, name, bases, attrs, **_):
         attrs[NamespacesConsts.STRUCT] = {}
-        attrs[NamespacesConsts.SCOPES] = defaultdict(lambda: ScopeDict(), {})
+        attrs[NamespacesConsts.SCOPES] = ScopesDict()
         attrs[NamespacesConsts.COMPONENTS] = []
         attrs[NamespacesConsts.TMP] = {}
 

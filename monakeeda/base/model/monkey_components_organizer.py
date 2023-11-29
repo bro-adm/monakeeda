@@ -6,6 +6,7 @@ from typing import List, Dict, Type, Optional, Tuple
 from monakeeda.consts import NamespacesConsts, FieldConsts
 from ..component import Component
 from ..meta import ComponentsOrganizer
+from ..scope import extract_all_components_of_main_scope
 
 
 class MonkeyComponentsOrganizer(ComponentsOrganizer):
@@ -74,7 +75,7 @@ class MonkeyComponentsOrganizer(ComponentsOrganizer):
                 organized.extend(organized_dependencies)
                 processed_fields.extend(processed_dependencies)
 
-        attr_components = reduce(lambda x1, x2: [*x1, *x2], monkey_cls.scopes[field_key].values(), [])
+        relevant_scopes, attr_components = extract_all_components_of_main_scope(monkey_cls.scopes, field_key)
         attr_components = [component for component in attr_components if type(component) in attrs_scoped_organized_components.keys()]
 
         organized.extend(attr_components)
