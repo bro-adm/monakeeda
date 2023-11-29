@@ -74,6 +74,10 @@ class Component(MonkeyBuilder, ValuesHandler, ABC):
         pass
 
     def _build(self, monkey_cls, bases, monkey_attrs, exceptions: ExceptionsDict, main_builder):
+        pass
+
+    def build(self, monkey_cls, bases, monkey_attrs, exceptions: ExceptionsDict, main_builder=None):
+        super().build(monkey_cls, bases, monkey_attrs, exceptions, main_builder)
         monkey_cls.scopes[self.scope][self.label].append(self)
 
 

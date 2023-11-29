@@ -34,7 +34,8 @@ class ExplodeFieldParameter(FieldParameter):
         for core_type in self._core_types:
             for sub_key, sub_field_info in core_type.struct[NamespacesConsts.FIELDS].items():
                 self._relevant_field_keys.append(sub_key)
-                self._relevant_components.extend(get_scoped_components_by_label(core_type, sub_key, 'alias'))
+                self._relevant_components.extend(get_scoped_components_by_label(core_type, sub_key, KnownLabels.ALIAS_PROVIDER))
+                # sub_explode = get_scoped_components_by_label(core_type, sub_key, KnownLabels.EXTERNAL_PROVIDER)
 
     def _handle_values(self, model_instance, values, stage, exceptions: ExceptionsDict):
         for sub_component in self._relevant_components:
