@@ -91,10 +91,10 @@ class ConfigurableComponent(Component, Generic[TParameter], ABC):
 
         return instance
 
-    def __init__(self, is_managed=False, **params):
+    def __init__(self, **params):
         # Pretty init for client's sake
         # Generally the override_init is the correct init api and holds the actual necessary attrs
-        super().__init__(is_managed)
+        super().__init__()
         self._init_params = params
 
     @classmethod

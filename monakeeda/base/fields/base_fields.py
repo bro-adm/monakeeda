@@ -15,21 +15,10 @@ class FieldParameter(Parameter, ABC):
     To ensure no duplications of components, the __eq__ methodology is implemented.
     """
 
-    def __init__(self, param_val, field_key, is_managed=False):
-        super().__init__(param_val, is_managed)
+    def __init__(self, param_val, field_key):
+        super().__init__(param_val)
         self._field_key = field_key
         self._scope = field_key
-
-    @property
-    def scope(self) -> str:
-        return self._field_key
-
-    @scope.setter
-    def scope(self, value: str):
-        if isinstance(value, str) and value.startswith(self._scope):
-            self._scope = value
-        else:
-            raise NotImplemented
 
     def __eq__(self, other):
         if not isinstance(other, FieldParameter):
@@ -37,7 +26,7 @@ class FieldParameter(Parameter, ABC):
         return self.scope == other.scope and self.param_val == other.param_val
 
     def __hash__(self):
-        return hash((self.scope, self.param_val))
+        return hash((self.scope, str(self.param_val)))
 
 
 class Field(ConfigurableComponent[FieldParameter]):

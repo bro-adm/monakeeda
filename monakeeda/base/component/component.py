@@ -57,8 +57,10 @@ class Component(MonkeyBuilder, ValuesHandler, ABC):
     def label(cls) -> str:
         pass
 
-    def __init__(self, is_managed=False):
-        self.is_managed = is_managed
+    def __init__(self):
+        self._scope = ''
+        self.is_managed = False
+        self.manager = None
         self.managing = []
 
     @property
@@ -67,16 +69,22 @@ class Component(MonkeyBuilder, ValuesHandler, ABC):
         pass
 
     @property
-    @abstractmethod
     def scope(self) -> str:
-        pass
+        return self._scope
+
+    @scope.setter
+    def scope(self, value: str):
+        if isinstance(value, str) and value.startswith(self._scope):
+            self._scope = value
+        else:
+            raise NotImplemented
 
     def _extract_relevant_exceptions(self, exceptions: ExceptionsDict) -> List[Exception]:
         return exceptions[self.scope]  # default implementation
 
     def is_collision(self, other) -> bool:
         if self.label != other.label:
-            raise NotImplemented
+            raise NotImplementedError
 
         return True  # default implementation
 
@@ -87,6 +95,10 @@ class Component(MonkeyBuilder, ValuesHandler, ABC):
 
             for component in components:
                 if component.scope == extract_main_scope(self.scope):
+                    if component.manager:
+                        component.manager.managing.remove(component)
+
+                    component.manager = self
                     component.is_managed = True
                     self.managing.append(component)
 

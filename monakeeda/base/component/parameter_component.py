@@ -13,8 +13,8 @@ class Parameter(Component, ABC):
 
     __key__: ClassVar[str]  # key for setting value
 
-    def __init__(self, param_val, is_managed=False):
-        super().__init__(is_managed)
+    def __init__(self, param_val):
+        super().__init__()
         self.param_val = param_val
 
     @property

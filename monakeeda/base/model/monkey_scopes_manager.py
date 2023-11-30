@@ -44,7 +44,7 @@ class MonkeyScopesManager(ScopesManager):
                 components_combos = list(combinations(components, 2))
                 for combo in components_combos:
                     component_one, component_two = combo
-                    if component_one.is_collision(component_two):
+                    if component_one.manager == component_two.manager and component_one.is_collision(component_two):
                         # combo_component_collisions.append(combo)
                         problematic_labeled_collisions[label].add(component_one.representor)
                         problematic_labeled_collisions[label].add(component_two.representor)

@@ -2,7 +2,7 @@ from typing import Any, _TYPING_INTERNALS, Generic
 
 from monakeeda.consts import NamespacesConsts, TmpConsts
 from monakeeda.logger import logger, STAGE, MONKEY
-from monakeeda.utils import deep_update
+from monakeeda.utils import deep_update, get_wanted_params
 from .monkey_components_organizer import MonkeyComponentsOrganizer
 from .monkey_scopes_manager import MonkeyScopesManager
 from .errors import MonkeyValuesHandlingException
@@ -78,7 +78,16 @@ class BaseMonkey(metaclass=MonkeyMeta, component_managers=component_managers, sc
             self.update(**{key: value})
 
     def __eq__(self, other):
+        if not isinstance(other, BaseMonkey):
+            raise NotImplementedError
         return self.__dict__ == other.__dict__
+
+    # def __str__(self):
+    #     return str(get_wanted_params(self.__dict__, self.struct[NamespacesConsts.FIELDS].keys()).values())
+
+    # def __hash__(self):
+    #     print(tuple(get_wanted_params(self.__dict__, self.struct[NamespacesConsts.FIELDS].keys()).values()))
+    #     return hash(tuple(get_wanted_params(self.__dict__, self.struct[NamespacesConsts.FIELDS].keys()).values()))
 
     @staticmethod
     def _operate(model, operator_type: str, context: Any):
