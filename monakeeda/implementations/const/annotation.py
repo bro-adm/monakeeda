@@ -20,12 +20,12 @@ class Const(GenericAnnotation, Generic[T]):
 
     def _handle_values(self, model_instance, values, stage, exceptions: ExceptionsDict):
         if stage == Stages.UPDATE:
-            curr_val = getattr(model_instance, self.scope)
+            curr_val = getattr(model_instance, self._field_key)
 
-            value = values[self.scope]
+            value = values[self._field_key]
 
             if value != curr_val:
-                exceptions[self.scope].append(ConstError(curr_val, value))
+                exceptions[self._field_key].append(ConstError(curr_val, value))
 
     def accept_operator(self, operator_visitor: ImplementationsOperatorVisitor, context: Any):
         operator_visitor.operate_const_annotation(self, context)
