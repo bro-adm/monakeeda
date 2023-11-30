@@ -1,4 +1,4 @@
-from abc import ABC, abstractmethod
+from abc import ABC
 from functools import lru_cache
 from typing import List, Union, Tuple
 
@@ -19,36 +19,59 @@ class Annotation(Component, ABC):
     Additionally because it is a mirror of any python type, typing type, generic type or just any object it keeps the original annotation in the base_type attr
     """
 
-    def __init__(self, field_key, set_annotation, annotations_mapping, is_managed=False):
-        super().__init__(is_managed)
+    def __init__(self, field_key, set_annotation, annotations_mapping):
+        super().__init__()
         self._field_key = field_key
         self._scope = field_key
         self._annotations_mapping = annotations_mapping
         self.set_annotation = set_annotation
+        self.wrapped_by_annotations = []
 
     @classmethod
     @property
     def label(cls) -> str:
         return "type_validator"  # default implementation
 
+    def is_collision(self, other) -> bool:
+        if super().is_collision(other):
+
+            if isinstance(other, Annotation) and self.is_managed is True and other.is_managed is True:
+                return False
+
+            return True
+
+        return False
+
     @property
     def representor(self) -> str:
         return self.__class__.__name__
 
     @property
-    def scope(self) -> str:
-        return self._scope
-
-    @scope.setter
-    def scope(self, value: str):
-        if isinstance(value, str) and value.startswith(self._scope):
-            self._scope = value
-        else:
-            raise NotImplemented
-
-    @property
     def represented_types(self):
         return self.set_annotation
+
+    def _build(self, monkey_cls, bases, monkey_attrs, exceptions: ExceptionsDict, main_builder):
+        relevant_components = []
+        for managed_component_type in self.__managed_components__:
+            components = monkey_cls.__type_organized_components__[managed_component_type]
+
+            for component in components:
+                if not isinstance(component, Annotation) and component.scope == self.scope:
+                    relevant_components.append(component)
+
+        for component in self.wrapped_by_annotations:
+            if type(component) in self.__managed_components__:
+                relevant_components.append(component)
+
+        for component in relevant_components:
+            if self.label != component.label or not self.is_collision(component):
+                if component.manager:
+                    component.manager.managing.remove(component)
+
+                # component.scope = f"{component.scope}.{self.__class__.__name__}"
+                component.manager = self
+                component.is_managed = True
+                self.managing.append(component)
 
 
 class GenericAnnotation(Annotation, ABC):
@@ -76,6 +99,7 @@ class GenericAnnotation(Annotation, ABC):
             if t != type(None):
                 self._annotations_mapping[t]
                 sub_annotation = self._annotations_mapping[t](self._field_key, t, self._annotations_mapping)
+                sub_annotation.wrapped_by_annotations.extend([self, *self.wrapped_by_annotations])
                 annotations.append(sub_annotation)
 
         return annotations
@@ -108,12 +132,17 @@ class GenericAnnotation(Annotation, ABC):
         return tuple(types) if len(types) > 1 else types[0]
 
     def _build(self, monkey_cls, bases, monkey_attrs, exceptions: ExceptionsDict, main_builder):
-        for managed_component_type in self.__managed_components__:
-            components = monkey_cls.__type_organized_components__[managed_component_type]
+        super()._build(monkey_cls, bases, monkey_attrs, exceptions, main_builder)
 
-            for component in components:
-                if not isinstance(component, Annotation) and component.scope == self.scope:
-                    component.scope = f"{component.scope}.{self.__class__.__name__}"
+        for component in self.represented_annotations:
+            if type(component) in self.__managed_components__:
+                if self.label != component.label or not self.is_collision(component):
+                    if component.manager:
+                        component.manager.managing.remove(component)
+
+                    # component.scope = f"{component.scope}.{self.__class__.__name__}"
+                    component.manager = self
+                    component.is_managed = True
                     self.managing.append(component)
 
     def __getitem__(self, item):
