@@ -22,11 +22,6 @@ class OptionalAnnotation(GenericAnnotation):
 
     def _build(self, monkey_cls, bases, monkey_attrs, exceptions: ExceptionsDict, main_builder):
         super()._build(monkey_cls, bases, monkey_attrs, exceptions, main_builder)
-
-        for component in self.direct_annotations:
-            component.scope = f"{component.scope}.{self.__class__.__name__}"
-            self.managing.append(component)
-
         monkey_attrs[NamespacesConsts.STRUCT][NamespacesConsts.FIELDS][self._field_key][FieldConsts.REQUIRED] = False
 
     def accept_operator(self, operator_visitor: ImplementationsOperatorVisitor, context: Any):
