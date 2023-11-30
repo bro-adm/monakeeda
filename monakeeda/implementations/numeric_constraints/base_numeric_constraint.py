@@ -23,13 +23,15 @@ class NumericConstraintFieldParameter(FieldParameter, ABC):
         return self.representor, self.param_val
 
     def is_collision(self, other) -> bool:
-        super().is_collision(other)
+        if super().is_collision(other):
 
-        key1, val1 = self.constraint
-        key2, val2 = other.constraint
+            key1, val1 = self.constraint
+            key2, val2 = other.constraint
 
-        is_valid = constraint_collisions_validation[(key1, key2)](val1, val2) if (key1, key2) in constraint_collisions_validation else constraint_collisions_validation[(key2, key1)](val2, val1)
-        return not is_valid
+            is_valid = constraint_collisions_validation[(key1, key2)](val1, val2) if (key1, key2) in constraint_collisions_validation else constraint_collisions_validation[(key2, key1)](val2, val1)
+            return not is_valid
+
+        return False
 
     def _build(self, monkey_cls, bases, monkey_attrs, exceptions: ExceptionsDict, main_builder):
         if not self.is_managed:
@@ -37,12 +39,14 @@ class NumericConstraintFieldParameter(FieldParameter, ABC):
 
 
 class NumericConstraintAnnotation(GenericAnnotation, Generic[T]):
-    __builders__ = [CoreAnnotationsExtractor(int, float)]
-
     @classmethod
     @property
     def label(cls) -> str:
         return "numeric_constraint"
+
+    @property
+    def represented_types(self) -> Union[Tuple[type], type]:
+        return self
 
     @property
     @abstractmethod
@@ -50,13 +54,14 @@ class NumericConstraintAnnotation(GenericAnnotation, Generic[T]):
         pass
 
     def is_collision(self, other) -> bool:
-        super().is_collision(other)
+        if super().is_collision(other):  # non-managed Annotations combo or Annotation+FieldParameter combo of the same label and same manager
+            key1, val1 = self.constraint
+            key2, val2 = other.constraint
 
-        key1, val1 = self.constraint
-        key2, val2 = other.constraint
+            is_valid = constraint_collisions_validation[(key1, key2)](val1, val2) if (key1, key2) in constraint_collisions_validation else constraint_collisions_validation[(key2, key1)](val2, val1)
+            return not is_valid
 
-        is_valid = constraint_collisions_validation[(key1, key2)](val1, val2) if (key1, key2) in constraint_collisions_validation else constraint_collisions_validation[(key2, key1)](val2, val1)
-        return not is_valid
+        return False
 
     def _build(self, monkey_cls, bases, monkey_attrs, exceptions: ExceptionsDict, main_builder):
         super()._build(monkey_cls, bases, monkey_attrs, exceptions, main_builder)

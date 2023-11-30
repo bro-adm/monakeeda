@@ -7,12 +7,12 @@ from .base_decorator import BaseValidatorDecorator
 from ..existence_managers import OptionalAnnotation
 from ..implemenations_base_operator_visitor import ImplementationsOperatorVisitor
 from ..known_builders import DependenciesBuilder
-from ..numeric_constraints import Negative
+from ..numeric_constraints import LTENumericConstraintFieldParameter
 
 
 @managed_by(OptionalAnnotation)
 class Validator(BaseValidatorDecorator):
-    __prior_handler__ = Negative
+    __prior_handler__ = LTENumericConstraintFieldParameter
     __builders__ = [DependenciesBuilder()]
 
     def __init__(self, field_key: str, dependencies: Union[list, str] = None):

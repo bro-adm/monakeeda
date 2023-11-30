@@ -3,16 +3,17 @@ from typing import Any
 from monakeeda.base import Field, ExceptionsDict, managed_by
 from .base_numeric_constraint import NumericConstraintFieldParameter
 from .exceptions import NumericConstraintFailedException
+from .negative_annotation import Negative
+from .positive_annotation import Positive
 from ..general_annotations import NumericTypeAnnotation
 from ..implemenations_base_operator_visitor import ImplementationsOperatorVisitor
-from ..valid_values import ValidValues
 
 
-@managed_by(NumericTypeAnnotation)
+@managed_by(NumericTypeAnnotation, Positive, Negative)
 @Field.parameter
 class GTNumericConstraintFieldParameter(NumericConstraintFieldParameter):
     __key__ = "gt"
-    __prior_handler__ = ValidValues
+    __prior_handler__ = Negative
 
     def _handle_values(self, model_instance, values, stage, exceptions: ExceptionsDict):
         value = values[self.scope]

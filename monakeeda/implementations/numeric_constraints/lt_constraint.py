@@ -4,11 +4,13 @@ from monakeeda.base import Field, ExceptionsDict, managed_by
 from .base_numeric_constraint import NumericConstraintFieldParameter
 from .exceptions import NumericConstraintFailedException
 from .gte_constraint import GTENumericConstraintFieldParameter
+from .negative_annotation import Negative
+from .positive_annotation import Positive
 from ..general_annotations import NumericTypeAnnotation
 from ..implemenations_base_operator_visitor import ImplementationsOperatorVisitor
 
 
-@managed_by(NumericTypeAnnotation)
+@managed_by(NumericTypeAnnotation, Positive, Negative)
 @Field.parameter
 class LTNumericConstraintFieldParameter(NumericConstraintFieldParameter):
     __key__ = "lt"
