@@ -53,3 +53,10 @@ def capitalize_words(input: str) -> str:
 
 def to_types(the_list: list) -> list:
     return [type(obj) for obj in the_list]
+
+
+def list_insert_if_does_not_exist(lst: list, index: int, value):
+    if index >= len(lst):
+        lst.insert(index, value)
+
+    return lst[index]

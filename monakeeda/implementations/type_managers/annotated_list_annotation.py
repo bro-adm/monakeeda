@@ -1,27 +1,87 @@
-from typing import List, Any
+from collections import defaultdict
+from typing import List, Any, Dict
 
-from monakeeda.base import annotation_mapper, GenericAnnotation, ExceptionsDict
+from monakeeda.base import annotation_mapper, ExceptionsDict, ComponentDecorator, Component
+from monakeeda.utils import list_insert_if_does_not_exist
+from .base_type_manager_annotation import BaseTypeManagerAnnotation
+from .consts import KnownLabels
 from .discriminator_annotation import Discriminator
 from ..implemenations_base_operator_visitor import ImplementationsOperatorVisitor
 
 
-@annotation_mapper(List)
-class ListAnnotation(GenericAnnotation):
-    __prior_handler__ = Discriminator
+class ListComponentDecorator(ComponentDecorator):
+    def __init__(self):
+        super().__init__()
+        self._activations_per_item: List[Dict[Component, Dict[Component, bool]]] = []
+        self._exceptions_per_item: Dict[int, List[Exception]] = defaultdict(lambda: [], {})
 
     def _handle_values(self, model_instance, values, stage, exceptions: ExceptionsDict):
-        value = values[self.scope]
+        field_key = self.component._field_key
+        list_value = values[field_key]
 
-        list_type = self.args
-        unmatched_values = []
+        for i in range(len(list_value)):
+            item_activation_info = list_insert_if_does_not_exist(self._activations_per_item, i, {})
 
-        for val in value:
-            if not isinstance(val, list_type):
-                unmatched_values.append(value)
+            is_activated = False
 
-        if unmatched_values:
-            exceptions[self.scope].append(
-                TypeError(f'the following values are not of type {list_type} -> {unmatched_values}'))
+            if not item_activation_info:
+                is_activated = True
+
+            else:
+                for manager in self.component.managers:
+                    manager_activation_info = item_activation_info[manager]
+                    if manager_activation_info[self.component]:
+                        is_activated = True
+                        break
+
+            if is_activated:
+                item = list_value[i]
+                values[field_key] = item
+
+                relevant_exceptions = self._exceptions_per_item[item]
+                relevant_exceptions_dict = ExceptionsDict()
+                relevant_exceptions_dict[field_key] = relevant_exceptions
+                self.component.handle_values(model_instance, values, stage, relevant_exceptions_dict)
+
+                processed_value = values[field_key]
+                list_value[i] = processed_value
+
+                new_exceptions = set(relevant_exceptions) - set(exceptions[field_key])
+                self._exceptions_per_item[item].extend(new_exceptions)
+                exceptions[field_key].extend(new_exceptions)
+
+                self._activations_per_item[i][self.component] = model_instance.__run_organized_components__.copy()
+
+        values[field_key] = list_value
+
+
+@annotation_mapper(List)
+class ListAnnotation(BaseTypeManagerAnnotation):
+    __prior_handler__ = Discriminator
+    __manage_all_sub_annotations__ = True
+
+    @classmethod
+    @property
+    def label(cls) -> str:
+        return KnownLabels.TYPE_MANAGER
+
+    def _build(self, monkey_cls, bases, monkey_attrs, exceptions: ExceptionsDict, main_builder):
+        super()._build(monkey_cls, bases, monkey_attrs, exceptions, main_builder)
+
+        list_component_decorator = ListComponentDecorator()
+
+        for component in self.managing:
+            component.decorators.append(list_component_decorator)
+
+    def _handle_values(self, model_instance, values, stage, exceptions: ExceptionsDict):
+        value = values[self._field_key]
+
+        if isinstance(value, list):
+            for component in self.managing:
+                model_instance.__run_organized_components__[component] = True
+
+        else:
+            exceptions[self.scope].append(TypeError(f'Required to be provided with value of type list -> but was provided with {type(value)}'))
 
     def accept_operator(self, operator_visitor: ImplementationsOperatorVisitor, context: Any):
         operator_visitor.operate_list_annotation(self, context)
