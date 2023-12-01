@@ -6,6 +6,7 @@ from ..exceptions_manager import ExceptionsDict
 from ..interfaces import ValuesHandler, MonkeyBuilder
 from ..operator import OperatorVisitor
 from ..scope import extract_main_scope
+from ...utils import to_types
 
 all_components = []
 
@@ -60,7 +61,7 @@ class Component(MonkeyBuilder, ValuesHandler, ABC):
     def __init__(self):
         self._scope = ''
         self.is_managed = False
-        self.manager = None
+        self.managers = []
         self.managing = []
 
     @property
@@ -95,10 +96,15 @@ class Component(MonkeyBuilder, ValuesHandler, ABC):
 
             for component in components:
                 if component.scope == extract_main_scope(self.scope):
-                    if component.manager:
-                        component.manager.managing.remove(component)
+                    managers_to_remove = []
+                    for manager in component.managers:
+                        if type(manager) in to_types(self.managers):
+                            manager.managing.remove(component)
+                            managers_to_remove.append(manager)
+                    for manager in managers_to_remove:
+                        component.managers.remove(manager)
 
-                    component.manager = self
+                    component.managers.append(self)
                     component.is_managed = True
                     self.managing.append(component)
 

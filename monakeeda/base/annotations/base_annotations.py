@@ -6,7 +6,7 @@ from typing_extensions import get_args
 
 from ..component import Component
 from ..exceptions_manager import ExceptionsDict
-from ...utils import wrap_in_list
+from ...utils import wrap_in_list, to_types
 
 
 class Annotation(Component, ABC):
@@ -65,11 +65,16 @@ class Annotation(Component, ABC):
 
         for component in relevant_components:
             if self.label != component.label or not self.is_collision(component):
-                if component.manager:
-                    component.manager.managing.remove(component)
 
-                # component.scope = f"{component.scope}.{self.__class__.__name__}"
-                component.manager = self
+                managers_to_remove = []
+                for manager in component.managers:
+                    if type(manager) in to_types(self.managers):
+                        manager.managing.remove(component)
+                        managers_to_remove.append(manager)
+                for manager in managers_to_remove:
+                    component.managers.remove(manager)
+
+                component.managers.append(self)
                 component.is_managed = True
                 self.managing.append(component)
 
@@ -137,11 +142,15 @@ class GenericAnnotation(Annotation, ABC):
         for component in self.represented_annotations:
             if type(component) in self.__managed_components__:
                 if self.label != component.label or not self.is_collision(component):
-                    if component.manager:
-                        component.manager.managing.remove(component)
+                    managers_to_remove = []
+                    for manager in component.managers:
+                        if type(manager) in to_types(self.managers):
+                            manager.managing.remove(component)
+                            managers_to_remove.append(manager)
+                    for manager in managers_to_remove:
+                        component.managers.remove(manager)
 
-                    # component.scope = f"{component.scope}.{self.__class__.__name__}"
-                    component.manager = self
+                    component.managers.append(self)
                     component.is_managed = True
                     self.managing.append(component)
 

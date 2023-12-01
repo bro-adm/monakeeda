@@ -4,7 +4,6 @@ from monakeeda.base import BaseMonkey, GenericAnnotation, ExceptionsDict, get_sc
 from .consts import DISCRIMINATOR_NAMESPACE, KnownLabels
 from .exceptions import DiscriminatorKeyNotProvidedInValues, GivenModelsDoNotHaveADiscriminator, GivenModelsHaveMoreThanOneDiscriminationKey
 from .union_annotation import UnionAnnotation
-from ..value_providers import KnownLabels
 from ..implemenations_base_operator_visitor import ImplementationsOperatorVisitor
 from ..known_builders import CoreAnnotationsExtractor
 from ...utils import get_wanted_params

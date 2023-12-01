@@ -49,3 +49,7 @@ def capitalize_words(input: str) -> str:
     transformed_string = ' '.join(part.capitalize() for part in parts)
 
     return transformed_string
+
+
+def to_types(the_list: list) -> list:
+    return [type(obj) for obj in the_list]
