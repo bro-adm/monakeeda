@@ -9,6 +9,7 @@ from ..value_providers import ValueFieldParameter
 @annotation_mapper(Optional)
 class OptionalAnnotation(GenericAnnotation):
     __prior_handler__ = ValueFieldParameter
+    __manage_all_sub_annotations__ = True
 
     @classmethod
     @property

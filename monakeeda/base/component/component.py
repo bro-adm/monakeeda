@@ -5,8 +5,6 @@ from typing import ClassVar, TypeVar, Type, Any, List
 from ..exceptions_manager import ExceptionsDict
 from ..interfaces import ValuesHandler, MonkeyBuilder
 from ..operator import OperatorVisitor
-from ..scope import extract_main_scope
-from ...utils import to_types
 
 all_components = []
 
@@ -91,26 +89,18 @@ class Component(MonkeyBuilder, ValuesHandler, ABC):
 
     def _build(self, monkey_cls, bases, monkey_attrs, exceptions: ExceptionsDict, main_builder):
         # default implementation
+        from .managed_component import handle_manager_collisions
+
         for managed_component_type in self.__managed_components__:
             components = monkey_cls.__type_organized_components__[managed_component_type]
 
             for component in components:
-                if component.scope == extract_main_scope(self.scope):
-                    managers_to_remove = []
-                    for manager in component.managers:
-                        if type(manager) in to_types(self.managers):
-                            manager.managing.remove(component)
-                            managers_to_remove.append(manager)
-                    for manager in managers_to_remove:
-                        component.managers.remove(manager)
-
-                    component.managers.append(self)
-                    component.is_managed = True
-                    self.managing.append(component)
+                if component.scope == self.scope:
+                    handle_manager_collisions(self, component)
 
     def build(self, monkey_cls, bases, monkey_attrs, exceptions: ExceptionsDict, main_builder=None):
         super().build(monkey_cls, bases, monkey_attrs, exceptions, main_builder)
-        monkey_cls.scopes[self.scope][self.label].append(self)  # Add regardless of build exceptions
+        monkey_cls.scopes[self.scope][self.label].append(self)  # Add regardless of build exceptions - for label collision validation
 
     @abstractmethod
     def accept_operator(self, operator_visitor: OperatorVisitor, context: Any):

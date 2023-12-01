@@ -1,5 +1,6 @@
 from typing import Type
 
+from monakeeda.utils import to_types
 from .component import Component
 
 
@@ -11,3 +12,17 @@ def managed_by(*managers: Type[Component]):
         return component_cls
 
     return get_component
+
+
+def handle_manager_collisions(main_component: Component, managed_component: Component, collision_by_type=False):
+    managers_to_remove = []
+    for manager in managed_component.managers:
+        if (collision_by_type and type(manager) in to_types(main_component.managers)) or manager in main_component.managers:
+            managers_to_remove.append(manager)
+    for manager in managers_to_remove:
+        manager.managing.remove(managed_component)
+        managed_component.managers.remove(manager)
+
+    managed_component.managers.append(main_component)
+    managed_component.is_managed = True
+    main_component.managing.append(managed_component)

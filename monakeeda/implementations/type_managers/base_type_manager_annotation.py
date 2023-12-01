@@ -1,10 +1,12 @@
 from abc import ABC
 
-from monakeeda.base import GenericAnnotation, ExceptionsDict
+from monakeeda.base import GenericAnnotation
 from .consts import KnownLabels
 
 
-class BaseInfiniteArgsAnnotation(GenericAnnotation, ABC):
+class BaseTypeManagerAnnotation(GenericAnnotation, ABC):
+    __manage_all_sub_annotations__ = True
+
     @classmethod
     @property
     def label(cls) -> str:

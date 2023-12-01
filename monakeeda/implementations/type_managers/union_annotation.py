@@ -1,14 +1,14 @@
 from typing import Union, Any
 
 from monakeeda.base import annotation_mapper, ExceptionsDict, GenericAnnotation
-from .base_infinite_args_annotation import BaseInfiniteArgsAnnotation
+from .base_type_manager_annotation import BaseTypeManagerAnnotation
 from .consts import KnownLabels
 from ..existence_managers import CreateFrom
 from ..implemenations_base_operator_visitor import ImplementationsOperatorVisitor
 
 
 @annotation_mapper(Union)
-class UnionAnnotation(BaseInfiniteArgsAnnotation):
+class UnionAnnotation(BaseTypeManagerAnnotation):
     __prior_handler__ = CreateFrom
 
     @classmethod

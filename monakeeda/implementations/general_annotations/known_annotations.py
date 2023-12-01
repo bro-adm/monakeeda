@@ -1,11 +1,9 @@
 from typing import Any, get_args, TypeVar
 
 from monakeeda.base import Annotation, type_validation, Stages, OperatorVisitor, known_annotation_mapper, \
-    KnownAnnotations, BaseMonkey, ExceptionsDict, managed_by
+    KnownAnnotations, BaseMonkey, ExceptionsDict
 from monakeeda.consts import NamespacesConsts, TmpConsts
 from .basic_annotations import NumericTypeAnnotation
-from ..existence_managers import OptionalAnnotation
-from ..type_managers import UnionAnnotation, Discriminator
 
 
 @known_annotation_mapper(KnownAnnotations.TypeVarAnnotation, TypeVar, isinstance)
@@ -36,7 +34,6 @@ class TypeVarAnnotation(Annotation):
         operator_visitor.operate_model_annotation(self, context)
 
 
-@managed_by(OptionalAnnotation, UnionAnnotation, Discriminator)
 @known_annotation_mapper(KnownAnnotations.ModelAnnotation, BaseMonkey, issubclass)
 class ModelAnnotation(Annotation):
     __prior_handler__ = TypeVarAnnotation
@@ -61,7 +58,6 @@ class ModelAnnotation(Annotation):
         operator_visitor.operate_model_annotation(self, context)
 
 
-@managed_by(OptionalAnnotation, UnionAnnotation)
 @known_annotation_mapper(KnownAnnotations.ArbitraryAnnotation, object, issubclass)
 class ArbitraryAnnotation(Annotation):
     __prior_handler__ = ModelAnnotation

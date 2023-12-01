@@ -1,14 +1,16 @@
 from typing import Any, Union
 
-from monakeeda.base import ExceptionsDict
+from monakeeda.base import ExceptionsDict, managed_by
 from monakeeda.consts import NamespacesConsts
 from monakeeda.utils import get_wanted_params, wrap_in_list
 from .base_decorator import BaseMutatorDecorator
+from ..existence_managers import OptionalAnnotation
 from ..implemenations_base_operator_visitor import ImplementationsOperatorVisitor
 from ..known_builders import DependenciesBuilder
 from ..validators import Validator
 
 
+@managed_by(OptionalAnnotation)
 class Mutator(BaseMutatorDecorator):
     __prior_handler__ = Validator
     __builders__ = [DependenciesBuilder()]

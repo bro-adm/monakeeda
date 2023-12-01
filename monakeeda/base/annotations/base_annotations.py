@@ -4,9 +4,9 @@ from typing import List, Union, Tuple
 
 from typing_extensions import get_args
 
-from ..component import Component
+from ..component import Component, handle_manager_collisions
 from ..exceptions_manager import ExceptionsDict
-from ...utils import wrap_in_list, to_types
+from ...utils import wrap_in_list
 
 
 class Annotation(Component, ABC):
@@ -65,18 +65,7 @@ class Annotation(Component, ABC):
 
         for component in relevant_components:
             if self.label != component.label or not self.is_collision(component):
-
-                managers_to_remove = []
-                for manager in component.managers:
-                    if type(manager) in to_types(self.managers):
-                        manager.managing.remove(component)
-                        managers_to_remove.append(manager)
-                for manager in managers_to_remove:
-                    component.managers.remove(manager)
-
-                component.managers.append(self)
-                component.is_managed = True
-                self.managing.append(component)
+                handle_manager_collisions(self, component, collision_by_type=True)
 
 
 class GenericAnnotation(Annotation, ABC):
@@ -90,6 +79,8 @@ class GenericAnnotation(Annotation, ABC):
     Both these objects are either _GenericAlias or _AnnotatedAlias via the logic of how python works with Generics.
     Therefore works with get_args typing helper
     """
+
+    __manage_all_sub_annotations__ = False
 
     @property
     def args(self):
@@ -140,19 +131,9 @@ class GenericAnnotation(Annotation, ABC):
         super()._build(monkey_cls, bases, monkey_attrs, exceptions, main_builder)
 
         for component in self.represented_annotations:
-            if type(component) in self.__managed_components__:
+            if self.__manage_all_sub_annotations__ or type(component) in self.__managed_components__:
                 if self.label != component.label or not self.is_collision(component):
-                    managers_to_remove = []
-                    for manager in component.managers:
-                        if type(manager) in to_types(self.managers):
-                            manager.managing.remove(component)
-                            managers_to_remove.append(manager)
-                    for manager in managers_to_remove:
-                        component.managers.remove(manager)
-
-                    component.managers.append(self)
-                    component.is_managed = True
-                    self.managing.append(component)
+                    handle_manager_collisions(self, component, collision_by_type=True)
 
     def __getitem__(self, item):
         return item
