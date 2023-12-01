@@ -14,3 +14,14 @@ def get_parameter_type_by_key(component: Type[ConfigurableComponent], key: str) 
             return parameter
 
     return
+
+
+def get_all_managed_components(component: Component) -> List[Component]:
+    components = []
+
+    components.extend(component.managing)
+
+    for managed_component in component.managing:
+        components.extend(get_all_managed_components(managed_component))
+
+    return components
