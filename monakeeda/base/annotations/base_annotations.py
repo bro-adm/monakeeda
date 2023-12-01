@@ -66,6 +66,7 @@ class Annotation(Component, ABC):
         for component in relevant_components:
             if self.label != component.label or not self.is_collision(component):
                 handle_manager_collisions(self, component, collision_by_type=True)
+                component.decorators.extend(self.decorators)
 
 
 class GenericAnnotation(Annotation, ABC):
@@ -134,6 +135,7 @@ class GenericAnnotation(Annotation, ABC):
             if self.__manage_all_sub_annotations__ or type(component) in self.__managed_components__:
                 if self.label != component.label or not self.is_collision(component):
                     handle_manager_collisions(self, component, collision_by_type=True)
+                    component.decorators.extend(self.decorators)
 
     def __getitem__(self, item):
         return item

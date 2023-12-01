@@ -61,6 +61,7 @@ class Component(MonkeyBuilder, ValuesHandler, ABC):
         self.is_managed = False
         self.managers = []
         self.managing = []
+        self.decorators = []
 
     @property
     @abstractmethod
@@ -97,6 +98,7 @@ class Component(MonkeyBuilder, ValuesHandler, ABC):
             for component in components:
                 if component.scope == self.scope:
                     handle_manager_collisions(self, component)
+                    component.decorators.extend(self.decorators)
 
     def build(self, monkey_cls, bases, monkey_attrs, exceptions: ExceptionsDict, main_builder=None):
         super().build(monkey_cls, bases, monkey_attrs, exceptions, main_builder)
