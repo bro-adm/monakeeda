@@ -4,9 +4,9 @@ from typing import List, Union, Tuple
 
 from typing_extensions import get_args
 
+from monakeeda.utils import wrap_in_list
 from ..component import Component, handle_manager_collisions
 from ..exceptions_manager import ExceptionsDict
-from ...utils import wrap_in_list
 
 
 class Annotation(Component, ABC):
@@ -65,8 +65,7 @@ class Annotation(Component, ABC):
 
         for component in relevant_components:
             if self.label != component.label or not self.is_collision(component):
-                handle_manager_collisions(self, component, collision_by_type=True)
-                component.decorators.extend(self.decorators)
+                handle_manager_collisions(self, component, decorator=self.decorator, collision_by_type=True)
 
 
 class GenericAnnotation(Annotation, ABC):
@@ -134,8 +133,7 @@ class GenericAnnotation(Annotation, ABC):
         for component in self.represented_annotations:
             if self.__manage_all_sub_annotations__ or type(component) in self.__managed_components__:
                 if self.label != component.label or not self.is_collision(component):
-                    handle_manager_collisions(self, component, collision_by_type=True)
-                    component.decorators.extend(self.decorators)
+                    handle_manager_collisions(self, component, decorator=self.decorator, collision_by_type=True)
 
     def __getitem__(self, item):
         return item

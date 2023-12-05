@@ -28,6 +28,7 @@ class Positive(NumericConstraintAnnotation[T], Generic[T]):
             exceptions[self.scope].append(NumericConstraintFailedException(self.representor, value))
         else:
             for component in self.managing:
+                component.actuator = self
                 model_instance.__run_organized_components__[component] = True
 
     def accept_operator(self, operator_visitor: OperatorVisitor, context: Any):

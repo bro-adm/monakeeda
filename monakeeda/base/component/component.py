@@ -1,6 +1,6 @@
 import inspect
 from abc import ABC, abstractmethod
-from typing import ClassVar, TypeVar, Type, Any, List
+from typing import ClassVar, TypeVar, Type, Any, List, Dict, Optional
 
 from ..exceptions_manager import ExceptionsDict
 from ..interfaces import ValuesHandler, MonkeyBuilder
@@ -58,10 +58,11 @@ class Component(MonkeyBuilder, ValuesHandler, ABC):
 
     def __init__(self):
         self._scope = ''
+        self.decorator = None  # the decorator that this component might set on its managed components
         self.is_managed = False
-        self.managers = []
-        self.managing = []
-        self.decorators = []
+        self.actuator: Optional['Component'] = None
+        self.managers: Dict['Component', Optional['ComponentDecorator']] = {}
+        self.managing: List['Component'] = []
 
     @property
     @abstractmethod
@@ -97,8 +98,7 @@ class Component(MonkeyBuilder, ValuesHandler, ABC):
 
             for component in components:
                 if component.scope == self.scope:
-                    handle_manager_collisions(self, component)
-                    component.decorators.extend(self.decorators)
+                    handle_manager_collisions(self, component, decorator=self.decorator)
 
     def build(self, monkey_cls, bases, monkey_attrs, exceptions: ExceptionsDict, main_builder=None):
         super().build(monkey_cls, bases, monkey_attrs, exceptions, main_builder)

@@ -8,7 +8,7 @@ from .monkey_scopes_manager import MonkeyScopesManager
 from .errors import MonkeyValuesHandlingException
 from .generic_alias import MonkeyGenericAlias
 from ..annotations import AnnotationManager, annotation_mapping
-from ..component import all_components
+from ..component import all_components, get_run_decorator
 from ..config import ConfigManager, all_configs
 from ..decorators import DecoratorManager
 from ..exceptions_manager import ExceptionsDict
@@ -52,10 +52,11 @@ class BaseMonkey(metaclass=MonkeyMeta, component_managers=component_managers, sc
         exceptions = ExceptionsDict()  # pass by reference - so updates will be available
 
         for component, is_run in self.__run_organized_components__.items():
-            for decorator in component.decorators:
+            decorator = get_run_decorator(component)
+            if decorator:
                 decorator.component = component
                 decorator.handle_values(self, values, stage, exceptions)
-            if not component.decorators and is_run:
+            elif is_run:
                 component.handle_values(self, values, stage, exceptions)
 
         if exceptions:

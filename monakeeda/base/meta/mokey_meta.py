@@ -71,7 +71,7 @@ class MonkeyMeta(ABCMeta):
             logger.info(f"Model Components Run Order:", extra={STAGE: "Component Info", MONKEY: name})
 
             for component, is_run in cls.__run_organized_components__.items():
-                logger.info(f"\t{component, is_run}, {component.managers=}, {component.is_managed=}, {component.decorators=} -> {component.scope=}", extra={STAGE: "Component Info", MONKEY: name})
+                logger.info(f"\t{component, is_run}, {component.managers=}, {component.is_managed=} -> {component.scope=}", extra={STAGE: "Component Info", MONKEY: name})
 
         else:
             cls._init_args = ((name, bases, attrs), {"component_managers": component_managers, "scopes_manager": scopes_manager, "component_organizer": component_organizer, "operators_visitors": operators_visitors})

@@ -19,6 +19,7 @@ class OptionalAnnotation(GenericAnnotation):
     def _handle_values(self, model_instance, values, stage, exceptions: ExceptionsDict):
         if self._field_key in values:
             for component in self.managing:
+                component.actuator = self
                 model_instance.__run_organized_components__[component] = True
 
     def _build(self, monkey_cls, bases, monkey_attrs, exceptions: ExceptionsDict, main_builder):

@@ -66,18 +66,15 @@ class ListAnnotation(BaseTypeManagerAnnotation):
         return KnownLabels.TYPE_MANAGER
 
     def _build(self, monkey_cls, bases, monkey_attrs, exceptions: ExceptionsDict, main_builder):
+        self.decorator = ListComponentDecorator()
         super()._build(monkey_cls, bases, monkey_attrs, exceptions, main_builder)
-
-        list_component_decorator = ListComponentDecorator()
-
-        for component in self.managing:
-            component.decorators.append(list_component_decorator)
 
     def _handle_values(self, model_instance, values, stage, exceptions: ExceptionsDict):
         value = values[self._field_key]
 
         if isinstance(value, list):
             for component in self.managing:
+                component.actuator = self
                 model_instance.__run_organized_components__[component] = True
 
         else:
