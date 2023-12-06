@@ -1,14 +1,15 @@
-from .base import Field, Config
+from .base import Field, Config, labeled_components
 from .implementations import *
 from .monkey_model import MonkeyModel, generate_model
 
 
 def log_main_information():
-    from .base import all_components, all_configs, all_operators
+    from .base import labeled_components, all_configs, all_operators
     from .logger import logger, STAGE, MONKEY
 
-    for component in all_components:
-        logger.info(f"\t{component}", extra={STAGE: "All Components", MONKEY: "MONAKEEDA"})
+    for label, components in labeled_components.items():
+        for component in components:
+            logger.info(f"\t{label} -> {component}", extra={STAGE: "All Components", MONKEY: "MONAKEEDA"})
 
     for config_name, config_cls in all_configs.items():
         logger.info(f"\t{config_name} -> {config_cls}", extra={STAGE: "All Configs", MONKEY: "MONAKEEDA"})

@@ -1,12 +1,14 @@
 import inspect
 from abc import ABC, abstractmethod
-from typing import ClassVar, TypeVar, Type, Any, List, Dict, Optional
+from collections import OrderedDict
+from typing import ClassVar, TypeVar, Type, Any, List, Dict, Optional, OrderedDict as TypeOrderedDict
 
+from .errors import PrioriHandlerCollisionException
 from ..exceptions_manager import ExceptionsDict
 from ..interfaces import ValuesHandler, MonkeyBuilder
 from ..operator import OperatorVisitor
 
-all_components = []
+labeled_components: TypeOrderedDict[str, list] = OrderedDict({})
 
 
 class Component(MonkeyBuilder, ValuesHandler, ABC):
@@ -44,11 +46,23 @@ class Component(MonkeyBuilder, ValuesHandler, ABC):
             cls.__managed_components__ = cls.__managed_components__.copy()
 
         if not inspect.isabstract(cls):
-            if cls.__prior_handler__:
-                position = all_components.index(cls.__prior_handler__)
-                all_components.insert(position + 1, cls)
+            global labeled_components
+
+            listed_components = list(labeled_components.keys())
+            if cls.__prior_handler__ not in labeled_components:
+                if cls.label not in labeled_components:
+                    labeled_components[cls.label] = [cls]
+                else:
+                    labeled_components[cls.label].append(cls)
             else:
-                all_components.append(cls)
+                if cls.label in labeled_components:
+                    set_position = listed_components.index(cls.label)
+                    if listed_components[set_position-1] != cls.__prior_handler__:
+                        raise PrioriHandlerCollisionException(cls, cls.label, cls.__prior_handler__)
+
+                    labeled_components[cls.label].append(cls)
+                else:
+                    labeled_components[cls.label] = [cls]
 
     @classmethod
     @property
@@ -94,7 +108,7 @@ class Component(MonkeyBuilder, ValuesHandler, ABC):
         from .managed_component import handle_manager_collisions
 
         for managed_component_type in self.__managed_components__:
-            components = monkey_cls.__type_organized_components__[managed_component_type]
+            components = [component for component in monkey_cls.__label_organized_components__[managed_component_type.label] if type(component) == managed_component_type]
 
             for component in components:
                 if component.scope == self.scope:

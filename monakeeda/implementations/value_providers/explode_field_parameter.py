@@ -4,7 +4,7 @@ from monakeeda.base import Field, BaseMonkey, get_scoped_components_by_label, Ex
 from monakeeda.consts import NamespacesConsts, FieldConsts
 from monakeeda.utils import get_wanted_params
 from .consts import KnownLabels
-from .file_input_config_parameter import FileInputConfigParameter
+from .alias_field_parameter import AliasFieldParameter
 from ..implemenations_base_operator_visitor import ImplementationsOperatorVisitor
 from ..known_builders import ParameterValueTypeValidator, CoreAnnotationsExtractor
 
@@ -12,7 +12,7 @@ from ..known_builders import ParameterValueTypeValidator, CoreAnnotationsExtract
 @Field.parameter
 class ExplodeFieldParameter(FieldParameter):
     __key__ = 'explode'
-    __prior_handler__ = FileInputConfigParameter
+    __prior_handler__ = AliasFieldParameter.label
     __builders__ = [ParameterValueTypeValidator(bool), CoreAnnotationsExtractor(BaseMonkey)]
 
     @classmethod

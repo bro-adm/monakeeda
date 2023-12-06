@@ -5,7 +5,6 @@ from monakeeda.base import annotation_mapper, ExceptionsDict, ComponentDecorator
 from monakeeda.utils import list_insert_if_does_not_exist
 from .base_type_manager_annotation import BaseTypeManagerAnnotation
 from .consts import KnownLabels
-from .discriminator_annotation import Discriminator
 from ..implemenations_base_operator_visitor import ImplementationsOperatorVisitor
 
 
@@ -29,12 +28,15 @@ class ListComponentDecorator(ComponentDecorator):
 
             else:
                 for manager in self.component.managers:
-                    manager_activation_info = item_activation_info[manager]
-                    if manager_activation_info[self.component]:
-                        is_activated = True
-                        break
+                    if manager in item_activation_info:
+                        manager_activation_info = item_activation_info[manager]
+                        if manager_activation_info[self.component]:
+                            is_activated = True
+                            break
 
             if is_activated:
+                pre_run_activations = model_instance.__run_organized_components__.copy()
+
                 item = list_value[i]
                 values[field_key] = item
 
@@ -51,19 +53,17 @@ class ListComponentDecorator(ComponentDecorator):
                 exceptions[field_key].extend(new_exceptions)
 
                 self._activations_per_item[i][self.component] = model_instance.__run_organized_components__.copy()
+                model_instance.__run_organized_components__ = pre_run_activations
+                print(model_instance.__run_organized_components__)
 
         values[field_key] = list_value
 
 
 @annotation_mapper(List)
 class ListAnnotation(BaseTypeManagerAnnotation):
-    __prior_handler__ = Discriminator
-    __manage_all_sub_annotations__ = True
-
-    @classmethod
     @property
-    def label(cls) -> str:
-        return KnownLabels.TYPE_MANAGER
+    def represented_types(self):
+        return list
 
     def _build(self, monkey_cls, bases, monkey_attrs, exceptions: ExceptionsDict, main_builder):
         self.decorator = ListComponentDecorator()

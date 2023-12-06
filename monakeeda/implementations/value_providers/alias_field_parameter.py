@@ -3,7 +3,7 @@ from typing import Any
 
 from monakeeda.base import FieldParameter, Field, ExceptionsDict, BaseMonkey
 from .consts import KnownLabels
-from .explode_field_parameter import ExplodeFieldParameter
+from .file_input_config_parameter import FileInputConfigParameter
 from ..implemenations_base_operator_visitor import ImplementationsOperatorVisitor
 from ..known_builders import ParameterValueTypeValidator
 
@@ -19,7 +19,7 @@ class AliasInfo(BaseMonkey, delay=True):
 @Field.parameter
 class AliasFieldParameter(FieldParameter):
     __key__ = 'alias'
-    __prior_handler__ = ExplodeFieldParameter
+    __prior_handler__ = FileInputConfigParameter.label
     __builders__ = [ParameterValueTypeValidator((str, AliasInfo))]
 
     @classmethod

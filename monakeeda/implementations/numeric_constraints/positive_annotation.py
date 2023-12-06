@@ -4,13 +4,10 @@ from monakeeda.base import ExceptionsDict, OperatorVisitor, managed_by
 from .base_numeric_constraint import NumericConstraintAnnotation
 from .exceptions import NumericConstraintFailedException
 from ..general_annotations import NumericTypeAnnotation
-from ..valid_values import ValidValues
 
 
 @managed_by(NumericTypeAnnotation)
 class Positive(NumericConstraintAnnotation[T], Generic[T]):
-    __prior_handler__ = ValidValues
-
     def __instancecheck__(self, instance):
         if isinstance(instance, self.args):
             return instance > 0

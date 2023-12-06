@@ -3,7 +3,7 @@ from typing import Generic, T, Any
 from monakeeda.base import GenericAnnotation, Stages, ExceptionsDict, managed_by
 from .consts import MUTATION_MANAGER
 from .exceptions import ConstError
-from ..existence_managers import OptionalAnnotation
+from ..type_managers import OptionalAnnotation
 from ..implemenations_base_operator_visitor import ImplementationsOperatorVisitor
 from ..mutators import Mutator
 from ..type_managers import Discriminator, UnionAnnotation

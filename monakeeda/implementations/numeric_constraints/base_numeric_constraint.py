@@ -3,11 +3,11 @@ from typing import Generic, T, Tuple, Union
 
 from monakeeda.base import FieldParameter, GenericAnnotation, ExceptionsDict
 from .helpers import constraint_collisions_validation
-from ..known_builders import ParameterValueTypeValidator, CoreAnnotationsExtractor
+from ..general_annotations import BasicTypeValidatorAnnotation
 
 
 class NumericConstraintFieldParameter(FieldParameter, ABC):
-    # __builders__ = [ParameterValueTypeValidator((int, float)), CoreAnnotationsExtractor(int, float)]
+    __prior_handler__ = BasicTypeValidatorAnnotation.label
 
     @classmethod
     @property
@@ -39,6 +39,8 @@ class NumericConstraintFieldParameter(FieldParameter, ABC):
 
 
 class NumericConstraintAnnotation(GenericAnnotation, Generic[T]):
+    __prior_handler__ = BasicTypeValidatorAnnotation.label
+
     @classmethod
     @property
     def label(cls) -> str:

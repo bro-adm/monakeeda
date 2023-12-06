@@ -51,11 +51,11 @@ class MonkeyMeta(ABCMeta):
 
             model_components = attrs[NamespacesConsts.COMPONENTS]
             logger.info(f"Post Component Managers All Model Components = {model_components}", extra={STAGE: "Component Info", MONKEY: name})
-            cls.__type_organized_components__ = cls.__component_organizer__.order_by_chain_of_responsibility(model_components)
-            logger.info(f"Post Component Managers Organized Model Components = {cls.__type_organized_components__}", extra={STAGE: "Component Info", MONKEY: name})
+            cls.__label_organized_components__ = cls.__component_organizer__.order_by_chain_of_responsibility(model_components)
+            logger.info(f"Post Component Managers Organized Model Components = {cls.__label_organized_components__}", extra={STAGE: "Component Info", MONKEY: name})
 
             build_exceptions = ExceptionsDict()
-            for component_type, components in cls.__type_organized_components__.items():
+            for label, components in cls.__label_organized_components__.items():
                 for component in components:
                     component.build(cls, bases, attrs, build_exceptions)
 
@@ -64,14 +64,13 @@ class MonkeyMeta(ABCMeta):
             if build_exceptions:
                 raise MonkeyBuildException(name, build_exceptions)
 
-            logger.info(f"Post Components Build Organized Model Components = {cls.__type_organized_components__}", extra={STAGE: "Component Info", MONKEY: name})
+            logger.info(f"Post Components Build Organized Model Components = {cls.__label_organized_components__}", extra={STAGE: "Component Info", MONKEY: name})
             logger.info(f"Scopes = {attrs[NamespacesConsts.SCOPES]}", extra={STAGE: "Component Info", MONKEY: name})
 
-            cls.__run_organized_components__ = cls.__component_organizer__.order_for_instance_operation(cls, cls.__type_organized_components__)
+            cls.__run_organized_components__ = cls.__component_organizer__.order_for_instance_operation(cls, cls.__label_organized_components__)
             logger.info(f"Model Components Run Order:", extra={STAGE: "Component Info", MONKEY: name})
-
             for component, is_run in cls.__run_organized_components__.items():
-                logger.info(f"\t{component, is_run}, {component.managers=}, {component.is_managed=} -> {component.scope=}", extra={STAGE: "Component Info", MONKEY: name})
+                logger.info(f"\t{component.scope=} -> {component, is_run}, {component.managers=}, {component.managing=}, {component.is_managed=}", extra={STAGE: "Component Info", MONKEY: name})
 
         else:
             cls._init_args = ((name, bases, attrs), {"component_managers": component_managers, "scopes_manager": scopes_manager, "component_organizer": component_organizer, "operators_visitors": operators_visitors})

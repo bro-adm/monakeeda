@@ -3,17 +3,17 @@ from typing import Any
 from monakeeda.base import ConfigParameter, Config, ExceptionsDict
 from monakeeda.consts import NamespacesConsts, FieldConsts
 from .exceptions import MissingFieldValueException
-from .optional_annotation import OptionalAnnotation
 from ..implemenations_base_operator_visitor import ImplementationsOperatorVisitor
 from ..known_builders import ParameterAllowedValuesValidator
 from ..known_scopes import KnownScopes
+from ..value_providers import ValueFieldParameter
 
 
 @Config.parameter
 class ValidateMissingFieldsConfigParameter(ConfigParameter):
     __key__ = 'validate_missing_fields'
     __builders__ = [ParameterAllowedValuesValidator([True])]
-    __prior_handler__ = OptionalAnnotation
+    __prior_handler__ = ValueFieldParameter.label
 
     @classmethod
     @property

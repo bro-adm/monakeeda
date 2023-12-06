@@ -23,13 +23,13 @@ class FileInputException(Exception):
 @Config.parameter
 class FileInputConfigParameter(ConfigParameter):
     __key__ = "file_input"
-    __prior_handler__ = AliasGenerator
+    __prior_handler__ = AliasGenerator.label
     __builders__ = [ParameterValueTypeValidator(str)]
 
     @classmethod
     @property
     def label(cls) -> str:
-        return KnownLabels.EXTERNAL_PROVIDER
+        return "global" + KnownLabels.EXTERNAL_PROVIDER
 
     @property
     def scope(self) -> str:

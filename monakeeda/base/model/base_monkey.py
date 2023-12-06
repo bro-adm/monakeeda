@@ -2,13 +2,13 @@ from typing import Any, _TYPING_INTERNALS, Generic
 
 from monakeeda.consts import NamespacesConsts, TmpConsts
 from monakeeda.logger import logger, STAGE, MONKEY
-from monakeeda.utils import deep_update, get_wanted_params
+from monakeeda.utils import deep_update
 from .monkey_components_organizer import MonkeyComponentsOrganizer
 from .monkey_scopes_manager import MonkeyScopesManager
 from .errors import MonkeyValuesHandlingException
 from .generic_alias import MonkeyGenericAlias
 from ..annotations import AnnotationManager, annotation_mapping
-from ..component import all_components, get_run_decorator
+from ..component import get_run_decorator, labeled_components
 from ..config import ConfigManager, all_configs
 from ..decorators import DecoratorManager
 from ..exceptions_manager import ExceptionsDict
@@ -20,7 +20,7 @@ from ..operator import all_operators
 component_managers = [ConfigManager(all_configs), FieldManager(Field, NoField), DecoratorManager(), AnnotationManager(annotation_mapping)]
 
 
-class BaseMonkey(metaclass=MonkeyMeta, component_managers=component_managers, scopes_manager=MonkeyScopesManager(), component_organizer=MonkeyComponentsOrganizer(all_components), operators_visitors=all_operators):
+class BaseMonkey(metaclass=MonkeyMeta, component_managers=component_managers, scopes_manager=MonkeyScopesManager(), component_organizer=MonkeyComponentsOrganizer(labeled_components), operators_visitors=all_operators):
     """
     Responsible for holding the PURE run of all the logics combined without being dependent on any specific compartment.
 
@@ -51,12 +51,12 @@ class BaseMonkey(metaclass=MonkeyMeta, component_managers=component_managers, sc
         super().__setattr__("__run_organized_components__", self.__class__.__run_organized_components__.copy())
         exceptions = ExceptionsDict()  # pass by reference - so updates will be available
 
-        for component, is_run in self.__run_organized_components__.items():
+        for component in self.__run_organized_components__.keys():
             decorator = get_run_decorator(component)
             if decorator:
                 decorator.component = component
                 decorator.handle_values(self, values, stage, exceptions)
-            elif is_run:
+            elif self.__run_organized_components__[component]:
                 component.handle_values(self, values, stage, exceptions)
 
         if exceptions:
@@ -76,10 +76,12 @@ class BaseMonkey(metaclass=MonkeyMeta, component_managers=component_managers, sc
         self._handle_values(kwargs, Stages.UPDATE)
 
     def __setattr__(self, key, value):
-        if key in _TYPING_INTERNALS:  # Python's weird usage of inheritance with generics and their initialization
-            super().__setattr__(key, value)
-        else:
-            self.update(**{key: value})
+        super().__setattr__(key, value)
+
+        # if key in _TYPING_INTERNALS:  # Python's weird usage of inheritance with generics and their initialization
+        #     super().__setattr__(key, value)
+        # else:
+        #     self.update(**{key: value})
 
     def __eq__(self, other):
         if not isinstance(other, BaseMonkey):

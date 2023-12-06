@@ -3,19 +3,11 @@ from typing import Union, Any
 from monakeeda.base import annotation_mapper, ExceptionsDict, GenericAnnotation
 from .base_type_manager_annotation import BaseTypeManagerAnnotation
 from .consts import KnownLabels
-from ..existence_managers import CreateFrom
 from ..implemenations_base_operator_visitor import ImplementationsOperatorVisitor
 
 
 @annotation_mapper(Union)
 class UnionAnnotation(BaseTypeManagerAnnotation):
-    __prior_handler__ = CreateFrom
-
-    @classmethod
-    @property
-    def label(cls) -> str:
-        return KnownLabels.TYPE_MANAGER
-
     def _handle_values(self, model_instance, values, stage, exceptions: ExceptionsDict):
         value = values[self._field_key]
 

@@ -7,7 +7,7 @@ from ..implemenations_base_operator_visitor import ImplementationsOperatorVisito
 
 
 class Abstract(GenericAnnotation, Generic[T]):
-    __prior_handler__ = Config
+    __prior_handler__ = Config.label
 
     @classmethod
     @property

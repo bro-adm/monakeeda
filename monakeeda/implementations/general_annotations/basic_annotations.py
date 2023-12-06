@@ -1,14 +1,22 @@
+from abc import ABC
 from typing import Any
 
 from monakeeda.base import Annotation, annotation_mapper, type_validation, ExceptionsDict
 from ..implemenations_base_operator_visitor import ImplementationsOperatorVisitor
-from ..type_managers import DictAnnotation
+from ..type_managers import KnownLabels
+
+
+class BasicTypeValidatorAnnotation(Annotation, ABC):
+    __prior_handler__ = KnownLabels.TYPE_MANAGER
+
+    @classmethod
+    @property
+    def label(cls) -> str:
+        return "type_validator"
 
 
 @annotation_mapper(object, Any)
-class ObjectAnnotation(Annotation):
-    __prior_handler__ = DictAnnotation
-
+class ObjectAnnotation(BasicTypeValidatorAnnotation):
     def _handle_values(self, model_instance, values, stage, exceptions: ExceptionsDict):
         pass
 
@@ -17,8 +25,8 @@ class ObjectAnnotation(Annotation):
 
 
 @annotation_mapper(str, list, dict)
-class BasicTypeAnnotation(Annotation):
-    __prior_handler__ = ObjectAnnotation
+class BasicTypeAnnotation(BasicTypeValidatorAnnotation):
+    __prior_handler__ = KnownLabels.TYPE_MANAGER
 
     def _handle_values(self, model_instance, values, stage, exceptions: ExceptionsDict):
         result = type_validation(values[self._field_key], self.set_annotation)
@@ -36,4 +44,4 @@ class BasicTypeAnnotation(Annotation):
 
 @annotation_mapper(int, float)
 class NumericTypeAnnotation(BasicTypeAnnotation):
-    __prior_handler__ = BasicTypeAnnotation
+    __prior_handler__ = KnownLabels.TYPE_MANAGER

@@ -3,23 +3,16 @@ from typing import Any, Generic, TypeVarTuple
 from monakeeda.base import BaseMonkey, GenericAnnotation, ExceptionsDict, get_scoped_components_by_label
 from .consts import DISCRIMINATOR_NAMESPACE, KnownLabels
 from .exceptions import DiscriminatorKeyNotProvidedInValues, GivenModelsDoNotHaveADiscriminator, GivenModelsHaveMoreThanOneDiscriminationKey
-from .union_annotation import UnionAnnotation
+from .base_type_manager_annotation import BaseTypeManagerAnnotation
 from ..implemenations_base_operator_visitor import ImplementationsOperatorVisitor
 from ..known_builders import CoreAnnotationsExtractor
-from ...utils import get_wanted_params
+from monakeeda.utils import get_wanted_params
 
 TModels = TypeVarTuple("TModels")
 
 
-class Discriminator(GenericAnnotation, Generic[*TModels]):
-    __prior_handler__ = UnionAnnotation
+class Discriminator(BaseTypeManagerAnnotation, Generic[*TModels]):
     __builders__ = [CoreAnnotationsExtractor(BaseMonkey)]
-    __supports_infinite__ = True
-
-    @classmethod
-    @property
-    def label(cls) -> str:
-        return KnownLabels.TYPE_MANAGER
 
     def __init__(self, field_key, set_annotation, annotations_mapping):
         super().__init__(field_key, set_annotation, annotations_mapping)

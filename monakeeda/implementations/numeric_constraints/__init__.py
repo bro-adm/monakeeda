@@ -4,3 +4,4 @@ from .lt_constraint import LTNumericConstraintFieldParameter
 from .lte_constraint import LTENumericConstraintFieldParameter
 from .negative_annotation import Negative
 from .positive_annotation import Positive
+from .base_numeric_constraint import NumericConstraintFieldParameter

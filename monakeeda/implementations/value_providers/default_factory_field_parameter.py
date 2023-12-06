@@ -3,7 +3,7 @@ from typing import Any
 from monakeeda.base import Field, Stages, ExceptionsDict, FieldParameter
 from monakeeda.consts import NamespacesConsts, FieldConsts
 from .consts import KnownLabels
-from .default_field_parameter import DefaultFieldParameter
+from .env_field_parameter import EnvFieldParameter
 from ..implemenations_base_operator_visitor import ImplementationsOperatorVisitor
 from ..known_builders import ParameterCallableValueValidator
 
@@ -11,7 +11,7 @@ from ..known_builders import ParameterCallableValueValidator
 @Field.parameter
 class DefaultFactoryFieldParameter(FieldParameter):
     __key__ = 'default_factory'
-    __prior_handler__ = DefaultFieldParameter
+    __prior_handler__ = EnvFieldParameter.label
     __builders__ = [ParameterCallableValueValidator(0)]
 
     @classmethod

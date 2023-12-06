@@ -11,7 +11,7 @@ from ..implemenations_base_operator_visitor import ImplementationsOperatorVisito
 @Field.parameter
 class ValueFieldParameter(FieldParameter):
     __key__ = 'value'
-    __prior_handler__ = DefaultFactoryFieldParameter
+    __prior_handler__ = DefaultFactoryFieldParameter.label
 
     @classmethod
     @property

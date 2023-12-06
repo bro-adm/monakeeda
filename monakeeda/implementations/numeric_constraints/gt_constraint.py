@@ -13,7 +13,6 @@ from ..implemenations_base_operator_visitor import ImplementationsOperatorVisito
 @Field.parameter
 class GTNumericConstraintFieldParameter(NumericConstraintFieldParameter):
     __key__ = "gt"
-    __prior_handler__ = Negative
 
     def _handle_values(self, model_instance, values, stage, exceptions: ExceptionsDict):
         value = values[self.scope]

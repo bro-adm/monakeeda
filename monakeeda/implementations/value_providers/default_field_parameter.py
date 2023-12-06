@@ -10,7 +10,7 @@ from ..implemenations_base_operator_visitor import ImplementationsOperatorVisito
 @Field.parameter
 class DefaultFieldParameter(FieldParameter):
     __key__ = 'default'
-    __prior_handler__ = EnvFieldParameter
+    __prior_handler__ = EnvFieldParameter.label
 
     @classmethod
     @property

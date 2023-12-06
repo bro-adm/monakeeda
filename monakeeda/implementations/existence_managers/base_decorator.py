@@ -3,9 +3,12 @@ from abc import ABC
 from monakeeda.base import BaseDecorator, ExceptionsDict
 from monakeeda.consts import NamespacesConsts, FieldConsts
 from .consts import KnownLabels
+from .validate_missing_fields_config_parameter import ValidateMissingFieldsConfigParameter
 
 
 class BaseCreatorDecorator(BaseDecorator, ABC):
+    __prior_handler__ = ValidateMissingFieldsConfigParameter.label
+
     @classmethod
     @property
     def label(cls) -> str:

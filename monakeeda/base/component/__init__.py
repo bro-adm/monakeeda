@@ -1,4 +1,4 @@
-from .component import Component, TComponent, all_components
+from .component import Component, TComponent, labeled_components
 from .component_decorators import ComponentDecorator
 from .configurable_component import ConfigurableComponent
 from .helpers import get_run_decorator

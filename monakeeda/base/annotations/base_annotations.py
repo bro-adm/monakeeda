@@ -27,11 +27,6 @@ class Annotation(Component, ABC):
         self.set_annotation = set_annotation
         self.wrapped_by_annotations = []
 
-    @classmethod
-    @property
-    def label(cls) -> str:
-        return "type_validator"  # default implementation
-
     def is_collision(self, other) -> bool:
         if super().is_collision(other):
 
@@ -53,7 +48,7 @@ class Annotation(Component, ABC):
     def _build(self, monkey_cls, bases, monkey_attrs, exceptions: ExceptionsDict, main_builder):
         relevant_components = []
         for managed_component_type in self.__managed_components__:
-            components = monkey_cls.__type_organized_components__[managed_component_type]
+            components = [component for component in monkey_cls.__label_organized_components__[managed_component_type.label] if type(component) == managed_component_type]
 
             for component in components:
                 if not isinstance(component, Annotation) and component.scope == self.scope:

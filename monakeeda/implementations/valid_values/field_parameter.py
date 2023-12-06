@@ -1,8 +1,8 @@
 from typing import Any
 
 from monakeeda.base import FieldParameter, Field, ExceptionsDict, managed_by
-from ..existence_managers import OptionalAnnotation
-from ..general_annotations import ArbitraryAnnotation
+from ..type_managers import OptionalAnnotation
+from ..numeric_constraints import NumericConstraintFieldParameter
 from ..implemenations_base_operator_visitor import ImplementationsOperatorVisitor
 from ..known_builders import ParameterValueTypeValidator
 
@@ -12,7 +12,7 @@ from ..known_builders import ParameterValueTypeValidator
 class ValidValues(FieldParameter):
     __key__ = 'valid_values'
     __builders__ = [ParameterValueTypeValidator((list, tuple, set))]
-    __prior_handler__ = ArbitraryAnnotation
+    __prior_handler__ = NumericConstraintFieldParameter.label
 
     @classmethod
     @property

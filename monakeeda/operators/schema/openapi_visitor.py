@@ -86,5 +86,5 @@ class OpenAPIOperatorVisitor(ImplementationsOperatorVisitor[dict]):
     def operate_list_annotation(self, annotation: ListAnnotation, context: dict):
         pass
 
-    def operate_dict_annotation(self, annotation: DictAnnotation, context: dict):
-        pass
+    # def operate_dict_annotation(self, annotation: DictAnnotation, context: dict):
+    #     pass

@@ -3,7 +3,7 @@ from typing import Any
 from monakeeda.base import ConfigParameter, Config, ExceptionsDict
 from monakeeda.consts import NamespacesConsts, FieldConsts
 from ..known_scopes import KnownScopes
-from ..abstract import AbstractParameter
+from ..abstract import ABSTRACT_MANAGER
 from ..implemenations_base_operator_visitor import ImplementationsOperatorVisitor
 from ..known_builders import ParameterCallableValueValidator, FieldsParameterTypesExtractor
 
@@ -11,7 +11,7 @@ from ..known_builders import ParameterCallableValueValidator, FieldsParameterTyp
 @Config.parameter
 class AliasGenerator(ConfigParameter):
     __key__ = 'alias_generator'
-    __prior_handler__ = AbstractParameter
+    __prior_handler__ = ABSTRACT_MANAGER
     __builders__ = [ParameterCallableValueValidator(1), FieldsParameterTypesExtractor('alias')]
 
     @classmethod
@@ -48,7 +48,7 @@ class AliasGenerator(ConfigParameter):
                     append = False
 
             if append:
-                monkey_cls.__type_organized_components__[alias_parameter_type].append(alias_parameter)  # adds to the currently running for loop and for later value handlers run order
+                monkey_cls.__type_organized_components__[alias_parameter_type.label].append(alias_parameter)  # adds to the currently running for loop and for later value handlers run order
                 field._parameters.append(alias_parameter)  # added for consistency
 
     def accept_operator(self, operator_visitor: ImplementationsOperatorVisitor, context: Any):

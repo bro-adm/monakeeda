@@ -1,21 +1,13 @@
 from typing import Optional, Any
 
-from monakeeda.base import annotation_mapper, GenericAnnotation, ExceptionsDict
+from monakeeda.base import annotation_mapper, ExceptionsDict
 from monakeeda.consts import NamespacesConsts, FieldConsts
+from .base_type_manager_annotation import BaseTypeManagerAnnotation
 from ..implemenations_base_operator_visitor import ImplementationsOperatorVisitor
-from ..value_providers import ValueFieldParameter
 
 
 @annotation_mapper(Optional)
-class OptionalAnnotation(GenericAnnotation):
-    __prior_handler__ = ValueFieldParameter
-    __manage_all_sub_annotations__ = True
-
-    @classmethod
-    @property
-    def label(cls) -> str:
-        return "existence_manager"
-
+class OptionalAnnotation(BaseTypeManagerAnnotation):
     def _handle_values(self, model_instance, values, stage, exceptions: ExceptionsDict):
         if self._field_key in values:
             for component in self.managing:

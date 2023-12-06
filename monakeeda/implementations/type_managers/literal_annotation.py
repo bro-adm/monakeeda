@@ -4,17 +4,14 @@ from monakeeda.base import annotation_mapper, Annotation, ExceptionsDict
 from monakeeda.consts import NamespacesConsts, FieldConsts
 from .consts import DISCRIMINATION_KEY, DISCRIMINATION_VALUES, DISCRIMINATOR_NAMESPACE
 from ..implemenations_base_operator_visitor import ImplementationsOperatorVisitor
-from ..existence_managers import OptionalAnnotation
 
 
 @annotation_mapper(Literal)
 class LiteralAnnotation(Annotation):
-    __prior_handler__ = OptionalAnnotation
-
     @classmethod
     @property
     def label(cls) -> str:
-        return "discrimination_setup"
+        return "type_manager"
 
     def _build(self, monkey_cls, bases, monkey_attrs, exceptions: ExceptionsDict, main_builder):
         super()._build(monkey_cls, bases, monkey_attrs, exceptions, main_builder)

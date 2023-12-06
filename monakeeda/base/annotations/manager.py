@@ -27,7 +27,14 @@ class AnnotationManager(ComponentManager):
         self._annotation_mapping = annotation_mapping
 
     def _components(self, monkey_cls) -> List[Annotation]:
-        return getattr(monkey_cls, NamespacesConsts.STRUCT)[NamespacesConsts.ANNOTATIONS].values()
+        components = []
+
+        for key, annotation in monkey_cls.struct[NamespacesConsts.ANNOTATIONS].items():
+            components.append(annotation)
+            if isinstance(annotation, GenericAnnotation):
+                components.extend(annotation.represented_annotations)
+
+        return components
 
     def _find_field_by_type_var(self, monkey_cls, type_var: TypeVar) -> str:
         for field_key, annotation_instance in monkey_cls.struct[NamespacesConsts.ANNOTATIONS].items():
@@ -79,10 +86,6 @@ class AnnotationManager(ComponentManager):
 
             annotation_cls_instance = self._annotation_mapping[annotation](key, annotation, self._annotation_mapping)
             monkey_attrs[NamespacesConsts.STRUCT][NamespacesConsts.ANNOTATIONS][key] = annotation_cls_instance
-
-        for key, annotation in monkey_attrs[NamespacesConsts.STRUCT][NamespacesConsts.ANNOTATIONS].items():
-            if isinstance(annotation, GenericAnnotation):
-                monkey_attrs[NamespacesConsts.COMPONENTS].extend(annotation.represented_annotations)
 
     def _build(self, monkey_cls, bases, monkey_attrs, exceptions: ExceptionsDict, main_builder):
         monkey_attrs[NamespacesConsts.STRUCT][NamespacesConsts.ANNOTATIONS] = OrderedDict()

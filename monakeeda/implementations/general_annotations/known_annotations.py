@@ -3,13 +3,12 @@ from typing import Any, get_args, TypeVar
 from monakeeda.base import Annotation, type_validation, Stages, OperatorVisitor, known_annotation_mapper, \
     KnownAnnotations, BaseMonkey, ExceptionsDict
 from monakeeda.consts import NamespacesConsts, TmpConsts
-from .basic_annotations import NumericTypeAnnotation
+from ..type_managers import KnownLabels
+from .basic_annotations import BasicTypeValidatorAnnotation
 
 
 @known_annotation_mapper(KnownAnnotations.TypeVarAnnotation, TypeVar, isinstance)
-class TypeVarAnnotation(Annotation):
-    __prior_handler__ = NumericTypeAnnotation
-
+class TypeVarAnnotation(BasicTypeValidatorAnnotation):
     def _get_actual_type(self, model_instance, stage):
         model_tmp = getattr(model_instance, NamespacesConsts.TMP)
 
@@ -35,9 +34,7 @@ class TypeVarAnnotation(Annotation):
 
 
 @known_annotation_mapper(KnownAnnotations.ModelAnnotation, BaseMonkey, issubclass)
-class ModelAnnotation(Annotation):
-    __prior_handler__ = TypeVarAnnotation
-
+class ModelAnnotation(BasicTypeValidatorAnnotation):
     def _handle_values(self, model_instance, values, stage, exceptions: ExceptionsDict):
         value = values[self.scope]
 
@@ -59,9 +56,7 @@ class ModelAnnotation(Annotation):
 
 
 @known_annotation_mapper(KnownAnnotations.ArbitraryAnnotation, object, issubclass)
-class ArbitraryAnnotation(Annotation):
-    __prior_handler__ = ModelAnnotation
-
+class ArbitraryAnnotation(BasicTypeValidatorAnnotation):
     def _handle_values(self, model_instance, values, stage, exceptions: ExceptionsDict):
         result = type_validation(values[self.scope], self.set_annotation)
 

@@ -4,13 +4,11 @@ from monakeeda.base import ExceptionsDict
 from monakeeda.consts import NamespacesConsts, FieldConsts
 from monakeeda.utils import get_wanted_params, wrap_in_list
 from .base_decorator import BaseCreatorDecorator
-from .validate_missing_fields_config_parameter import ValidateMissingFieldsConfigParameter
 from ..implemenations_base_operator_visitor import ImplementationsOperatorVisitor
 from ..known_builders import DependenciesBuilder
 
 
 class CreateFrom(BaseCreatorDecorator):
-    __prior_handler__ = ValidateMissingFieldsConfigParameter
     __builders__ = [DependenciesBuilder()]
 
     def __init__(self, field_key: str, dependencies: Union[list, str] = '*'):

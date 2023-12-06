@@ -24,7 +24,7 @@ class EnvInfo(BaseMonkey, delay=True):
 @Field.parameter
 class EnvFieldParameter(FieldParameter):
     __key__ = 'env'
-    __prior_handler__ = AliasFieldParameter
+    __prior_handler__ = AliasFieldParameter.label
     __builders__ = [ParameterValueTypeValidator((str, EnvInfo))]
 
     @classmethod

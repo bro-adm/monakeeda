@@ -1,2 +1,2 @@
-from .basic_annotations import ObjectAnnotation, BasicTypeAnnotation, NumericTypeAnnotation
+from .basic_annotations import ObjectAnnotation, BasicTypeAnnotation, NumericTypeAnnotation, BasicTypeValidatorAnnotation
 from .known_annotations import TypeVarAnnotation, ModelAnnotation, ArbitraryAnnotation
