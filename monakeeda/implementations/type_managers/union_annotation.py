@@ -2,7 +2,6 @@ from typing import Union, Any
 
 from monakeeda.base import annotation_mapper, ExceptionsDict, GenericAnnotation
 from .base_type_manager_annotation import BaseTypeManagerAnnotation
-from .consts import KnownLabels
 from ..implemenations_base_operator_visitor import ImplementationsOperatorVisitor
 
 

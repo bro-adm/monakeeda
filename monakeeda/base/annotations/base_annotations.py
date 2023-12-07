@@ -45,6 +45,10 @@ class Annotation(Component, ABC):
     def represented_types(self):
         return self.set_annotation
 
+    @property
+    def main_annotation(self):
+        return self
+
     def _build(self, monkey_cls, bases, monkey_attrs, exceptions: ExceptionsDict, main_builder):
         relevant_components = []
         for managed_component_type in self.__managed_components__:
@@ -121,6 +125,10 @@ class GenericAnnotation(Annotation, ABC):
             types.extend(wrap_in_list(annotation.represented_types))
 
         return tuple(types) if len(types) > 1 else types[0]
+
+    @property
+    def main_annotation(self):
+        return self  # default implementation
 
     def _build(self, monkey_cls, bases, monkey_attrs, exceptions: ExceptionsDict, main_builder):
         super()._build(monkey_cls, bases, monkey_attrs, exceptions, main_builder)

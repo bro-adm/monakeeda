@@ -18,6 +18,10 @@ class Const(GenericAnnotation, Generic[T]):
     def label(cls) -> str:
         return MUTATION_MANAGER
 
+    @property
+    def main_annotation(self):
+        return self.direct_annotations[0].main_annotation
+
     def _handle_values(self, model_instance, values, stage, exceptions: ExceptionsDict):
         if stage == Stages.UPDATE:
             curr_val = getattr(model_instance, self._field_key)
