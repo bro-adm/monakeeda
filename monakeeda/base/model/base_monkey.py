@@ -1,12 +1,12 @@
-from typing import Any, _TYPING_INTERNALS, Generic
+from typing import Any, Generic
 
 from monakeeda.consts import NamespacesConsts, TmpConsts
 from monakeeda.logger import logger, STAGE, MONKEY
 from monakeeda.utils import deep_update
-from .monkey_components_organizer import MonkeyComponentsOrganizer
-from .monkey_scopes_manager import MonkeyScopesManager
 from .errors import MonkeyValuesHandlingException
 from .generic_alias import MonkeyGenericAlias
+from .monkey_components_organizer import MonkeyComponentsOrganizer
+from .monkey_scopes_manager import MonkeyScopesManager
 from ..annotations import AnnotationManager, annotation_mapping
 from ..component import get_run_decorator, labeled_components
 from ..config import ConfigManager, all_configs
@@ -76,12 +76,12 @@ class BaseMonkey(metaclass=MonkeyMeta, component_managers=component_managers, sc
         self._handle_values(kwargs, Stages.UPDATE)
 
     def __setattr__(self, key, value):
-        super().__setattr__(key, value)
-
-        # if key in _TYPING_INTERNALS:  # Python's weird usage of inheritance with generics and their initialization
-        #     super().__setattr__(key, value)
-        # else:
-        #     self.update(**{key: value})
+        if key in self.struct[NamespacesConsts.FIELDS]:
+            # I know this does not catch random extras concept ->
+            # but the other use case is to validate each type of external or internal setter logic (e.g. _TYPING_INTERNALS and extranal setters like DecoratorComponent)
+            self.update(**{key: value})
+        else:
+            super().__setattr__(key, value)
 
     def __eq__(self, other):
         if not isinstance(other, BaseMonkey):
