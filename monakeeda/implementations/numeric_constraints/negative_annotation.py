@@ -3,7 +3,7 @@ from typing import Tuple, Union, Any, Generic, T
 from monakeeda.base import ExceptionsDict, OperatorVisitor, managed_by
 from .base_numeric_constraint import NumericConstraintAnnotation
 from .exceptions import NumericConstraintFailedException
-from ..general_annotations import NumericTypeAnnotation
+from ..type_validators import NumericTypeAnnotation
 
 
 @managed_by(NumericTypeAnnotation)

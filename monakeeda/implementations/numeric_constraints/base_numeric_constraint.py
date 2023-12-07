@@ -3,7 +3,7 @@ from typing import Generic, T, Tuple, Union
 
 from monakeeda.base import FieldParameter, GenericAnnotation, ExceptionsDict
 from .helpers import constraint_collisions_validation
-from ..general_annotations import BasicTypeValidatorAnnotation
+from ..type_validators import BasicTypeValidatorAnnotation
 
 
 class NumericConstraintFieldParameter(FieldParameter, ABC):

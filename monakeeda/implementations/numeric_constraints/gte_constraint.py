@@ -5,8 +5,8 @@ from .base_numeric_constraint import NumericConstraintFieldParameter
 from .exceptions import NumericConstraintFailedException
 from .negative_annotation import Negative
 from .positive_annotation import Positive
-from ..general_annotations import NumericTypeAnnotation
 from ..implemenations_base_operator_visitor import ImplementationsOperatorVisitor
+from ..type_validators import NumericTypeAnnotation
 
 
 @managed_by(NumericTypeAnnotation, Positive, Negative)

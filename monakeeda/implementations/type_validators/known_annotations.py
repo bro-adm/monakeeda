@@ -1,9 +1,8 @@
 from typing import Any, get_args, TypeVar
 
-from monakeeda.base import Annotation, type_validation, Stages, OperatorVisitor, known_annotation_mapper, \
+from monakeeda.base import type_validation, Stages, OperatorVisitor, known_annotation_mapper, \
     KnownAnnotations, BaseMonkey, ExceptionsDict
 from monakeeda.consts import NamespacesConsts, TmpConsts
-from ..type_managers import KnownLabels
 from .basic_annotations import BasicTypeValidatorAnnotation
 
 
