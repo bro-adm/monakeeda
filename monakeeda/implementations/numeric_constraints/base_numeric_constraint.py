@@ -34,7 +34,7 @@ class NumericConstraintFieldParameter(FieldParameter, ABC):
         return False
 
     def _build(self, monkey_cls, bases, monkey_attrs, exceptions: ExceptionsDict, main_builder):
-        if not self.is_managed:
+        if not self.managers:
             exceptions[self._field_key].append(Exception(f"{self.representor} must be set along a int or float"))
 
 
@@ -68,5 +68,5 @@ class NumericConstraintAnnotation(GenericAnnotation, Generic[T]):
     def _build(self, monkey_cls, bases, monkey_attrs, exceptions: ExceptionsDict, main_builder):
         super()._build(monkey_cls, bases, monkey_attrs, exceptions, main_builder)
 
-        if not self.is_managed:
+        if not self.managers:
             exceptions[self._field_key].append(Exception(f"{self.representor} must be set along a int or float"))

@@ -22,15 +22,18 @@ class Annotation(Component, ABC):
     def __init__(self, field_key, set_annotation, annotations_mapping):
         super().__init__()
         self._field_key = field_key
-        self._scope = field_key
         self._annotations_mapping = annotations_mapping
         self.set_annotation = set_annotation
         self.wrapped_by_annotations = []
 
+    @property
+    def scope(self) -> str:
+        return self._field_key
+
     def is_collision(self, other) -> bool:
         if super().is_collision(other):
 
-            if isinstance(other, Annotation) and self.is_managed is True and other.is_managed is True:
+            if isinstance(other, Annotation) and self.managers is True and other.managers is True:
                 return False
 
             return True

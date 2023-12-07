@@ -18,7 +18,10 @@ class FieldParameter(Parameter, ABC):
     def __init__(self, param_val, field_key):
         super().__init__(param_val)
         self._field_key = field_key
-        self._scope = field_key
+
+    @property
+    def scope(self) -> str:
+        return self._field_key
 
     def __eq__(self, other):
         if not isinstance(other, FieldParameter):

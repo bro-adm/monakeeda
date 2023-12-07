@@ -24,5 +24,4 @@ def handle_manager_collisions(main_component: Component, managed_component: Comp
         managed_component.managers.pop(manager)
 
     managed_component.managers[main_component] = decorator if decorator else main_component.managers
-    managed_component.is_managed = True
     main_component.managing.append(managed_component)

@@ -71,9 +71,7 @@ class Component(MonkeyBuilder, ValuesHandler, ABC):
         pass
 
     def __init__(self):
-        self._scope = ''
         self.decorator = None  # the decorator that this component might set on its managed components
-        self.is_managed = False
         self.actuator: Optional['Component'] = None
         self.managers: Dict['Component', Optional['ComponentDecorator']] = {}
         self.managing: List['Component'] = []
@@ -84,15 +82,9 @@ class Component(MonkeyBuilder, ValuesHandler, ABC):
         pass
 
     @property
+    @abstractmethod
     def scope(self) -> str:
-        return self._scope
-
-    @scope.setter
-    def scope(self, value: str):
-        if isinstance(value, str) and value.startswith(self._scope):
-            self._scope = value
-        else:
-            raise NotImplemented
+        pass
 
     def _extract_relevant_exceptions(self, exceptions: ExceptionsDict) -> List[Exception]:
         return exceptions[self.scope]  # default implementation
