@@ -32,8 +32,7 @@ class Annotation(Component, ABC):
 
     def is_collision(self, other) -> bool:
         if super().is_collision(other):
-
-            if isinstance(other, Annotation) and self.managers is True and other.managers is True:
+            if isinstance(other, Annotation) and self.managers and other.managers:
                 return False
 
             return True
