@@ -27,7 +27,7 @@ class CreateFrom(BaseCreatorDecorator):
                 self.scope)
 
     def _extract_relevant_exceptions(self, exceptions: ExceptionsDict):
-        relevant_exceptions = super()._extract_relevant_exceptions(exceptions)
+        relevant_exceptions = super()._extract_relevant_exceptions(exceptions).copy()
         for key in self.dependencies:
             relevant_exceptions.extend(exceptions[key])
 

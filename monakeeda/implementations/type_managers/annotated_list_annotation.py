@@ -4,7 +4,6 @@ from typing import List, Any, Dict
 from monakeeda.base import annotation_mapper, ExceptionsDict, ComponentDecorator, Component
 from monakeeda.utils import list_insert_if_does_not_exist
 from .base_type_manager_annotation import BaseTypeManagerAnnotation
-from .consts import KnownLabels
 from ..implemenations_base_operator_visitor import ImplementationsOperatorVisitor
 
 
@@ -54,7 +53,6 @@ class ListComponentDecorator(ComponentDecorator):
 
                 self._activations_per_item[i][self.component] = model_instance.__run_organized_components__.copy()
                 model_instance.__run_organized_components__ = pre_run_activations
-                print(model_instance.__run_organized_components__)
 
         values[field_key] = list_value
 
