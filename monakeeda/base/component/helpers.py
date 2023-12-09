@@ -1,18 +1,18 @@
-from typing import Optional
+from typing import Optional, List
 
 from .component import Component
 from .component_decorators import ComponentDecorator
 
 
-def get_run_decorator(component: Component) -> Optional[ComponentDecorator]:
+def get_run_decorator(component: Component) -> List[ComponentDecorator]:
+    decorators = []
+
     if component.actuator:
         info = component.managers[component.actuator]
-        if not info:
-            return None
 
         if isinstance(info, ComponentDecorator):
-            return info
+            decorators.append(info)
 
-        return get_run_decorator(component.actuator)
+        decorators.extend(get_run_decorator(component.actuator))
 
-    return None
+    return decorators

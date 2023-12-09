@@ -52,10 +52,15 @@ class BaseMonkey(metaclass=MonkeyMeta, component_managers=component_managers, sc
         exceptions = ExceptionsDict()  # pass by reference - so updates will be available
 
         for component in self.__run_organized_components__.keys():
-            decorator = get_run_decorator(component)
-            if decorator:
-                decorator.component = component
-                decorator.handle_values(self, values, stage, exceptions)
+            decorators = get_run_decorator(component)
+            if decorators:
+                prior_handler = component
+                for decorator in decorators:
+                    decorator.component = prior_handler
+                    prior_handler = decorator
+
+                decorators[-1].handle_values(self, values, stage, exceptions)
+
             elif self.__run_organized_components__[component]:
                 component.handle_values(self, values, stage, exceptions)
 
