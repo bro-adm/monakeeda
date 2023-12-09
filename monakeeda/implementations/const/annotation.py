@@ -23,10 +23,6 @@ class Const(GenericAnnotation, Generic[T]):
     def main_annotation(self):
         return self.direct_annotations[0].main_annotation
 
-    def _build(self, monkey_cls, bases, monkey_attrs, exceptions: ExceptionsDict, main_builder):
-        super()._build(monkey_cls, bases, monkey_attrs, exceptions, main_builder)
-        self._current_value = inspect._empty
-
     def _handle_values(self, model_instance, values, stage, exceptions: ExceptionsDict):
         model_instance.__notes__.setdefault(self, {"curr_value": inspect._empty})
 
