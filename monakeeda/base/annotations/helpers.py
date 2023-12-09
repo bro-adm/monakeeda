@@ -1,8 +1,8 @@
-from typing import List, Dict, Optional
+from typing import List, Dict, Optional, Tuple
 
 from typing_extensions import get_origin, get_args
 
-__helper_mapping = {list: List, dict: Dict}
+__helper_mapping = {list: List, dict: Dict, tuple: Tuple}
 
 
 def get_type_cls(tp):
