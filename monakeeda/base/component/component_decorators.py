@@ -1,4 +1,4 @@
-from abc import ABC
+from abc import ABC, abstractmethod
 from typing import List
 
 from .component import Component
@@ -12,3 +12,7 @@ class ComponentDecorator(ValuesHandler, ABC):
 
     def _extract_relevant_exceptions(self, exceptions: ExceptionsDict) -> List[Exception]:
         return []
+
+    @abstractmethod
+    def reset(self):
+        pass
