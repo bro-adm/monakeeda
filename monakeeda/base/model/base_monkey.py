@@ -66,6 +66,7 @@ class BaseMonkey(metaclass=MonkeyMeta, component_managers=component_managers, sc
             super(BaseMonkey, self).__setattr__(key, values[key])
 
     def __init__(self, **kwargs):
+        self.__notes__ = {}  # Used by components to write current known informations between stages at the scope of the model instance only
         self._handle_values(kwargs, Stages.INIT)
 
     def update(self, **kwargs):
