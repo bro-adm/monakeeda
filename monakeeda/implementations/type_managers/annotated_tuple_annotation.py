@@ -19,8 +19,8 @@ class TupleComponentDecorator(ComponentDecorator):
         self.managers_activations_per_index = defaultdict(lambda: {}, {})
 
     def _handle_values(self, model_instance, values, stage, exceptions: ExceptionsDict):
-        relevant_indices = self.components_to_indices_mapping[self.component]
-        field_key = self.component._field_key
+        relevant_indices = self.components_to_indices_mapping[self.actual_component]
+        field_key = self.actual_component._field_key
         tuple_value = list(values[field_key])
 
         for i in relevant_indices:
@@ -28,10 +28,10 @@ class TupleComponentDecorator(ComponentDecorator):
 
             is_activated = False
 
-            for manager in self.component.managers:
+            for manager in self.actual_component.managers:
                 if manager in item_activation_info:
                     manager_activation_info = item_activation_info[manager]
-                    if self.component in manager_activation_info:
+                    if self.actual_component in manager_activation_info:
                         is_activated = True
                         break
 
@@ -41,7 +41,7 @@ class TupleComponentDecorator(ComponentDecorator):
                 item = tuple_value[i]
                 values[field_key] = item
 
-                relevant_exceptions = self.exceptions_per_index[item]
+                relevant_exceptions = self.exceptions_per_index[i]
                 relevant_exceptions_dict = ExceptionsDict()
                 relevant_exceptions_dict[field_key] = relevant_exceptions
                 self.component.handle_values(model_instance, values, stage, relevant_exceptions_dict)
@@ -50,10 +50,10 @@ class TupleComponentDecorator(ComponentDecorator):
                 tuple_value[i] = processed_value
 
                 new_exceptions = set(relevant_exceptions) - set(exceptions[field_key])
-                self.exceptions_per_index[item].extend(new_exceptions)
+                self.exceptions_per_index[i].extend(new_exceptions)
                 exceptions[field_key].extend(new_exceptions)
 
-                self.managers_activations_per_index[i][self.component] = [component for component in self.component.managing if model_instance.__run_organized_components__[component]]
+                self.managers_activations_per_index[i][self.actual_component] = [component for component in self.actual_component.managing if model_instance.__run_organized_components__[component]]
                 model_instance.__run_organized_components__ = pre_run_activations
 
         values[field_key] = tuple(tuple_value)
