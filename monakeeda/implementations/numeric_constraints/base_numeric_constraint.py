@@ -51,6 +51,10 @@ class NumericConstraintAnnotation(GenericAnnotation, Generic[T]):
         return self
 
     @property
+    def main_annotation(self):
+        return self.direct_annotations[0].main_annotation
+
+    @property
     @abstractmethod
     def constraint(self) -> Tuple[str, Union[int, float]]:
         pass
