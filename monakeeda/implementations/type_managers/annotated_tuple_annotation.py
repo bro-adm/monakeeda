@@ -42,7 +42,7 @@ class TupleComponentDecorator(ComponentDecorator['TupleAnnotation']):
 
             is_activated = False
 
-            if self.direct_decorator_component in item_activation_info:
+            if self.direct_decorator_component in item_activation_info and self.actual_component in item_activation_info[self.direct_decorator_component]:
                 is_activated = True
             elif self.component_actuator in item_activation_info:
                 manager_activation_info = item_activation_info[self.component_actuator]
