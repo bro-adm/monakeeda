@@ -4,9 +4,9 @@ from typing import Tuple, Any, Dict, List
 
 from monakeeda.base import annotation_mapper, ExceptionsDict, ComponentDecorator, Component, GenericAnnotation, \
     Annotation
-from .base_type_manager_annotation import BaseTypeManagerAnnotation
-from ..existence_managers.exceptions import MissingFieldValueException
-from ..implemenations_base_operator_visitor import ImplementationsOperatorVisitor
+from .errors import ItemException
+from ..base_type_manager_annotation import BaseTypeManagerAnnotation
+from ...implemenations_base_operator_visitor import ImplementationsOperatorVisitor
 
 
 class TupleComponentDecorator(ComponentDecorator['TupleAnnotation']):
@@ -64,6 +64,7 @@ class TupleComponentDecorator(ComponentDecorator['TupleAnnotation']):
                 tuple_value[i] = processed_value
 
                 new_exceptions = set(relevant_exceptions) - set(exceptions[field_key])
+                new_exceptions = [ItemException(self._decorating_component.represented_types, i, exception) for exception in new_exceptions]
                 self.exceptions_per_index[i].extend(new_exceptions)
                 exceptions[field_key].extend(new_exceptions)
 
@@ -111,7 +112,7 @@ class TupleAnnotation(BaseTypeManagerAnnotation):
             exceptions[self.scope].append(ValueError(f'Required to be provided a {self.represented_types} of length {len(self.direct_annotations)} -> but was provided with {value} of len {len(value)}'))
 
             for i in range(len(value), len(self.direct_annotations)):
-                self.decorator.exceptions_per_index[i] = [MissingFieldValueException()]
+                self.decorator.exceptions_per_index[i] = [ValueError("missing")]
 
                 for annotation in self.annotations_per_item[i]:
                     if annotation in relevant_activations:

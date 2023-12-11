@@ -2,8 +2,9 @@ from collections import defaultdict
 from typing import List, Any, Dict
 
 from monakeeda.base import annotation_mapper, ExceptionsDict, ComponentDecorator, Component
-from .base_type_manager_annotation import BaseTypeManagerAnnotation
-from ..implemenations_base_operator_visitor import ImplementationsOperatorVisitor
+from .errors import ItemException
+from ..base_type_manager_annotation import BaseTypeManagerAnnotation
+from ...implemenations_base_operator_visitor import ImplementationsOperatorVisitor
 
 
 class ListComponentDecorator(ComponentDecorator['ListAnnotation']):
@@ -49,6 +50,7 @@ class ListComponentDecorator(ComponentDecorator['ListAnnotation']):
                 list_value[i] = processed_value
 
                 new_exceptions = set(relevant_exceptions) - set(exceptions[field_key])
+                new_exceptions = [ItemException(self._decorating_component.represented_types, i, exception) for exception in new_exceptions]
                 self.exceptions_per_index[i].extend(new_exceptions)
                 exceptions[field_key].extend(new_exceptions)
 

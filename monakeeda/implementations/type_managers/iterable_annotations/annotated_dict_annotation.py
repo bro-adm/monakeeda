@@ -5,7 +5,8 @@ from typing import Dict, Any, TypedDict, Generic, TypeVar, List, Set
 
 from monakeeda.base import annotation_mapper, ExceptionsDict, OperatorVisitor, ComponentDecorator, Annotation, \
     GenericAnnotation, Component
-from .base_type_manager_annotation import BaseTypeManagerAnnotation
+from .errors import ItemException
+from ..base_type_manager_annotation import BaseTypeManagerAnnotation
 
 TInfo = TypeVar('TInfo')
 
@@ -100,6 +101,7 @@ class DictComponentDecorator(ComponentDecorator['DictAnnotation']):
                     compartment_items[i] = processed_value
 
                     new_exceptions = set(relevant_exceptions) - set(exceptions[field_key])
+                    new_exceptions = [ItemException(self._decorating_component.represented_types, f"{compartment.value}-{i}", exception) for exception in new_exceptions]
                     compartment_exceptions[i].extend(new_exceptions)
                     exceptions[field_key].extend(new_exceptions)
 
