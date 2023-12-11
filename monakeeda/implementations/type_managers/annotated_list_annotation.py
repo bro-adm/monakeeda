@@ -13,8 +13,14 @@ class ListComponentDecorator(ComponentDecorator):
         self._activations_per_item: List[Dict[Component, Dict[Component, bool]]] = []
         self._exceptions_per_item: Dict[int, List[Exception]] = defaultdict(lambda: [], {})
 
+    def reset(self):
+        self._activations_per_item = []
+
+    def _build(self, monkey_cls, bases, monkey_attrs, exceptions: ExceptionsDict, main_builder):
+        pass
+        
     def _handle_values(self, model_instance, values, stage, exceptions: ExceptionsDict):
-        field_key = self.component._field_key
+        field_key = self.actual_component._field_key
         list_value = values[field_key]
 
         for i in range(len(list_value)):
@@ -39,7 +45,7 @@ class ListComponentDecorator(ComponentDecorator):
                 item = list_value[i]
                 values[field_key] = item
 
-                relevant_exceptions = self._exceptions_per_item[item]
+                relevant_exceptions = self._exceptions_per_item[i]
                 relevant_exceptions_dict = ExceptionsDict()
                 relevant_exceptions_dict[field_key] = relevant_exceptions
                 self.component.handle_values(model_instance, values, stage, relevant_exceptions_dict)
@@ -48,7 +54,7 @@ class ListComponentDecorator(ComponentDecorator):
                 list_value[i] = processed_value
 
                 new_exceptions = set(relevant_exceptions) - set(exceptions[field_key])
-                self._exceptions_per_item[item].extend(new_exceptions)
+                self._exceptions_per_item[i].extend(new_exceptions)
                 exceptions[field_key].extend(new_exceptions)
 
                 self._activations_per_item[i][self.component] = model_instance.__run_organized_components__.copy()
@@ -72,7 +78,7 @@ class ListAnnotation(BaseTypeManagerAnnotation):
 
         if isinstance(value, list):
             for component in self.managing:
-                component.actuator = self
+                component.actuators.append(self)
                 model_instance.__run_organized_components__[component] = True
 
         else:

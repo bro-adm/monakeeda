@@ -1,12 +1,12 @@
 from abc import ABCMeta
-from collections import defaultdict
 
 from monakeeda.consts import NamespacesConsts
 from monakeeda.logger import logger, STAGE, MONKEY
 from .errors import MonkeyBuildException
 from .helpers import handle_class_inputs
-from ..scope import ScopesDict
+from ..component import get_all_decorators
 from ..exceptions_manager import ExceptionsDict
+from ..scope import ScopesDict
 
 delayed_monkeys = []
 
@@ -58,6 +58,11 @@ class MonkeyMeta(ABCMeta):
             for label, components in cls.__label_organized_components__.items():
                 for component in components:
                     component.build(cls, bases, attrs, build_exceptions)
+
+                    decorators = get_all_decorators(component)
+                    for decorator in decorators:
+                        decorator.component = component
+                        decorator.build(cls, bases, attrs, build_exceptions)
 
             cls.__scopes_manager__.build(cls, bases, attrs, build_exceptions)
 

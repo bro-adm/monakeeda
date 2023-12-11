@@ -32,7 +32,7 @@ class OptionalAnnotation(BaseTypeManagerAnnotation):
     def _handle_values(self, model_instance, values, stage, exceptions: ExceptionsDict):
         if values.get(self._field_key, None):
             for component in self.managing:
-                component.actuator = self
+                component.actuators.append(self)
                 model_instance.__run_organized_components__[component] = True
 
     def accept_operator(self, operator_visitor: ImplementationsOperatorVisitor, context: Any):

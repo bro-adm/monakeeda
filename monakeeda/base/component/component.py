@@ -72,7 +72,7 @@ class Component(MonkeyBuilder, ValuesHandler, ABC):
 
     def __init__(self):
         self.decorator = None  # the decorator that this component might set on its managed components
-        self.actuator: Optional['Component'] = None
+        self.actuators: List['Component'] = []
         self.managers: Dict['Component', Optional['ComponentDecorator']] = {}
         self.managing: List['Component'] = []
 

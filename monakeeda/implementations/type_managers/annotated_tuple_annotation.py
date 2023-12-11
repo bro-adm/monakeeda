@@ -1,5 +1,6 @@
 from collections import defaultdict
-from typing import Tuple, Any, Dict, List
+from functools import lru_cache
+from typing import Tuple, Any, Dict, List, Set
 
 from monakeeda.base import annotation_mapper, ExceptionsDict, ComponentDecorator, Component, GenericAnnotation, \
     Annotation, get_all_managed_components
@@ -9,14 +10,28 @@ from ..implemenations_base_operator_visitor import ImplementationsOperatorVisito
 
 
 class TupleComponentDecorator(ComponentDecorator):
-    def __init__(self, managers_indices_mapping: Dict[Component, List[int]]):
+    def __init__(self, main_tuple_annotation: 'TupleAnnotation'):
         super().__init__()
-        self.components_to_indices_mapping = managers_indices_mapping
+        self._main_tuple_annotation = main_tuple_annotation
+        self.components_to_indices_mapping = defaultdict(lambda: set(), {})
         self.managers_activations_per_index: Dict[int, Dict[Component, List[Component]]] = defaultdict(lambda: {}, {})
         self.exceptions_per_index: Dict[int, List[Exception]] = defaultdict(lambda: [], {})
 
     def reset(self):
         self.managers_activations_per_index = defaultdict(lambda: {}, {})
+
+    def _build(self, monkey_cls, bases, monkey_attrs, exceptions: ExceptionsDict, main_builder):
+        for managing_component in self.actual_component.managers:
+            if managing_component == self._main_tuple_annotation:
+                if isinstance(self.actual_component, Annotation):
+                    for index, annotations in self._main_tuple_annotation.annotations_per_item.items():
+                        if self.actual_component in annotations:
+                            self.components_to_indices_mapping[self.actual_component].add(index)
+                            break
+                else:
+                    self.components_to_indices_mapping[self.actual_component] = set(range(len(self._main_tuple_annotation.direct_annotations)))
+            else:
+                self.components_to_indices_mapping[self.actual_component].update(self.components_to_indices_mapping[managing_component])
 
     def _handle_values(self, model_instance, values, stage, exceptions: ExceptionsDict):
         relevant_indices = self.components_to_indices_mapping[self.actual_component]
@@ -28,12 +43,10 @@ class TupleComponentDecorator(ComponentDecorator):
 
             is_activated = False
 
-            for manager in self.actual_component.managers:
-                if manager in item_activation_info:
-                    manager_activation_info = item_activation_info[manager]
-                    if self.actual_component in manager_activation_info:
-                        is_activated = True
-                        break
+            if self.component_actuator in item_activation_info:
+                manager_activation_info = item_activation_info[self.component_actuator]
+                if self.actual_component in manager_activation_info:
+                    is_activated = True
 
             if is_activated:
                 pre_run_activations = model_instance.__run_organized_components__.copy()
@@ -65,23 +78,25 @@ class TupleAnnotation(BaseTypeManagerAnnotation):
     def represented_types(self):
         return tuple
 
+    @property
+    @lru_cache()
+    def annotations_per_item(self) -> Dict[int, List[Annotation]]:
+        annotations_per_index = {}
+        for i in range(len(self.direct_annotations)):
+            item_annotations = []
+
+            direct_component = self.direct_annotations[i]
+            item_annotations.append(direct_component)
+            if isinstance(direct_component, GenericAnnotation):
+                item_annotations.extend(direct_component.represented_annotations)
+
+            annotations_per_index[i] = item_annotations
+
+        return annotations_per_index
+
     def _build(self, monkey_cls, bases, monkey_attrs, exceptions: ExceptionsDict, main_builder):
-        i = 0
-        managed_indices_map = defaultdict(lambda: [], {})
-        for component in self.direct_annotations:
-            managed_indices_map[component] = [i]
-            if isinstance(component, GenericAnnotation):
-                for sub_component in component.represented_annotations:
-                    managed_indices_map[sub_component] = [i]
-            # TODO: add build logic to decorator and let managed components run those builds after they know who they mnage
-            i += 1
-
-        self.decorator = TupleComponentDecorator(managed_indices_map)
+        self.decorator = TupleComponentDecorator(self)
         super()._build(monkey_cls, bases, monkey_attrs, exceptions, main_builder)
-
-        for component in self.managing:
-            if not isinstance(component, Annotation):
-                self.decorator.components_to_indices_mapping[component] = list(range(len(self.direct_annotations)))
 
     def _handle_values(self, model_instance, values, stage, exceptions: ExceptionsDict):
         self.decorator.reset()
@@ -90,35 +105,24 @@ class TupleAnnotation(BaseTypeManagerAnnotation):
         relevant_activations = self.managing.copy()
 
         if not isinstance(value, self.represented_types):
-            exceptions[self.scope].append(
-                TypeError(f'Required to be provided with value of type {self.represented_types} -> but was provided with {type(value)}'))
+            exceptions[self.scope].append(TypeError(f'Required to be provided with value of type {self.represented_types} -> but was provided with {type(value)}'))
         elif not len(value) == len(self.direct_annotations):
-            exceptions[self.scope].append(
-                ValueError(f'Required to be provided a {self.represented_types} of length {len(self.direct_annotations)} -> but was provided with {value} of len {len(value)}'))
+            exceptions[self.scope].append(ValueError(f'Required to be provided a {self.represented_types} of length {len(self.direct_annotations)} -> but was provided with {value} of len {len(value)}'))
 
             for i in range(len(value), len(self.direct_annotations)):
                 self.decorator.exceptions_per_index[i] = [MissingFieldValueException()]
 
-            relevant_represented_annotations = self.direct_annotations[:len(value)]
-            relevant_represented_annotations.extend([relevant_annotation.represented_annotations for relevant_annotation in relevant_represented_annotations if isinstance(relevant_annotation, GenericAnnotation)])
-
-            for component in self.managing:
-                if component not in relevant_represented_annotations and isinstance(component, Annotation):
-                    relevant_activations.remove(component)
-                    # If there are any non Annotation managed components that usually run on all items of the tuple ->
-                    # They won't run on the problematic indices because of the inserted exceptions on those indices.
-                    # NOTE: we do not want ot change the component's relavnt indices mapping at run time -> that is a build setup thing
+                for annotation in self.annotations_per_item[i]:
+                    if annotation in relevant_activations:
+                        relevant_activations.remove(annotation)
 
         for component in relevant_activations:
             relevant_indices = self.decorator.components_to_indices_mapping[component]
-            component.actuator = self
+            component.actuators.append(self)
             model_instance.__run_organized_components__[component] = True
 
             for index in relevant_indices:
                 self.decorator.managers_activations_per_index[index].setdefault(self, []).append(component)
-
-            for managed_component in get_all_managed_components(component):
-                self.decorator.components_to_indices_mapping[managed_component] = self.decorator.components_to_indices_mapping[component]
 
     def accept_operator(self, operator_visitor: ImplementationsOperatorVisitor, context: Any):
         operator_visitor.operate_list_annotation(self, context)

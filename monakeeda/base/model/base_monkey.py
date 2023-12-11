@@ -8,7 +8,7 @@ from .generic_alias import MonkeyGenericAlias
 from .monkey_components_organizer import MonkeyComponentsOrganizer
 from .monkey_scopes_manager import MonkeyScopesManager
 from ..annotations import AnnotationManager, annotation_mapping
-from ..component import get_run_decorator, labeled_components
+from ..component import get_decorators_per_actuator, labeled_components
 from ..config import ConfigManager, all_configs
 from ..decorators import DecoratorManager
 from ..exceptions_manager import ExceptionsDict
@@ -52,14 +52,18 @@ class BaseMonkey(metaclass=MonkeyMeta, component_managers=component_managers, sc
         exceptions = ExceptionsDict()  # pass by reference - so updates will be available
 
         for component in self.__run_organized_components__.keys():
-            decorators = get_run_decorator(component)
-            if decorators:
-                prior_handler = component
-                for decorator in decorators:
-                    decorator.component = prior_handler
-                    prior_handler = decorator
+            decorators_per_actuator = get_decorators_per_actuator(component)
+            decorators_per_actuator = list(zip(component.actuators, decorators_per_actuator))
+            if decorators_per_actuator:
+                for item in decorators_per_actuator:
+                    actuator, decorators_route = item
+                    prior_handler = component
+                    for decorator in decorators_route:
+                        decorator.component_actuator = actuator
+                        decorator.component = prior_handler
+                        prior_handler = decorator
 
-                decorators[-1].handle_values(self, values, stage, exceptions)
+                    decorators_route[-1].handle_values(self, values, stage, exceptions)
 
             elif self.__run_organized_components__[component]:
                 component.handle_values(self, values, stage, exceptions)
