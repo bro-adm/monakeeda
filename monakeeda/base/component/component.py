@@ -1,7 +1,7 @@
 import inspect
 from abc import ABC, abstractmethod
 from collections import OrderedDict
-from typing import ClassVar, TypeVar, Type, Any, List, Dict, Optional, OrderedDict as TypeOrderedDict
+from typing import ClassVar, TypeVar, Type, Any, List, Dict, Optional, OrderedDict as TypeOrderedDict, Set
 
 from .errors import PrioriHandlerCollisionException
 from ..exceptions_manager import ExceptionsDict
@@ -72,7 +72,7 @@ class Component(MonkeyBuilder, ValuesHandler, ABC):
 
     def __init__(self):
         self.decorator = None  # the decorator that this component might set on its managed components
-        self.actuators: List['Component'] = []
+        self.actuators: Set['Component'] = set()
         self.managers: Dict['Component', Optional['ComponentDecorator']] = {}
         self.managing: List['Component'] = []
 

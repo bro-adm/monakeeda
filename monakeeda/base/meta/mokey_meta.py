@@ -61,7 +61,7 @@ class MonkeyMeta(ABCMeta):
 
                     decorators = get_all_decorators(component)
                     for decorator in decorators:
-                        decorator.component = component
+                        decorator.decorated = component
                         decorator.build(cls, bases, attrs, build_exceptions)
 
             cls.__scopes_manager__.build(cls, bases, attrs, build_exceptions)

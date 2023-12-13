@@ -15,25 +15,37 @@ class ListComponentDecorator(ComponentDecorator['ListAnnotation']):
 
     def reset(self):
         self.managers_activations_per_index = defaultdict(lambda: {}, {})
+        self.exceptions_per_index = defaultdict(lambda: [], {})
 
     def _build(self, monkey_cls, bases, monkey_attrs, exceptions: ExceptionsDict, main_builder):
         pass
         
     def _handle_values(self, model_instance, values, stage, exceptions: ExceptionsDict):
-        field_key = self.actual_component._field_key
+        field_key = self.component._field_key
         list_value = values[field_key]
+
+        print(f"--- Start List Decorator ---")
 
         for i in range(len(list_value)):
             item_activation_info = self.managers_activations_per_index[i]
 
             is_activated = False
 
-            if self.direct_decorator_component in item_activation_info and self.actual_component in item_activation_info[self.direct_decorator_component]:
-                is_activated = True
-            elif self.component_actuator in item_activation_info:
+            print(f"{self.decorated=}, {self.direct_decorator_component=}, {i=}, {item_activation_info=}")
+
+            if isinstance(self.decorated, ComponentDecorator):
+                print(f"{self.decorated._decorating_component=}")
+                if self.decorated._decorating_component in item_activation_info:
+                    if item_activation_info[self.decorated._decorating_component]:
+                        is_activated = True
+
+            if self.component_actuator in item_activation_info:
                 manager_activation_info = item_activation_info[self.component_actuator]
-                if self.actual_component in manager_activation_info:
+                if self.component in manager_activation_info:
                     is_activated = True
+
+
+            print(f"{is_activated=}")
 
             if is_activated:
                 pre_run_activations = model_instance.__run_organized_components__.copy()
@@ -44,20 +56,26 @@ class ListComponentDecorator(ComponentDecorator['ListAnnotation']):
                 relevant_exceptions = self.exceptions_per_index[i]
                 relevant_exceptions_dict = ExceptionsDict()
                 relevant_exceptions_dict[field_key] = relevant_exceptions
-                self.component.handle_values(model_instance, values, stage, relevant_exceptions_dict)
+                self.decorated.handle_values(model_instance, values, stage, relevant_exceptions_dict)
 
                 processed_value = values[field_key]
                 list_value[i] = processed_value
 
                 new_exceptions = set(relevant_exceptions) - set(exceptions[field_key])
-                new_exceptions = [ItemException(self._decorating_component.represented_types, i, exception) for exception in new_exceptions]
-                self.exceptions_per_index[i].extend(new_exceptions)
-                exceptions[field_key].extend(new_exceptions)
+                print(f"{new_exceptions=}")
+                for exception in new_exceptions:
+                    relevant_exceptions.remove(exception)
+                    wrapped_exception = ItemException(self._decorating_component.represented_types, i, exception)
+                    print(f"ADDED {wrapped_exception}, {self._decorating_component.representor}, {exceptions.__repr__()}")
+                    exceptions[field_key].append(wrapped_exception)
+                    relevant_exceptions.append(wrapped_exception)
 
-                self.managers_activations_per_index[i][self.component] = model_instance.__run_organized_components__.copy()
+                self.managers_activations_per_index[i][self.component] = [component for component in self.component.managing if model_instance.__run_organized_components__[component]]
+                print(f"new activations = {self.managers_activations_per_index[i][self.component]}")
                 model_instance.__run_organized_components__ = pre_run_activations
 
         values[field_key] = list_value
+        print(f"--- End List Decorator ---")
 
 
 @annotation_mapper(List)
@@ -75,7 +93,7 @@ class ListAnnotation(BaseTypeManagerAnnotation):
 
         if isinstance(value, list):
             for component in self.managing:
-                component.actuators.append(self)
+                component.actuators.add(self)
                 model_instance.__run_organized_components__[component] = True
 
                 for i in range(len(value)):

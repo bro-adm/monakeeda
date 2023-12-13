@@ -35,20 +35,21 @@ class DictComponentDecorator(ComponentDecorator['DictAnnotation']):
 
     def reset(self):
         self.managers_activations_per_dict_compartment = DictCompartmentsInfo[Dict[int, Dict[Component, List[Component]]]](key=defaultdict(lambda: {}, {}), value=defaultdict(lambda: {}, {}))
+        self.exceptions_per_dict_compartment = DictCompartmentsInfo[Dict[int, List[Exception]]](key=defaultdict(lambda: [], {}), value=defaultdict(lambda: [], {}))
 
     def _build(self, monkey_cls, bases, monkey_attrs, exceptions: ExceptionsDict, main_builder):
-        for managing_component in self.actual_component.managers:
+        for managing_component in self.component.managers:
             if managing_component == self._decorating_component:
-                if isinstance(self.actual_component, Annotation):
+                if isinstance(self.component, Annotation):
                     for dict_compartment, annotations in self._decorating_component.annotations_per_dict_compartment.items():
-                        if self.actual_component in annotations:
-                            self.components_to_dict_compartments_mapping[self.actual_component].add(dict_compartments[dict_compartment])
+                        if self.component in annotations:
+                            self.components_to_dict_compartments_mapping[self.component].add(dict_compartments[dict_compartment])
                             break
                 else:
                     # DOnt know what such a component would be :|
-                    self.components_to_dict_compartments_mapping[self.actual_component] = {DictCompartments.key, DictCompartments.value}
+                    self.components_to_dict_compartments_mapping[self.component] = {DictCompartments.key, DictCompartments.value}
             else:
-                self.components_to_dict_compartments_mapping[self.actual_component].update(self.components_to_dict_compartments_mapping[managing_component])
+                self.components_to_dict_compartments_mapping[self.component].update(self.components_to_dict_compartments_mapping[managing_component])
 
     def _extract_compartment(self, original_value: dict, compartment: DictCompartments) -> List[Any]:
         if compartment == DictCompartments.key:
@@ -57,12 +58,14 @@ class DictComponentDecorator(ComponentDecorator['DictAnnotation']):
             return list(original_value.values())
 
     def _handle_values(self, model_instance, values, stage, exceptions: ExceptionsDict):
-        relevant_dict_compartments = self.components_to_dict_compartments_mapping[self.actual_component]
-        field_key = self.actual_component._field_key
+        relevant_dict_compartments = self.components_to_dict_compartments_mapping[self.component]
+        field_key = self.component._field_key
         dict_value = values[field_key]
 
         dict_keys = dict_value.keys()
         dict_values = dict_value.values()
+
+        print(f"--- Start Dict Decorator {relevant_dict_compartments} ---")
 
         for compartment in relevant_dict_compartments:
             compartment_items = self._extract_compartment(dict_value, compartment)
@@ -79,12 +82,20 @@ class DictComponentDecorator(ComponentDecorator['DictAnnotation']):
 
                 is_activated = False
 
-                if self.direct_decorator_component in item_activation_info and self.actual_component in item_activation_info[self.direct_decorator_component]:
-                    is_activated = True
-                elif self.component_actuator in item_activation_info:
+                print(f"{self.decorated=}, {self.direct_decorator_component=}, {i=}, {item_activation_info=}")
+
+                if isinstance(self.decorated, ComponentDecorator):
+                    print(f"{self.decorated._decorating_component=}")
+                    if self.decorated._decorating_component in item_activation_info:
+                        if item_activation_info[self.decorated._decorating_component]:
+                            is_activated = True
+
+                if self.component_actuator in item_activation_info:
                     manager_activation_info = item_activation_info[self.component_actuator]
-                    if self.actual_component in manager_activation_info:
+                    if self.component in manager_activation_info:
                         is_activated = True
+
+                print(f"{is_activated=}")
 
                 if is_activated:
                     pre_run_activations = model_instance.__run_organized_components__.copy()
@@ -95,20 +106,26 @@ class DictComponentDecorator(ComponentDecorator['DictAnnotation']):
                     relevant_exceptions = compartment_exceptions[i]
                     relevant_exceptions_dict = ExceptionsDict()
                     relevant_exceptions_dict[field_key] = relevant_exceptions
-                    self.component.handle_values(model_instance, values, stage, relevant_exceptions_dict)
+                    self.decorated.handle_values(model_instance, values, stage, relevant_exceptions_dict)
 
                     processed_value = values[field_key]
                     compartment_items[i] = processed_value
 
                     new_exceptions = set(relevant_exceptions) - set(exceptions[field_key])
-                    new_exceptions = [ItemException(self._decorating_component.represented_types, f"{compartment.value}-{i}", exception) for exception in new_exceptions]
-                    compartment_exceptions[i].extend(new_exceptions)
-                    exceptions[field_key].extend(new_exceptions)
+                    print(f"{new_exceptions=}")
+                    for exception in new_exceptions:
+                        relevant_exceptions.remove(exception)
+                        wrapped_exception = ItemException(self._decorating_component.represented_types, f"{compartment.value}-{i}", exception)
+                        print(f"ADDED {wrapped_exception}, {self._decorating_component.representor}, {exceptions.__repr__()}")
+                        exceptions[field_key].append(wrapped_exception)
+                        relevant_exceptions.append(wrapped_exception)
 
-                    compartment_activation_info[i][self.actual_component] = [component for component in self.actual_component.managing if model_instance.__run_organized_components__[component]]
+                    compartment_activation_info[i][self.component] = [component for component in self.component.managing if model_instance.__run_organized_components__[component]]
+                    print(f"new activations = {compartment_activation_info[i][self.component]}")
                     model_instance.__run_organized_components__ = pre_run_activations
 
         values[field_key] = {key: val for key, val in zip(dict_keys, dict_values)}
+        print(f"--- End Dict Decorator {relevant_dict_compartments} ---")
 
 
 @annotation_mapper(Dict)
@@ -148,7 +165,7 @@ class DictAnnotation(BaseTypeManagerAnnotation):
 
         if isinstance(value, self.represented_types):
             for component in self.managing:
-                component.actuators.append(self)
+                component.actuators.add(self)
                 model_instance.__run_organized_components__[component] = True
 
                 for i in range(len(value)):

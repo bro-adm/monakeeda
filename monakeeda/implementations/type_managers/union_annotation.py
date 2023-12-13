@@ -27,7 +27,7 @@ class UnionAnnotation(BaseTypeManagerAnnotation):
                 relevant_annotations.extend(annotation.represented_annotations)
 
             for relevant_annotation in relevant_annotations:
-                relevant_annotation.actuators.append(self)
+                relevant_annotation.actuators.add(self)
                 model_instance.__run_organized_components__[relevant_annotation] = True
 
         else:

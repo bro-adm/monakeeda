@@ -52,15 +52,18 @@ class BaseMonkey(metaclass=MonkeyMeta, component_managers=component_managers, sc
         exceptions = ExceptionsDict()  # pass by reference - so updates will be available
 
         for component in self.__run_organized_components__.keys():
+            print("=================================")
             decorators_per_actuator = get_decorators_per_actuator(component)
             decorators_per_actuator = list(zip(component.actuators, decorators_per_actuator))
             if decorators_per_actuator:
                 for item in decorators_per_actuator:
                     actuator, decorators_route = item
+                    print("----------------------------------")
+                    print(f"{component=}, {actuator=}, {decorators_route=}")
                     prior_handler = component
                     for decorator in decorators_route:
                         decorator.component_actuator = actuator
-                        decorator.component = prior_handler
+                        decorator.decorated = prior_handler
                         prior_handler = decorator
 
                     decorators_route[-1].handle_values(self, values, stage, exceptions)

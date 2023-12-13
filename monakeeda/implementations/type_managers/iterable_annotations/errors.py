@@ -10,3 +10,12 @@ class ItemException(Exception):
 
     def __str__(self):
         return f"{capitalize_words(self.main_type.__name__)} (compartment={self.compartment}) -> {self.exception}"
+
+    def __eq__(self, other):
+        if not isinstance(other, ItemException):
+            raise ValueError(f"Exception provided not of type {self.__class__.__name__}")
+
+        return self.main_type == other.main_type and self.compartment == other.compartment and str(self.exception) == str(other.exception)
+
+    def __hash__(self):
+        return hash((self.main_type, self.compartment, str(self.exception)))

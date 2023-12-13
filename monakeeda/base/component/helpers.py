@@ -13,7 +13,7 @@ def get_decorators_per_actuator(main_component: Component) -> List[List[Componen
         if not curr_component.actuators:
             pass
         elif len(curr_component.actuators) == 1:
-            _get_decorators_per_actuator(current_route, curr_component.actuators[0])
+            _get_decorators_per_actuator(current_route, list(curr_component.actuators)[0])
         else:
             for actuator in curr_component.actuators:
                 actuator_decorations = []
